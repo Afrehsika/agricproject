@@ -1980,5 +1980,169 @@ textarea.form-control {
     transform: scale(1.1);
 }
 
+/* Responsive / Mobile styles */
+@media (max-width: 768px) {
+    body {
+        overflow-y: auto;
+    }
+    
+    .mobile-only {
+        display: flex !important;
+    }
+    
+    .app-container {
+        grid-template-columns: 1fr !important;
+        height: auto;
+        min-height: 100vh;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: -280px;
+        width: 280px;
+        height: 100vh;
+        z-index: 1001;
+        transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 4px 0 25px rgba(0, 0, 0, 0.5);
+    }
+    
+    .sidebar.open {
+        left: 0;
+    }
+    
+    .sidebar-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background: rgba(15, 23, 42, 0.65);
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        z-index: 1000;
+        display: none;
+    }
+    
+    .sidebar-overlay.open {
+        display: block;
+    }
+    
+    .main-content {
+        padding: 16px;
+        width: 100%;
+        height: auto;
+        min-height: calc(100vh - 70px);
+        overflow-y: visible;
+    }
+    
+    .main-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        width: 100%;
+    }
+    
+    .header-right {
+        width: 100%;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        gap: 8px;
+    }
+    
+    .wallet-pill {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    #header-cart-btn, #header-alerts-btn {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .search-box {
+        max-width: 100%;
+    }
+    
+    .crop-tags {
+        justify-content: flex-start;
+    }
+    
+    .grid-2-1 {
+        grid-template-columns: 1fr !important;
+        gap: 16px;
+    }
+    
+    /* Ensure maps and containers fit screen widths */
+    #supply-map {
+        height: 250px !important;
+    }
+    
+    /* Modals scaling */
+    .momo-dialog {
+        width: 95% !important;
+        max-width: 450px !important;
+        margin: 20px auto !important;
+    }
+    
+    /* Login Portal adaptations */
+    .login-portal-card {
+        padding: 20px !important;
+        max-width: 95% !important;
+    }
+    
+    .demo-profiles-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    /* Floating action buttons adjust */
+    .ussd-widget-container {
+        left: 16px !important;
+        right: auto !important;
+        bottom: 16px !important;
+        position: fixed !important;
+    }
+    
+    .ussd-phone-mockup {
+        left: 0 !important;
+        right: auto !important;
+        bottom: 60px !important;
+        position: absolute !important;
+    }
+
+    #ussd-phone {
+        max-width: 300px;
+    }
+
+    .agribot-chat-container {
+        right: 16px !important;
+        left: auto !important;
+        bottom: 16px !important;
+        position: fixed !important;
+    }
+
+    .agribot-chat-box {
+        right: 0 !important;
+        left: auto !important;
+        bottom: 60px !important;
+        width: calc(100vw - 32px) !important;
+        max-width: 340px !important;
+    }
+
+    #agribot-chat-box {
+        height: 400px !important;
+    }
+}
+
+
 
 
