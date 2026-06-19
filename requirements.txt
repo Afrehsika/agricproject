@@ -1,0 +1,13 @@
+Django>=4.0
+djangorestframework
+python-dotenv
+requests
+numpy
+torch
+transformers
+datasets
+evaluate
+accelerate
+torchvision
+scikit-learn
+pillow
