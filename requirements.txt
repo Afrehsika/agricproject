@@ -11,3 +11,4 @@ accelerate
 torchvision
 scikit-learn
 pillow
+gunicorn
