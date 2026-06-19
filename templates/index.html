@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriConnect Ghana - Farmer-to-Buyer Digital Escrow & Logistics Marketplace</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <!-- 🔑 Login / Register Portal Overlay -->
+    {% include 'components/login_portal.html' %}
+
+    <!-- 📊 Main Dashboard Application Workspace -->
+    <div class="app-container" id="app-container" style="display: none;">
+        {% include 'components/sidebar.html' %}
+
+        <!-- Main Workspace -->
+        <main class="main-content">
+            {% include 'components/header.html' %}
+
+            {% include 'components/map.html' %}
+
+            <!-- Dynamic Tab Content Sections -->
+            <div class="content-body">
+                {% include 'components/marketplace.html' %}
+
+                {% include 'components/farmer_listings.html' %}
+
+                {% include 'components/orders.html' %}
+
+                {% include 'components/logistics.html' %}
+
+                {% include 'components/disease_scanner.html' %}
+
+                {% include 'components/network.html' %}
+
+                {% include 'components/messages.html' %}
+
+                {% include 'components/analytics.html' %}
+            </div>
+        </main>
+        
+        <!-- FLOATING BONUS PANELS -->
+        {% include 'components/ussd_simulator.html' %}
+
+        {% include 'components/agribot.html' %}
+        
+        <!-- DIALOG MODALS -->
+        {% include 'components/momo_modal.html' %}
+        {% include 'components/cart_modal.html' %}
+        {% include 'components/topup_modal.html' %}
+        {% include 'components/withdraw_modal.html' %}
+        {% include 'components/alert_inbox_modal.html' %}
+    </div>
+
+    <!-- 🔔 Notification Toasts Container -->
+    <div id="alert-toasts-container" class="alert-toasts-container"></div>
+
+    <!-- Paystack Inline JS SDK -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <!-- Leaflet JS for Map -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Frontend JS -->
+    <script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

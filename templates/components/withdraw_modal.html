@@ -1,0 +1,113 @@
+<div class="modal-backdrop" id="withdraw-modal" style="display: none;">
+    <div class="momo-dialog glass-panel fade-in-up">
+        <div class="momo-header" style="background: linear-gradient(135deg, var(--amber-gold), #fcd34d); color: #0b0f19;">
+            <div class="momo-provider-logo" style="background-color: #0b0f19; color: var(--amber-gold);"><i class="fa-solid fa-money-bill-transfer"></i></div>
+            <h4 style="margin: 0; font-family: var(--font-display); font-weight: 800;">Withdraw Funds</h4>
+        </div>
+        <div class="momo-body p-4">
+            <div class="momo-info-box">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Securely withdraw your wallet balance directly to your Mobile Money account or Bank Account.</span>
+            </div>
+            
+            <form id="withdraw-form" class="text-left">
+                <div id="withdraw-error" class="alert alert-danger mb-3" style="display: none; font-size: 12px; color: var(--red-alert); background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 6px;"></div>
+                
+                <div class="form-group">
+                    <label for="withdraw-amount" class="font-xs text-secondary mb-1 block">Amount to Withdraw</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-money-bill-wave"></i>
+                        <input type="number" id="withdraw-amount" class="form-control text-lg weight-700" min="1" placeholder="0.00" required>
+                        <span class="input-suffix">GHS</span>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-3">
+                    <label class="font-xs text-secondary mb-2 block">Withdrawal Channel</label>
+                    <div class="channel-selector-cards">
+                        <div class="channel-sel-card active" data-value="mobile_money">
+                            <i class="fa-solid fa-mobile-screen-button"></i>
+                            <span>Mobile Money</span>
+                        </div>
+                        <div class="channel-sel-card" data-value="bank_account">
+                            <i class="fa-solid fa-building-columns"></i>
+                            <span>Bank Account</span>
+                        </div>
+                    </div>
+                    <input type="hidden" id="withdraw-channel" value="mobile_money" required>
+                </div>
+                
+                <div class="form-group mt-3" id="withdraw-bank-group" style="display: none;">
+                    <label for="withdraw-bank-code" class="font-xs text-secondary mb-1 block">Select Bank</label>
+                    <div class="input-icon-wrapper select-wrapper">
+                        <i class="fa-solid fa-building-columns"></i>
+                        <select id="withdraw-bank-code" class="form-control">
+                            <option value="070101">GCB Bank</option>
+                            <option value="030301">Ecobank Ghana</option>
+                            <option value="020101">Absa Bank Ghana</option>
+                            <option value="100101">Fidelity Bank Ghana</option>
+                            <option value="040101">Agricultural Development Bank (ADB)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group mt-3">
+                    <label id="withdraw-acct-label" for="withdraw-account-number" class="font-xs text-secondary mb-1 block">Mobile Money Phone Number</label>
+                    <div class="input-icon-wrapper">
+                        <i class="fa-solid fa-phone" id="withdraw-acct-icon"></i>
+                        <input type="text" id="withdraw-account-number" class="form-control" placeholder="e.g. 0241112222" required>
+                    </div>
+                </div>
+                
+                <div class="momo-actions mt-4 gap-2 flex">
+                    <button type="button" id="withdraw-btn-cancel" class="btn btn-secondary flex-1">Cancel</button>
+                    <button type="submit" id="withdraw-btn-submit" class="btn flex-2" style="background: linear-gradient(135deg, var(--amber-gold), #fcd34d); color: #0b0f19; font-weight: 700; border: none;">
+                        <span class="btn-text"><i class="fa-solid fa-paper-plane mr-2"></i> Submit Request</span>
+                        <span class="spinner" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin"></i> Processing...</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const channelSelect = document.getElementById('withdraw-channel');
+    const bankGroup = document.getElementById('withdraw-bank-group');
+    const bankSelect = document.getElementById('withdraw-bank-code');
+    const acctLabel = document.getElementById('withdraw-acct-label');
+    const acctInput = document.getElementById('withdraw-account-number');
+    const acctIcon = document.getElementById('withdraw-acct-icon');
+    const channelCards = document.querySelectorAll('#withdraw-modal .channel-sel-card');
+
+    if (channelCards && channelSelect) {
+        channelCards.forEach(card => {
+            card.addEventListener('click', () => {
+                channelCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                channelSelect.value = card.dataset.value;
+                channelSelect.dispatchEvent(new Event('change'));
+            });
+        });
+    }
+
+    if (channelSelect) {
+        channelSelect.addEventListener('change', () => {
+            if (channelSelect.value === 'bank_account') {
+                bankGroup.style.display = 'block';
+                bankSelect.required = true;
+                acctLabel.textContent = "Bank Account Number";
+                acctInput.placeholder = "e.g. 1010982736451";
+                if (acctIcon) acctIcon.className = "fa-solid fa-hashtag";
+            } else {
+                bankGroup.style.display = 'none';
+                bankSelect.required = false;
+                acctLabel.textContent = "Mobile Money Phone Number";
+                acctInput.placeholder = "e.g. 0241112222";
+                if (acctIcon) acctIcon.className = "fa-solid fa-phone";
+            }
+        });
+    }
+});
+</script>

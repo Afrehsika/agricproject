@@ -1,0 +1,69 @@
+<div class="modal-backdrop" id="topup-modal" style="display: none;">
+    <div class="momo-dialog glass-panel fade-in-up">
+        <div class="momo-header" style="background: linear-gradient(135deg, var(--emerald-green), var(--emerald-light)); color: #0b0f19;">
+            <div class="momo-provider-logo" style="background-color: #0b0f19; color: var(--emerald-green);"><i class="fa-solid fa-credit-card"></i></div>
+            <h4 style="margin: 0; font-family: var(--font-display); font-weight: 800;">Fund Digital Wallet</h4>
+        </div>
+        <div class="momo-body p-4">
+            <div class="momo-info-box emerald">
+                <i class="fa-solid fa-shield-halved"></i>
+                <span>Instant wallet deposit via <strong>Paystack Secure Payment Gateway</strong> (supporting Card, MoMo, and Bank Transfer).</span>
+            </div>
+            
+            <div id="topup-error" class="alert alert-danger mb-3" style="display: none; font-size: 12px; color: var(--red-alert); background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 6px; text-align: left;"></div>
+            
+            <div class="form-group mt-3 text-left">
+                <label for="topup-amount" class="font-xs text-secondary mb-1 block">Top-Up Amount</label>
+                <div class="input-icon-wrapper">
+                    <i class="fa-solid fa-wallet"></i>
+                    <input type="number" id="topup-amount" class="form-control text-lg weight-800" min="1" value="50" style="color: var(--emerald-green); font-size: 20px;" required>
+                    <span class="input-suffix">GHS</span>
+                </div>
+            </div>
+            
+            <div class="quick-amount-chips">
+                <button type="button" class="amount-chip" data-amount="20">+ 20</button>
+                <button type="button" class="amount-chip active" data-amount="50">+ 50</button>
+                <button type="button" class="amount-chip" data-amount="100">+ 100</button>
+                <button type="button" class="amount-chip" data-amount="200">+ 200</button>
+                <button type="button" class="amount-chip" data-amount="500">+ 500</button>
+            </div>
+            
+            <div class="momo-actions mt-4 flex gap-2">
+                <button id="topup-btn-cancel" class="btn btn-secondary flex-1">Cancel</button>
+                <button id="topup-btn-confirm" class="btn btn-primary flex-2">
+                    <span class="btn-text"><i class="fa-solid fa-shield-halved mr-2"></i> Pay with Paystack</span>
+                    <span class="spinner" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin"></i> Initializing...</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const chips = document.querySelectorAll('#topup-modal .amount-chip');
+    const input = document.getElementById('topup-amount');
+    
+    if (chips && input) {
+        chips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                chips.forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                input.value = chip.dataset.amount;
+                input.dispatchEvent(new Event('input'));
+            });
+        });
+        
+        input.addEventListener('input', () => {
+            chips.forEach(c => {
+                if (c.dataset.amount === input.value) {
+                    c.classList.add('active');
+                } else {
+                    c.classList.remove('active');
+                }
+            });
+        });
+    }
+});
+</script>

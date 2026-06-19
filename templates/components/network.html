@@ -1,0 +1,59 @@
+<!-- Network / Trust Circle Tab -->
+<section id="tab-network" class="tab-pane">
+    <!-- Active Circle Connections Section -->
+    <div class="card glass mb-4">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px;">
+            <h3><i class="fa-solid fa-people-group text-emerald"></i> My Trust Circle</h3>
+            <span class="badge badge-green" id="active-connection-count">0 Connected</span>
+        </div>
+        <div class="card-body">
+            <p class="text-secondary font-sm mb-3">Transactions (purchasing harvests and wallet escrows) can only be completed between users in the same trust circle. Communicate and establish trust circles first.</p>
+            <div id="active-connections-grid" class="produce-grid" style="margin-top: 12px;">
+                <!-- Dynamically populated connection cards -->
+                <div class="text-secondary p-3 w-full text-center font-sm">No connections in your circle yet. Discover people below to send an invite!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Invitations Section -->
+    <div class="grid-2-1 mb-4" id="pending-invitations-section" style="display: none; grid-template-columns: 1fr 1fr; gap: 24px;">
+        <!-- Incoming Invites -->
+        <div class="card glass" id="incoming-requests-card" style="display: none;">
+            <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h4>Incoming Connection Requests</h4>
+            </div>
+            <div class="card-body" id="incoming-requests-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+                <!-- Dynamically populated incoming requests -->
+            </div>
+        </div>
+
+        <!-- Outgoing Invites -->
+        <div class="card glass" id="outgoing-requests-card" style="display: none;">
+            <div class="card-header" style="border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">
+                <h4>Sent Connection Invites</h4>
+            </div>
+            <div class="card-body" id="outgoing-requests-list" style="display: flex; flex-direction: column; gap: 12px; margin-top: 12px;">
+                <!-- Dynamically populated outgoing requests -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Explore & Discover Section -->
+    <div class="card glass">
+        <div class="card-header" style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); padding-bottom: 12px; flex-wrap: wrap; gap: 12px;">
+            <h3><i class="fa-solid fa-earth-africa text-blue-accent"></i> Discover AgriConnect Network</h3>
+            <!-- Filter search bar -->
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="network-search" placeholder="Search by name, role, or region..." style="background-color: var(--bg-main); border: 1px solid var(--border-color); color: var(--text-primary); border-radius: var(--radius-sm); padding: 8px 12px 8px 36px; outline: none; font-size: 13px;">
+            </div>
+        </div>
+        <div class="card-body">
+            <p class="text-secondary font-sm mb-3">Browse all members registered on the AgriConnect platform and send requests to join their circles of trust.</p>
+            <div id="discover-users-grid" class="produce-grid" style="margin-top: 12px;">
+                <!-- Dynamically populated platform user cards -->
+                <div class="text-secondary p-4 w-full text-center">Loading network directory...</div>
+            </div>
+        </div>
+    </div>
+</section>

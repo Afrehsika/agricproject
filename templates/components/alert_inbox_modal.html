@@ -1,0 +1,33 @@
+<div class="modal-backdrop" id="alerts-modal" style="display: none; z-index: 2000;">
+    <div class="momo-dialog glass-panel fade-in-up" style="max-width: 550px;">
+        <div class="momo-header" style="background: linear-gradient(135deg, var(--emerald-green), var(--emerald-light)); color: #0b0f19;">
+            <div class="momo-provider-logo" style="background-color: #0b0f19; color: var(--emerald-green);"><i class="fa-solid fa-bell"></i></div>
+            <h4 style="margin: 0; font-family: var(--font-display); font-weight: 800; display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                <span>Notifications Inbox</span>
+                <span class="font-xs font-normal" style="background: rgba(11, 15, 25, 0.1); padding: 2px 8px; border-radius: 12px; margin-right: 15px;" id="alerts-unread-count">0 Unread</span>
+            </h4>
+        </div>
+        <div class="momo-body p-4" style="max-height: 450px; overflow-y: auto;">
+            <div class="flex justify-between items-center mb-3">
+                <span class="font-xs text-secondary">Historical SMS & Email alerts logs</span>
+                <div class="flex gap-3" style="display: flex; gap: 12px; align-items: center;">
+                    <button id="alerts-mark-read-btn" class="btn-text font-xs" style="background: none; border: none; cursor: pointer; color: var(--emerald-green); font-weight: 600;"><i class="fa-solid fa-check-double mr-1"></i>Mark all read</button>
+                    <button id="alerts-clear-all-btn" class="btn-text font-xs" style="background: none; border: none; cursor: pointer; color: var(--red-alert); font-weight: 600;"><i class="fa-solid fa-trash-can mr-1"></i>Clear all</button>
+                </div>
+            </div>
+            
+            <div id="alerts-empty-state" class="text-center py-5" style="display: none;">
+                <div style="font-size: 40px; color: var(--font-dark); opacity: 0.3;" class="mb-2"><i class="fa-regular fa-bell-slash"></i></div>
+                <span class="text-secondary font-sm">No notifications yet. Place an order or make a transaction to see alerts.</span>
+            </div>
+            
+            <div class="alerts-list flex flex-col gap-3" id="alerts-list-container">
+                <!-- Loaded dynamically via js -->
+            </div>
+            
+            <div class="momo-actions mt-4 flex gap-2">
+                <button id="alerts-btn-close" class="btn btn-secondary flex-1">Close</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+<!-- 📱 FLOATING USSD MOBILE PHONE SIMULATOR -->
+<div class="ussd-widget-container" id="ussd-widget">
+    <div class="ussd-toggle-btn" id="ussd-toggle">
+        <i class="fa-solid fa-mobile-screen-button"></i> <span>USSD simulator (*920*44#)</span>
+    </div>
+    
+    <div class="ussd-phone-mockup" style="display: none;" id="ussd-phone">
+        <div class="phone-speaker"></div>
+        <div class="phone-screen">
+            <!-- Connection header -->
+            <div class="screen-header">
+                <span class="carrier">MTN-GH</span>
+                <span class="sig"><i class="fa-solid fa-signal"></i> 3G</span>
+            </div>
+            
+            <!-- Interactive USSD Dialog box -->
+            <div class="ussd-dialog-box" id="ussd-dialog">
+                <div class="ussd-message" id="ussd-screen-text">
+                    Dial <strong>*920*44#</strong> to connect to AgriConnect Ghana Offline Marketplace.
+                </div>
+                <div class="ussd-input-row" id="ussd-input-row" style="display: none;">
+                    <input type="text" id="ussd-user-input" class="ussd-field" placeholder="Enter option...">
+                </div>
+                <div class="ussd-buttons">
+                    <button id="ussd-btn-cancel" class="btn-ussd cancel">Cancel</button>
+                    <button id="ussd-btn-send" class="btn-ussd send">Dial</button>
+                </div>
+            </div>
+            
+            <!-- SMS Notification Toast on Phone screen -->
+            <div class="sms-toast" id="sms-notification" style="display: none;">
+                <div class="sms-icon"><i class="fa-solid fa-envelope"></i></div>
+                <div class="sms-content">
+                    <strong class="block font-xxs">AgriConnect Alert</strong>
+                    <span id="sms-text" class="font-xxs">SMS notification body here...</span>
+                </div>
+            </div>
+        </div>
+        <div class="phone-home-button" id="phone-close"></div>
+    </div>
+</div>

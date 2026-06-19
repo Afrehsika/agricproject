@@ -1,0 +1,23 @@
+<!-- Header -->
+<header class="main-header">
+    <div class="header-left">
+        <h1 id="tab-title">Marketplace</h1>
+        <p id="tab-subtitle" class="text-secondary">Discover fresh vegetables directly from smallholders in Bono East</p>
+    </div>
+    <div class="header-right" style="display: flex; align-items: center; gap: 12px;">
+        <!-- Cart Button -->
+        <button id="header-cart-btn" class="btn btn-secondary" style="width: auto; padding: 8px 16px; font-size: 13px; display: none; position: relative; border-radius: 50px; background-color: var(--bg-card);">
+            <i class="fa-solid fa-cart-shopping text-emerald"></i> Cart (<span id="header-cart-badge">0</span>)
+        </button>
+        <!-- Alerts Bell Button -->
+        <button id="header-alerts-btn" class="btn btn-secondary" style="width: auto; padding: 8px 12px; font-size: 14px; position: relative; border-radius: 50px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+            <i class="fa-solid fa-bell text-emerald"></i>
+            <span id="header-alerts-badge" style="display: none; position: absolute; top: 4px; right: 6px; width: 8px; height: 8px; background-color: var(--red-alert); border-radius: 50%;"></span>
+        </button>
+        <!-- Wallet Display -->
+        <div class="wallet-pill">
+            <i class="fa-solid fa-wallet text-amber"></i>
+            <span>Wallet: GHS <span id="header-wallet-balance">0.00</span></span>
+        </div>
+    </div>
+</header>

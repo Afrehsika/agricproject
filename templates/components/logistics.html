@@ -1,0 +1,88 @@
+<!-- Logistics Tab -->
+<section id="tab-logistics" class="tab-pane">
+    <!-- Farmer View (Hidden by default, shown via JS if role is FARMER) -->
+    <div id="farmer-logistics-view" class="grid-2-1" style="display: none;">
+        <!-- Left: My Dispatches / Shipments tracking -->
+        <div class="card">
+            <div class="card-header border-emerald">
+                <h3><i class="fa-solid fa-route text-emerald"></i> My Dispatched Shipments</h3>
+            </div>
+            <div class="card-body">
+                <div id="farmer-dispatched-jobs" class="logistics-jobs-list">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Dispatch & Book Driver form -->
+        <div class="card glass">
+            <div class="card-header border-orange">
+                <h3><i class="fa-solid fa-truck-ramp-box text-orange"></i> Dispatch & Book Driver</h3>
+            </div>
+            <div class="card-body">
+                <form id="dispatch-goods-form">
+                    <div id="dispatch-error" class="alert alert-danger mb-3" style="display: none; font-size: 12px; color: var(--red-alert); background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 6px;"></div>
+                    <div id="dispatch-success" class="alert alert-success mb-3" style="display: none; font-size: 12px; color: var(--emerald-green); background: rgba(16, 185, 129, 0.1); padding: 10px; border-radius: 6px;"></div>
+
+                    <div class="form-group">
+                        <label for="dispatch-produce">Select Produce to Ship</label>
+                        <select id="dispatch-produce" class="form-control" required>
+                            <option value="">-- Choose Listing to Ship --</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group mt-3">
+                        <label for="dispatch-qty">Quantity</label>
+                        <input type="number" id="dispatch-qty" class="form-control" min="1" placeholder="e.g. 5" required>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="dispatch-buyer">Select Client / Buyer</label>
+                        <select id="dispatch-buyer" class="form-control" required>
+                            <option value="">-- Choose Client / Buyer --</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group mt-3">
+                        <label for="dispatch-driver">Assign Driver / Transporter</label>
+                        <select id="dispatch-driver" class="form-control">
+                            <option value="">No Driver Pre-Assigned (Post to Marketplace)</option>
+                        </select>
+                        <small class="text-secondary font-xxs mt-1 block">Drivers are plotted as Blue Pins on the map. Click a pin to quick-select them.</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-orange btn-block mt-4">
+                        <i class="fa-solid fa-truck-moving"></i> Dispatch & Hire Driver
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transporter View (Hidden by default, shown via JS if role is TRANSPORTER) -->
+    <div id="transporter-logistics-view" class="grid-2-1" style="display: none;">
+        <!-- Available Jobs -->
+        <div class="card">
+            <div class="card-header border-amber">
+                <h3><i class="fa-solid fa-truck-moving text-amber"></i> Available Logistics Jobs</h3>
+            </div>
+            <div class="card-body">
+                <div id="logistics-open-jobs" class="logistics-jobs-list">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Claimed / Active Jobs -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-route"></i> My Claimed Transport Operations</h3>
+            </div>
+            <div class="card-body">
+                <div id="logistics-my-jobs" class="logistics-jobs-list">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

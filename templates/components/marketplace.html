@@ -1,0 +1,45 @@
+<!-- Marketplace Tab -->
+<section id="tab-marketplace" class="tab-pane active">
+    <!-- Filters & Sort -->
+    <div class="filter-bar card">
+        <div class="search-box">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            <input type="text" id="marketplace-search" placeholder="Search tomato variety, location...">
+        </div>
+        <div class="crop-tags">
+            <button class="tag active" data-crop="">All Vegetables</button>
+            <button class="tag" data-crop="Tomatoes">Tomatoes</button>
+            <button class="tag" data-crop="Habanero Peppers">Peppers</button>
+            <button class="tag" data-crop="Garden Eggs">Garden Eggs</button>
+            <button class="tag" data-crop="Okra">Okra</button>
+            <button class="tag" data-crop="Leafy Greens">Leafy Greens</button>
+        </div>
+        <div class="sort-selector">
+            <label>
+                <input type="checkbox" id="urgency-sort-toggle"> 
+                <span class="urgency-checkbox-label"><i class="fa-solid fa-triangle-exclamation text-orange"></i> Sort by Spoilage Urgency</span>
+            </label>
+        </div>
+    </div>
+
+    <!-- 🚨 SAVE THE CROP URGENT SECTION 🚨 -->
+    <div class="urgent-crops-section" id="urgent-crops-container" style="display: none;">
+        <h2 class="section-title text-orange font-outfit">
+            <i class="fa-solid fa-fire-flame-curved pulsing-amber"></i> 
+            Save the Crop! - Near-Rot Flash Sales
+        </h2>
+        <p class="section-desc text-secondary">These fresh vegetables are nearing their predicted rot dates. Buy immediately at heavy discounts to save farmer income and prevent post-harvest spoilage waste!</p>
+        
+        <div class="urgent-grid" id="urgent-produce-grid">
+            <!-- Filled dynamically by JS -->
+        </div>
+    </div>
+
+    <!-- STANDARD AVAILABLE PRODUCE -->
+    <div class="standard-crops-section mt-4">
+        <h2 class="section-title font-outfit">Available Vegetables</h2>
+        <div class="produce-grid" id="standard-produce-grid">
+            <!-- Filled dynamically by JS -->
+        </div>
+    </div>
+</section>

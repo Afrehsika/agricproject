@@ -1,0 +1,136 @@
+<!-- Analytics Tab -->
+<section id="tab-analytics" class="tab-pane">
+    <!-- Metrics Row -->
+    <div class="metrics-grid">
+        <div class="metric-card card border-emerald">
+            <span class="text-secondary font-xs block">Safe Escrow Transactions</span>
+            <h2 class="font-outfit weight-800 mt-1">100%</h2>
+            <p class="text-emerald font-xxs mt-2"><i class="fa-solid fa-shield-check"></i> Escrow security active</p>
+        </div>
+        <div class="metric-card card border-orange">
+            <span class="text-secondary font-xs block">Post-Harvest Waste Prevented</span>
+            <h2 class="font-outfit weight-800 mt-1">124 Crates</h2>
+            <p class="text-orange font-xxs mt-2"><i class="fa-solid fa-triangle-exclamation"></i> Bono East region focus</p>
+        </div>
+        <div class="metric-card card border-amber">
+            <span class="text-secondary font-xs block">Average Sale Speed</span>
+            <h2 class="font-outfit weight-800 mt-1">32 Hours</h2>
+            <p class="text-amber font-xxs mt-2"><i class="fa-solid fa-bolt"></i> Decay-based promotion result</p>
+        </div>
+        <div class="metric-card card">
+            <span class="text-secondary font-xs block">Total Active Farmers</span>
+            <h2 class="font-outfit weight-800 mt-1">42</h2>
+            <p class="text-secondary font-xxs mt-2"><i class="fa-solid fa-user-group"></i> Techiman cluster</p>
+        </div>
+    </div>
+
+    <!-- Graphs Row -->
+    <div class="grid-2-1 mt-4">
+        <!-- Chart Mockup -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-chart-area"></i> Vegetable Market Pricing Averages (GHS/Crate)</h3>
+            </div>
+            <div class="card-body text-center p-4">
+                <div class="chart-mockup-wrapper">
+                    <svg viewBox="0 0 500 200" class="chart-svg">
+                        <!-- Grid lines -->
+                        <line x1="40" y1="20" x2="480" y2="20" stroke="#1e293b" />
+                        <line x1="40" y1="70" x2="480" y2="70" stroke="#1e293b" />
+                        <line x1="40" y1="120" x2="480" y2="120" stroke="#1e293b" />
+                        <line x1="40" y1="170" x2="480" y2="170" stroke="#334155" />
+                        
+                        <!-- Labels -->
+                        <text x="15" y="25" fill="#64748b" font-size="10">200</text>
+                        <text x="15" y="75" fill="#64748b" font-size="10">150</text>
+                        <text x="15" y="125" fill="#64748b" font-size="10">100</text>
+                        <text x="20" y="175" fill="#64748b" font-size="10">50</text>
+                        
+                        <!-- Tomato Price curve (Techiman) -->
+                        <path d="M 50 130 Q 150 90 250 110 T 450 40" fill="none" stroke="#10b981" stroke-width="4" />
+                        <path d="M 50 130 Q 150 90 250 110 T 450 40 L 450 170 L 50 170 Z" fill="url(#green-grad)" opacity="0.1" />
+                        
+                        <!-- Pepper curve (Accra Benchmark) -->
+                        <path d="M 50 80 Q 150 70 250 60 T 450 30" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" />
+                        
+                        <!-- Defs for gradient -->
+                        <defs>
+                            <linearGradient id="green-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#10b981" />
+                                <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <text x="50" y="190" fill="#64748b" font-size="10">May 1</text>
+                        <text x="150" y="190" fill="#64748b" font-size="10">May 10</text>
+                        <text x="250" y="190" fill="#64748b" font-size="10">May 20</text>
+                        <text x="350" y="190" fill="#64748b" font-size="10">May 30</text>
+                        <text x="450" y="190" fill="#64748b" font-size="10">June 10</text>
+                    </svg>
+                </div>
+                <div class="chart-legend mt-2 flex justify-center gap-4">
+                    <span class="font-xs"><i class="fa-solid fa-circle text-emerald"></i> Techiman Tomatoes (Current)</span>
+                    <span class="font-xs"><i class="fa-solid fa-circle text-amber"></i> Accra Retail Benchmark (Historical)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Regional Yield info -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-circle-info"></i> Region Focus Insights</h3>
+            </div>
+            <div class="card-body">
+                <ul class="insight-list">
+                    <li>
+                        <span class="insight-label">Sub-Region focus</span>
+                        <strong class="text-right">Bono East (Techiman Municipal)</strong>
+                    </li>
+                    <li>
+                        <span class="insight-label">Primary Vegetable crop</span>
+                        <strong class="text-right">Tomatoes, Habanero Peppers</strong>
+                    </li>
+                    <li>
+                        <span class="insight-label">Average Post-Harvest Spoils</span>
+                        <strong class="text-right text-orange">35% annually (unmanaged)</strong>
+                    </li>
+                    <li>
+                        <span class="insight-label">Platform Waste Prevented</span>
+                        <strong class="text-right text-emerald">-72% over baseline</strong>
+                    </li>
+                    <li>
+                        <span class="insight-label">MoMo Escrow success rate</span>
+                        <strong class="text-right">100%</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Wallet Transaction History -->
+    <div class="card mt-4">
+        <div class="card-header">
+            <h3><i class="fa-solid fa-clock-rotate-left"></i> Digital Wallet Transaction History</h3>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Date & Time</th>
+                            <th>Reference</th>
+                            <th>Type</th>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wallet-transactions-body">
+                        <tr>
+                            <td colspan="5" class="text-center text-secondary">Loading transactions...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

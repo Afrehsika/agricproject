@@ -1,0 +1,32 @@
+<!-- 💬 FLOATING AGRIBOT CHAT WINDOW -->
+<div class="agribot-chat-container" id="agribot-container">
+    <div class="agribot-badge" id="agribot-toggle">
+        <i class="fa-solid fa-comment-dots"></i> <span>Ask AgriBot</span>
+        <span class="pulsing-dot"></span>
+    </div>
+    
+    <div class="agribot-chat-box" style="display: none;" id="agribot-chat-box">
+        <div class="agribot-chat-header">
+            <div class="bot-profile">
+                <div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>
+                <div>
+                    <h4>AgriBot Assistant</h4>
+                    <span class="status-online">Online</span>
+                </div>
+            </div>
+            <button id="agribot-close-btn" class="close-chat-btn"><i class="fa-solid fa-times"></i></button>
+        </div>
+        <div class="agribot-messages" id="agribot-messages-area">
+            <div class="bot-msg">
+                Hi! I'm **AgriBot**, your smart marketplace assistant. 🤖<br><br>
+                * **Farmers**: Type *"I harvested 25 crates of tomatoes"* to automatically list them.<br>
+                * **Buyers**: Type *"Show urgent crops"* or *"Recommend freshest tomatoes"* to browse smart matches.<br><br>
+                How can I help you today?
+            </div>
+        </div>
+        <div class="agribot-input-row">
+            <input type="text" id="agribot-user-text" placeholder="Type message or upload instruction...">
+            <button id="agribot-send-btn" class="send-msg-btn"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,153 @@
+<!-- Farmer Listings Tab -->
+<section id="tab-farmer-listings" class="tab-pane">
+    <div class="grid-2-1">
+        <!-- Existing Listings -->
+        <div class="card">
+            <div class="card-header">
+                <h3><i class="fa-solid fa-list-check"></i> My Active Listings</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table" id="farmer-listings-table">
+                        <thead>
+                            <tr>
+                                <th>Produce</th>
+                                <th>Qty</th>
+                                <th>Price/Unit</th>
+                                <th>Freshness</th>
+                                <th>Est. Rot Date</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="farmer-produce-list-body">
+                            <!-- Filled dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Forms Column -->
+        <div style="display: flex; flex-direction: column; gap: 24px;">
+            <!-- Add Listing Form -->
+            <div class="card glass">
+                <div class="card-header border-emerald">
+                    <h3><i class="fa-solid fa-plus-circle text-emerald"></i> Create New Listing</h3>
+                </div>
+                <div class="card-body">
+                    <form id="create-produce-form">
+                        <div class="form-group">
+                            <label for="produce-crop">Vegetable Crop</label>
+                            <select id="produce-crop" class="form-control" required>
+                                <option value="Tomatoes">Tomatoes</option>
+                                <option value="Habanero Peppers">Habanero Peppers</option>
+                                <option value="Garden Eggs">Garden Eggs</option>
+                                <option value="Okra">Okra</option>
+                                <option value="Leafy Greens">Leafy Greens</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="produce-variety">Variety</label>
+                            <input type="text" id="produce-variety" class="form-control" placeholder="e.g. Power Rano, Legon 18" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="produce-qty">Quantity</label>
+                                <input type="number" id="produce-qty" class="form-control" min="1" value="10" required>
+                            </div>
+                            <div class="form-group col">
+                                <label for="produce-unit">Unit Type</label>
+                                <select id="produce-unit" class="form-control">
+                                    <option value="Crates">Crates</option>
+                                    <option value="Sacks">Sacks</option>
+                                    <option value="Baskets">Baskets</option>
+                                    <option value="Boxes">Boxes</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group col">
+                                <label for="produce-price">Price per Unit (GHS)</label>
+                                <input type="number" id="produce-price" class="form-control" min="1" value="120" required>
+                            </div>
+                            <div class="form-group col">
+                                <label for="produce-harvest-date">Harvest Date</label>
+                                <input type="date" id="produce-harvest-date" class="form-control" required>
+                            </div>
+                        </div>
+                        
+                        <!-- AI PRICE & EXPIRY ADVISOR WIDGET -->
+                        <div class="ai-advisor-widget mt-3 p-3">
+                            <div class="advisor-header text-emerald font-sm">
+                                <i class="fa-solid fa-robot"></i> <strong>AI Shelf-life & Pricing Advisor</strong>
+                            </div>
+                            <div class="advisor-body mt-2 font-xs">
+                                <div class="adv-stat">
+                                    <span>Est. Freshness:</span> 
+                                    <span id="adv-freshness" class="weight-600 text-emerald">100%</span>
+                                </div>
+                                <div class="adv-stat">
+                                    <span>Estimated Rotting Date:</span> 
+                                    <span id="adv-rot-date" class="weight-600">Selecting date...</span>
+                                </div>
+                                <div class="adv-stat mt-2">
+                                    <span>AI Recommended Price:</span> 
+                                    <span id="adv-rec-price" class="weight-700 text-amber">GHS --</span>
+                                </div>
+                                <p id="adv-disclaimer" class="text-secondary mt-1 italic font-xxs">Based on local Techiman supply and decay rates.</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
+                            <label for="produce-desc">Produce Description</label>
+                            <textarea id="produce-desc" class="form-control" rows="2" placeholder="Describe quality, soil organic practice, availability..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block mt-3">
+                            <i class="fa-solid fa-cloud-arrow-up"></i> Publish Crop Listing
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+
+    <!-- Hire / Assign Driver Modal Dialog -->
+    <div class="modal-backdrop" id="assign-driver-modal" style="display: none;">
+        <div class="momo-dialog glass-panel fade-in-up">
+            <div class="momo-header" style="background: linear-gradient(135deg, var(--amber-gold), #fcd34d); color: #0b0f19;">
+                <div class="momo-provider-logo" style="background-color: #0b0f19; color: var(--amber-gold);"><i class="fa-solid fa-truck-moving"></i></div>
+                <h4 style="margin: 0; font-family: var(--font-display); font-weight: 800;">Hire/Assign Driver</h4>
+            </div>
+            <div class="momo-body p-4">
+                <div class="momo-info-box">
+                    <i class="fa-solid fa-circle-info"></i>
+                    <span>Choose an available transporter in Bono East to deliver this order.</span>
+                </div>
+                <form id="assign-driver-form">
+                    <input type="hidden" id="assign-job-id">
+                    <div id="assign-driver-error" class="alert alert-danger mb-3" style="display: none; font-size: 12px; color: var(--red-alert); background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 6px;"></div>
+                    
+                    <div class="form-group">
+                        <label for="assign-driver-select">Select Driver</label>
+                        <div class="input-icon-wrapper select-wrapper">
+                            <i class="fa-solid fa-truck"></i>
+                            <select id="assign-driver-select" class="form-control" required>
+                                <option value="">-- Loading drivers --</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="momo-actions mt-4 gap-2 flex">
+                        <button type="button" id="assign-driver-cancel" class="btn btn-secondary flex-1">Cancel</button>
+                        <button type="submit" class="btn btn-orange flex-2">
+                            <span class="btn-text">Assign Driver</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</section>

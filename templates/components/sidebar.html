@@ -1,0 +1,75 @@
+<!-- Sidebar Navigation -->
+<aside class="sidebar">
+    <div class="sidebar-header">
+        <div class="logo">
+            <i class="fa-solid fa-leaf text-emerald"></i>
+            <span>AgriConnect <span class="accent">Market</span></span>
+        </div>
+        <div class="tagline">Techiman Vegetable Hub</div>
+    </div>
+    
+    <!-- Active User Panel -->
+    <div class="user-panel-card">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="user-avatar" style="font-size: 32px; color: var(--text-secondary);">
+                <i class="fa-solid fa-user-circle"></i>
+            </div>
+            <div class="user-info">
+                <h4 id="logged-username">Loading...</h4>
+                <span class="user-role-badge" id="logged-role">Role</span>
+            </div>
+        </div>
+        <div class="wallet-actions-container mt-2" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 8px;">
+            <button id="sidebar-fund-btn" class="btn btn-primary btn-sm" style="font-size: 11px;">
+                <i class="fa-solid fa-plus-circle"></i> Fund Wallet
+            </button>
+            <button id="sidebar-withdraw-btn" class="btn btn-orange btn-sm" style="font-size: 11px; display: none;">
+                <i class="fa-solid fa-money-bill-transfer"></i> Withdraw
+            </button>
+        </div>
+    </div>
+
+    <nav class="sidebar-menu">
+        <ul>
+            <li class="menu-item active" data-tab="marketplace" id="nav-marketplace">
+                <i class="fa-solid fa-store"></i> <span>Marketplace</span>
+            </li>
+            <li class="menu-item" data-tab="farmer-listings" id="nav-farmer-listings">
+                <i class="fa-solid fa-wheat-awn"></i> <span>My Crop Listings</span>
+            </li>
+            <li class="menu-item" data-tab="orders" id="nav-orders" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fa-solid fa-box-open"></i> <span>My Orders</span>
+                </div>
+                <span id="sidebar-cart-badge" class="badge badge-green" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
+            </li>
+            <li class="menu-item" data-tab="logistics" id="nav-logistics">
+                <i class="fa-solid fa-truck-ramp-box"></i> <span>Logistics Jobs</span>
+            </li>
+            <li class="menu-item" data-tab="disease-scanner" id="nav-disease-scanner">
+                <i class="fa-solid fa-microscope"></i> <span>Disease Scanner</span>
+            </li>
+            <li class="menu-item" data-tab="network" id="nav-network">
+                <i class="fa-solid fa-people-group"></i> <span>My Circle</span>
+            </li>
+            <li class="menu-item" data-tab="messages" id="nav-messages" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fa-solid fa-message"></i> <span>Messages</span>
+                </div>
+                <span id="sidebar-message-badge" class="badge badge-orange" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
+            </li>
+            <li class="menu-item" data-tab="analytics" id="nav-analytics">
+                <i class="fa-solid fa-chart-line"></i> <span>Analytics & Wallet</span>
+            </li>
+        </ul>
+    </nav>
+
+    <div class="sidebar-footer">
+        <button id="seed-demo-btn" class="btn btn-secondary btn-sm btn-block mb-2">
+            <i class="fa-solid fa-database"></i> Reset & Seed Demo Data
+        </button>
+        <button id="logout-btn" class="btn btn-orange btn-sm btn-block">
+            <i class="fa-solid fa-right-from-bracket"></i> Sign Out
+        </button>
+    </div>
+</aside>
