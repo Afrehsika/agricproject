@@ -42,7 +42,10 @@ AgriConnect Market is a premium peer-to-peer web application designed to empower
    pip install -r requirements.txt
    ```
 
-4. **Configure Environment Variables**:
+4. **Setup Git Ignore**:
+   A `.gitignore` file has been added to automatically exclude `venv/`, `.env`, and `db.sqlite3` from being pushed to version control, keeping your environment and database secure during GitHub uploads.
+
+5. **Configure Environment Variables**:
    Create a `.env` file in the root directory (based on `.env.example` if available):
    ```env
    DEBUG=True
@@ -53,14 +56,14 @@ AgriConnect Market is a premium peer-to-peer web application designed to empower
    ARKESEL_SENDER_ID=AgriConnect
    ```
 
-5. **Run Migrations & Seed Demo Data**:
+6. **Run Migrations & Seed Demo Data**:
    ```bash
    python manage.py migrate
    # Seed demo profiles, tomato listings, transport jobs, and chats
    python manage.py loaddata demo_fixtures.json
    ```
 
-6. **Start the Development Server**:
+7. **Start the Development Server**:
    ```bash
    python manage.py runserver
    ```
