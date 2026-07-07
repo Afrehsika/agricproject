@@ -12,7 +12,6 @@ from logistics.models import TransportJob
 
 User = get_user_model()
 
-
 class SeedDataView(APIView):
     permission_classes = [permissions.AllowAny]
     authentication_classes = []
@@ -33,17 +32,17 @@ class SeedDataView(APIView):
             # 1. Create Farmers (Techiman region coordinates)
             # Coordinates are focused around Techiman town centre
             farmer_data = [
-                {'username': 'Kofi_Mensah', 'phone': '0241112222', 'lat': 7.5855, 'lng': -1.9350, 'dist': 'Techiman Municipal'},
-                {'username': 'Ama_Serwaa', 'phone': '0553334444', 'lat': 7.5790, 'lng': -1.9480, 'dist': 'Techiman Municipal'},
-                {'username': 'Kwaku_Duah', 'phone': '0275556666', 'lat': 7.6320, 'lng': -1.9310, 'dist': 'Tuobodom'},
-                {'username': 'Yaa_Asantewaa', 'phone': '0249999999', 'lat': 7.5990, 'lng': -1.9120, 'dist': 'Nkoranza South'}
+                {'username': 'Kofi_Mensah', 'phone': '0241157835', 'email': 'afrehkriss2101@gmail.com', 'lat': 7.5855, 'lng': -1.9350, 'dist': 'Techiman Municipal'},
+                {'username': 'Ama_Serwaa', 'phone': '0553334444', 'email': 'ama_serwaa@agri.com', 'lat': 7.5790, 'lng': -1.9480, 'dist': 'Techiman Municipal'},
+                {'username': 'Kwaku_Duah', 'phone': '0275556666', 'email': 'kwaku_duah@agri.com', 'lat': 7.6320, 'lng': -1.9310, 'dist': 'Tuobodom'},
+                {'username': 'Yaa_Asantewaa', 'phone': '0249999999', 'email': 'yaa_asantewaa@agri.com', 'lat': 7.5990, 'lng': -1.9120, 'dist': 'Nkoranza South'}
             ]
             
             farmers = []
             for idx, fd in enumerate(farmer_data):
                 f = User.objects.create_user(
                     username=fd['username'],
-                    email=f"{fd['username'].lower()}@agri.com",
+                    email=fd.get('email', f"{fd['username'].lower()}@agri.com"),
                     password='password123',
                     role='FARMER',
                     phone_number=fd['phone'],
@@ -56,15 +55,15 @@ class SeedDataView(APIView):
                 
             # 2. Create Buyers
             buyer_data = [
-                {'username': 'Kumasi_Restaurant_Hub', 'phone': '0247778888', 'lat': 6.6960, 'lng': -1.6240, 'dist': 'Kumasi Metro'}, # Kumasi
-                {'username': 'Accra_Salad_Bar', 'phone': '0501110000', 'lat': 5.6037, 'lng': -0.1870, 'dist': 'Accra Metro'}, # Accra
-                {'username': 'Techiman_Retailer_Ama', 'phone': '0245678901', 'lat': 7.5820, 'lng': -1.9380, 'dist': 'Techiman Municipal'} # Local Techiman Buyer
+                {'username': 'Kumasi_Restaurant_Hub', 'phone': '0550545381', 'email': 'yaw2101nana@gmail.com', 'lat': 6.6960, 'lng': -1.6240, 'dist': 'Kumasi Metro'}, # Kumasi
+                {'username': 'Accra_Salad_Bar', 'phone': '0501110000', 'email': 'accra_salad_bar@agri.com', 'lat': 5.6037, 'lng': -0.1870, 'dist': 'Accra Metro'}, # Accra
+                {'username': 'Techiman_Retailer_Ama', 'phone': '0245678901', 'email': 'techiman_retailer_ama@agri.com', 'lat': 7.5820, 'lng': -1.9380, 'dist': 'Techiman Municipal'} # Local Techiman Buyer
             ]
             buyers = []
             for bd in buyer_data:
                 b = User.objects.create_user(
                     username=bd['username'],
-                    email=f"{bd['username'].lower()}@agri.com",
+                    email=bd.get('email', f"{bd['username'].lower()}@agri.com"),
                     password='password123',
                     role='BUYER',
                     phone_number=bd['phone'],
@@ -78,14 +77,14 @@ class SeedDataView(APIView):
 
             # 3. Create Transporters
             transporter_data = [
-                {'username': 'KIA_Bongo_Kojo', 'phone': '0248889999', 'lat': 7.5890, 'lng': -1.9280, 'dist': 'Techiman Municipal'},
-                {'username': 'Aboboyaa_Tricycle_Yaw', 'phone': '0558883333', 'lat': 7.5750, 'lng': -1.9420, 'dist': 'Techiman Municipal'}
+                {'username': 'KIA_Bongo_Kojo', 'phone': '055246088', 'email': 'nana2101yaw@gmail.com', 'lat': 7.5890, 'lng': -1.9280, 'dist': 'Techiman Municipal'},
+                {'username': 'Aboboyaa_Tricycle_Yaw', 'phone': '0558883333', 'email': 'aboboyaa_tricycle_yaw@agri.com', 'lat': 7.5750, 'lng': -1.9420, 'dist': 'Techiman Municipal'}
             ]
             transporters = []
             for td in transporter_data:
                 t = User.objects.create_user(
                     username=td['username'],
-                    email=f"{td['username'].lower()}@agri.com",
+                    email=td.get('email', f"{td['username'].lower()}@agri.com"),
                     password='password123',
                     role='TRANSPORTER',
                     phone_number=td['phone'],

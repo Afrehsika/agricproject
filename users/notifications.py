@@ -14,7 +14,7 @@ def send_sms(phone_number, message):
     api_key = getattr(settings, 'ARKESEL_API_KEY', '')
     sender_id = getattr(settings, 'ARKESEL_SENDER_ID', 'AgriConnect')
     
-    print(f"\n--- [SMS SIMULATOR] To: {phone_number} | Message: {message} ---\n")
+    print(f"\n--- [DISPATCHING REAL SMS] To: {phone_number} | Message: {message} ---\n")
     
     if not api_key:
         logger.info(f"Arkesel API Key not configured. SMS not sent via API. Content: {message}")
@@ -38,14 +38,14 @@ def send_sms(phone_number, message):
         return response
     except Exception as e:
         logger.error(f"Error calling Arkesel SMS API: {e}")
-        return None
+        return f"EXCEPTION: {str(e)}"
 
 
 def send_email(email_address, subject, content):
     """
     Sends an Email. Falls back to logging to console.
     """
-    print(f"\n--- [EMAIL SIMULATOR] To: {email_address} | Subject: {subject} | Content: {content} ---\n")
+    print(f"\n--- [DISPATCHING REAL EMAIL] To: {email_address} | Subject: {subject} | Content: {content} ---\n")
     
     try:
         send_mail(
