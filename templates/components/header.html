@@ -1,26 +1,68 @@
 <!-- Header -->
-<header class="main-header">
-    <button id="mobile-menu-toggle" class="btn btn-secondary mobile-only" style="width: auto; padding: 8px 12px; margin-right: 12px; display: none; align-items: center; justify-content: center;">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    <div class="header-left">
-        <h1 id="tab-title">Marketplace</h1>
-        <p id="tab-subtitle" class="text-secondary">Discover fresh vegetables directly from smallholders in Bono East</p>
+<header class="main-header" style="display: flex; flex-direction: column; gap: 16px;">
+    <!-- Top Meta Row -->
+    <div class="header-meta-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid rgba(255,255,255,0.03); padding-bottom: 8px; flex-wrap: wrap; gap: 12px;">
+        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <!-- Weather Widget -->
+            <div class="weather-widget" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border-color); border-radius: 50px; padding: 6px 14px; font-size: 11px; color: var(--text-primary); font-weight: 600;">
+                <i class="fa-solid fa-cloud-sun" style="color: var(--amber-gold);"></i>
+                <span>Techiman, Bono East: 29°C • Sunny</span>
+            </div>
+            <!-- Price Ticker -->
+            <div class="ticker-wrap" style="overflow: hidden; background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border-color); border-radius: 50px; padding: 6px 16px; font-size: 11px; color: var(--text-secondary); max-width: 250px; white-space: nowrap; position: relative; display: inline-block; vertical-align: middle;">
+                <div class="ticker-move" style="display: flex; gap: 24px; white-space: nowrap; animation: ticker 20s linear infinite; align-items: center;">
+                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Tomatoes: <span style="color: var(--emerald-green); font-weight: 700;">GHS 120.00/crate</span></div>
+                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Peppers: <span style="color: var(--emerald-green); font-weight: 700;">GHS 95.00/crate</span></div>
+                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Garden Eggs: <span style="color: var(--emerald-green); font-weight: 700;">GHS 80.00/bag</span></div>
+                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Yam: <span style="color: var(--emerald-green); font-weight: 700;">GHS 150.00/tuber</span></div>
+                </div>
+            </div>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <!-- Date & Time -->
+            <div style="font-size: 11px; color: var(--text-secondary); font-weight: 600;">
+                <i class="fa-regular fa-calendar-days"></i> <span id="header-date">July 7, 2026</span>
+            </div>
+            <!-- Dark mode toggle -->
+            <button class="nav-icon-btn" title="Toggle Dark/Light Mode" onclick="document.body.classList.toggle('light-mode'); alert('Theme toggle simulated!');">
+                <i class="fa-solid fa-moon"></i>
+            </button>
+            <!-- Language selector -->
+            <select class="lang-select">
+                <option value="en">English (GH)</option>
+                <option value="tw">Twi (Akan)</option>
+            </select>
+        </div>
     </div>
-    <div class="header-right" style="display: flex; align-items: center; gap: 12px;">
-        <!-- Cart Button -->
-        <button id="header-cart-btn" class="btn btn-secondary" style="width: auto; padding: 8px 16px; font-size: 13px; display: none; position: relative; border-radius: 50px; background-color: var(--bg-card);">
-            <i class="fa-solid fa-cart-shopping text-emerald"></i> Cart (<span id="header-cart-badge">0</span>)
-        </button>
-        <!-- Alerts Bell Button -->
-        <button id="header-alerts-btn" class="btn btn-secondary" style="width: auto; padding: 8px 12px; font-size: 14px; position: relative; border-radius: 50px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; cursor: pointer;">
-            <i class="fa-solid fa-bell text-emerald"></i>
-            <span id="header-alerts-badge" style="display: none; position: absolute; top: 4px; right: 6px; width: 8px; height: 8px; background-color: var(--red-alert); border-radius: 50%;"></span>
-        </button>
-        <!-- Wallet Display -->
-        <div class="wallet-pill">
-            <i class="fa-solid fa-wallet text-amber"></i>
-            <span>Wallet: GHS <span id="header-wallet-balance">0.00</span></span>
+
+    <!-- Main Navigation/Title Row -->
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
+        <div style="display: flex; align-items: center;">
+            <button id="mobile-menu-toggle" class="btn btn-secondary mobile-only" style="width: auto; padding: 8px 12px; margin-right: 12px; display: none; align-items: center; justify-content: center;">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="header-left">
+                <h1 id="tab-title" style="font-size: 24px; font-weight: 800; font-family: var(--font-display); letter-spacing: -0.5px;">Marketplace</h1>
+                <p id="tab-subtitle" class="text-secondary" style="font-size: 13px;">Discover fresh vegetables directly from smallholders in Bono East</p>
+            </div>
+        </div>
+        
+        <div class="header-right" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <!-- Cart Button -->
+            <button id="header-cart-btn" class="btn btn-secondary" style="width: auto; padding: 8px 16px; font-size: 13px; display: none; position: relative; border-radius: 50px; background-color: var(--bg-card);">
+                <i class="fa-solid fa-cart-shopping text-emerald"></i> Cart (<span id="header-cart-badge">0</span>)
+            </button>
+            <!-- Alerts Bell Button -->
+            <button id="header-alerts-btn" class="btn btn-secondary" style="width: auto; padding: 8px 12px; font-size: 14px; position: relative; border-radius: 50px; background-color: var(--bg-card); display: flex; align-items: center; justify-content: center; cursor: pointer;">
+                <i class="fa-solid fa-bell text-emerald"></i>
+                <span id="header-alerts-badge" style="display: none; position: absolute; top: 4px; right: 6px; width: 8px; height: 8px; background-color: var(--red-alert); border-radius: 50%;"></span>
+            </button>
+            <!-- Wallet Display -->
+            <div class="wallet-pill">
+                <i class="fa-solid fa-wallet text-amber" style="color: var(--amber-gold) !important;"></i>
+                <span>Wallet: GHS <span id="header-wallet-balance">0.00</span></span>
+            </div>
         </div>
     </div>
 </header>
+

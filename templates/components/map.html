@@ -1,10 +1,44 @@
-<!-- Map View Container (Toggled via Tabs or side pane) -->
+<!-- Map View Container -->
 <section class="map-section">
-    <div class="map-header">
-        <h3><i class="fa-solid fa-map-location-dot text-emerald"></i> Techiman Region Geolocation Supply Map</h3>
-        <p class="text-secondary font-sm">Live locations of Techiman vegetable farmers, buyers, and matched transporters</p>
+    <div class="map-controls-row">
+        <div class="map-header" style="margin-bottom: 0;">
+            <h3 style="font-size: 16px; font-weight: 800; display: flex; align-items: center; gap: 8px; font-family: var(--font-display);">
+                <i class="fa-solid fa-earth-africa text-emerald"></i> Techiman Region Geolocation Supply Map
+            </h3>
+            <p class="text-secondary" style="font-size: 12px; margin-top: 2px;">Live positions of vegetable hubs, active buyers, and active transporters</p>
+        </div>
+        
+        <div class="map-controls-group" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <!-- Filter by Crop -->
+            <select class="map-ctrl-select" id="map-filter-crop" style="background-color: var(--bg-card) !important; border: 1px solid var(--border-color) !important; color: var(--text-primary) !important; padding: 6px 12px !important; border-radius: 50px !important; font-size: 11px !important; outline: none !important; cursor: pointer !important; font-family: var(--font-sans) !important; height: auto !important;">
+                <option value="">All Crops</option>
+                <option value="Tomatoes">Tomatoes</option>
+                <option value="Peppers">Peppers</option>
+                <option value="Garden Eggs">Garden Eggs</option>
+            </select>
+            <!-- Distance Filter -->
+            <select class="map-ctrl-select" id="map-filter-dist" style="background-color: var(--bg-card) !important; border: 1px solid var(--border-color) !important; color: var(--text-primary) !important; padding: 6px 12px !important; border-radius: 50px !important; font-size: 11px !important; outline: none !important; cursor: pointer !important; font-family: var(--font-sans) !important; height: auto !important;">
+                <option value="50">Within 50 km</option>
+                <option value="20">Within 20 km</option>
+                <option value="10">Within 10 km</option>
+            </select>
+            <!-- Search location -->
+            <div class="search-box" style="width: 130px; max-width: 100%; position: relative; display: inline-block;">
+                <i class="fa-solid fa-location-dot" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 11px; color: var(--text-secondary); z-index: 5;"></i>
+                <input type="text" placeholder="Location..." style="padding: 6px 8px 6px 26px !important; font-size: 11px !important; border-radius: 50px !important; background-color: var(--bg-card) !important; border: 1px solid var(--border-color) !important; color: var(--text-primary) !important; outline: none !important; width: 100% !important; height: auto !important;">
+            </div>
+            <!-- Satellite / Heatmap Toggles -->
+            <button class="map-ctrl-btn active" onclick="this.classList.toggle('active')" style="background-color: var(--emerald-green) !important; border: 1px solid var(--emerald-green) !important; color: #0b0f19 !important; padding: 6px 14px !important; border-radius: 50px !important; font-size: 11px !important; cursor: pointer !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; font-weight: 600 !important; outline: none !important; width: auto !important; height: auto !important;">
+                <i class="fa-solid fa-satellite"></i> Satellite
+            </button>
+            <button class="map-ctrl-btn" onclick="this.classList.toggle('active')" style="background-color: rgba(255,255,255,0.02) !important; border: 1px solid var(--border-color) !important; color: var(--text-secondary) !important; padding: 6px 14px !important; border-radius: 50px !important; font-size: 11px !important; cursor: pointer !important; display: inline-flex !important; align-items: center !important; gap: 6px !important; font-weight: 600 !important; outline: none !important; width: auto !important; height: auto !important;">
+                <i class="fa-solid fa-temperature-three-quarters"></i> Heatmap
+            </button>
+        </div>
     </div>
-    <div class="map-wrapper card">
-        <div id="supply-map" style="height: 300px; border-radius: 12px;"></div>
+    
+    <div class="map-wrapper card" style="padding: 0; overflow: hidden; border-radius: var(--radius-md);">
+        <div id="supply-map" style="height: 320px;"></div>
     </div>
 </section>
+

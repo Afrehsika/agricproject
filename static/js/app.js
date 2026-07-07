@@ -266,6 +266,21 @@ function updateUIForUser() {
     if (!currentUser) return;
     
     document.getElementById('logged-username').textContent = currentUser.username;
+    
+    // Set modern welcome hero details
+    const heroUser = document.getElementById('hero-username');
+    if (heroUser) {
+        heroUser.textContent = currentUser.username.replace(/_/g, ' ');
+    }
+    const heroWallet = document.getElementById('hero-wallet-balance-mock');
+    if (heroWallet) {
+        heroWallet.textContent = parseFloat(currentUser.wallet_balance).toFixed(2);
+    }
+    const headerDate = document.getElementById('header-date');
+    if (headerDate) {
+        headerDate.textContent = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    }
+
     document.getElementById('logged-role').textContent = currentUser.role.charAt(0) + currentUser.role.slice(1).toLowerCase();
     document.getElementById('header-wallet-balance').textContent = parseFloat(currentUser.wallet_balance).toFixed(2);
     
@@ -309,8 +324,11 @@ function updateUIForUser() {
         if (navDisease) navDisease.style.display = 'flex';
         if (navAnalytics) navAnalytics.style.display = 'flex';
         
-        // Default harvest dates for listing form
-        document.getElementById('produce-harvest-date').value = new Date().toISOString().split('T')[0];
+        // Default harvest dates for listing form safely guarded
+        const harvestDateInput = document.getElementById('produce-harvest-date');
+        if (harvestDateInput) {
+            harvestDateInput.value = new Date().toISOString().split('T')[0];
+        }
     } else if (currentUser.role === 'TRANSPORTER') {
         if (navMarket) navMarket.style.display = 'flex';
         if (navFarmer) navFarmer.style.display = 'none';
@@ -774,6 +792,19 @@ function switchTab(tabName) {
         targetPane.classList.add('active');
     }
 
+    // Toggle map visibility based on tab name to maintain design consistency
+    const mapSection = document.querySelector('.map-section');
+    if (mapSection) {
+        if (tabName === 'marketplace' || tabName === 'logistics') {
+            mapSection.style.display = 'block';
+            setTimeout(() => {
+                if (window.map) window.map.invalidateSize();
+            }, 360);
+        } else {
+            mapSection.style.display = 'none';
+        }
+    }
+
     // Set headers
     const titleEl = document.getElementById('tab-title');
     const subEl = document.getElementById('tab-subtitle');
@@ -980,9 +1011,17 @@ function createProduceCard(p, isUrgent) {
         `;
     }
 
+    // AI shelf life prediction
+    const shelfLife = Math.max(1, Math.round((new Date(p.predicted_rot_date) - new Date()) / (1000 * 60 * 60 * 24)));
+    // AI Recommendation
+    const recomBadge = p.freshness_score >= 70 ? '<div class="ai-recom-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Recommends</div>' : '';
+    // Mock distance
+    const mockDist = (Math.random() * 4 + 1.2).toFixed(1);
+
     col.innerHTML = `
-        <div class="produce-img-wrapper">
+        <div class="produce-img-wrapper" style="position: relative;">
             <img src="${imageUrl}" alt="${p.name}">
+            <div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Farmer</div>
             ${urgencyTagHtml}
         </div>
         <div class="produce-info">
@@ -991,15 +1030,27 @@ function createProduceCard(p, isUrgent) {
                     <h3 class="crop-name">${p.variety || p.name}</h3>
                     <span class="crop-variety">${p.name}</span>
                 </div>
-                <div class="badge ${isUrgent ? 'badge-orange' : 'badge-green'}">${p.quantity_available} ${p.unit}</div>
+                <div class="badge ${isUrgent ? 'badge-orange' : 'badge-green'}" style="border-radius: 50px;">${p.quantity_available} ${p.unit}</div>
             </div>
             
-            <div class="farmer-pill">
-                <i class="fa-solid fa-user-circle"></i>
-                <span>${p.farmer_name} (Techiman)</span>
+            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                <div class="farmer-pill">
+                    <i class="fa-solid fa-circle-user"></i>
+                    <span>${p.farmer_name}</span>
+                </div>
+                <div class="rating-badge">
+                    <i class="fa-solid fa-star"></i> <span>4.8</span>
+                </div>
             </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+                <span><i class="fa-solid fa-location-dot"></i> Techiman • ${mockDist} km</span>
+                <span><i class="fa-solid fa-calendar-day"></i> Shelf life: ~${shelfLife} days</span>
+            </div>
+
+            ${recomBadge}
             
-            <div class="freshness-container">
+            <div class="freshness-container" style="margin-top: 6px;">
                 <div class="freshness-lbl-row">
                     <span>AI Freshness:</span>
                     <span class="text-${freshnessClass === 'low' ? 'orange' : (freshnessClass === 'med' ? 'amber' : 'emerald')}">${p.freshness_score}%</span>
@@ -1019,22 +1070,28 @@ function createProduceCard(p, isUrgent) {
                 if (currentUser.role === 'BUYER') {
                     return `
                         <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
-                            <input type="number" class="form-control quantity-input" value="1" min="1" max="${p.quantity_available}" style="width: 70px; text-align: center; padding: 6px;">
-                            <button class="btn ${isUrgent ? 'btn-orange' : 'btn-primary'} add-to-cart-btn" data-id="${p.id}" style="flex-grow: 1; padding: 8px;">
-                                <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                            <input type="number" class="form-control quantity-input" value="1" min="1" max="${p.quantity_available}" style="width: 54px; text-align: center; padding: 6px; border-radius: var(--radius-sm); border-color: var(--border-color); background-color: var(--bg-main); color: var(--text-primary);">
+                            <button class="btn ${isUrgent ? 'btn-orange' : 'btn-primary'} add-to-cart-btn" data-id="${p.id}" style="flex-grow: 1; padding: 10px; font-size: 11px;">
+                                <i class="fa-solid fa-cart-plus"></i> Buy Now
+                            </button>
+                            <button class="btn btn-secondary" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);" onclick="alert('Opening secure chat channel with ${p.farmer_name} (simulation)')" title="Chat Farmer">
+                                <i class="fa-solid fa-comments text-emerald"></i>
+                            </button>
+                            <button class="btn btn-secondary" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);" onclick="alert('Produce saved to favorites & comparison matrix (simulation)')" title="Save / Compare">
+                                <i class="fa-solid fa-heart text-amber"></i>
                             </button>
                         </div>
                     `;
                 } else if (currentUser.role === 'FARMER') {
                     return `
-                        <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%;">
-                            <i class="fa-solid fa-wheat-awn"></i> Farmer View (Listing)
+                        <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%; border-radius: var(--radius-sm);">
+                            <i class="fa-solid fa-wheat-awn text-emerald"></i> Farmer View (Listing)
                         </button>
                     `;
                 } else {
                     return `
-                        <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%;">
-                            <i class="fa-solid fa-truck"></i> Transporter View
+                        <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%; border-radius: var(--radius-sm);">
+                            <i class="fa-solid fa-truck text-emerald"></i> Transporter View
                         </button>
                     `;
                 }

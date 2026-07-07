@@ -24,9 +24,23 @@
                 How can I help you today?
             </div>
         </div>
-        <div class="agribot-input-row">
-            <input type="text" id="agribot-user-text" placeholder="Type message or upload instruction...">
-            <button id="agribot-send-btn" class="send-msg-btn"><i class="fa-solid fa-paper-plane"></i></button>
+        
+        <!-- Suggested Prompts Row -->
+        <div class="bot-prompts-row">
+            <div class="bot-prompt-chip" onclick="document.getElementById('agribot-user-text').value = 'Show urgent crops'; document.getElementById('agribot-send-btn').click();">Show urgent crops</div>
+            <div class="bot-prompt-chip" onclick="document.getElementById('agribot-user-text').value = 'I harvested 25 crates of tomatoes';">Harvest tomatoes</div>
+            <div class="bot-prompt-chip" onclick="document.getElementById('agribot-user-text').value = 'Recommend freshest tomatoes'; document.getElementById('agribot-send-btn').click();">Freshest crops</div>
+        </div>
+
+        <div class="agribot-input-row" style="display: flex; align-items: center; padding: 10px;">
+            <button class="btn btn-secondary" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); margin-right: 6px;" onclick="alert('Voice input activated (simulation)')" title="Voice Input">
+                <i class="fa-solid fa-microphone"></i>
+            </button>
+            <button class="btn btn-secondary" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); margin-right: 6px;" onclick="alert('Image upload activated (simulation)')" title="Upload Image">
+                <i class="fa-solid fa-camera"></i>
+            </button>
+            <input type="text" id="agribot-user-text" placeholder="Type message..." style="flex-grow: 1;">
+            <button id="agribot-send-btn" class="send-msg-btn" style="height: 32px; padding: 0 12px;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
 </div>

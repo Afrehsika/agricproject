@@ -1,24 +1,95 @@
 <!-- Marketplace Tab -->
 <section id="tab-marketplace" class="tab-pane active">
-    <!-- Filters & Sort -->
+    <!-- Premium Hero Section -->
+    <div class="hero-section">
+        <div class="hero-content">
+            <h2 class="hero-greeting">Good Morning, <span id="hero-username">Kofi</span> 👋</h2>
+            <p class="hero-subtitle">Discover fresh vegetables directly from verified smallholder farmers in Bono East.</p>
+        </div>
+        <!-- Hero Stat Cards -->
+        <div class="stats-grid-row">
+            <div class="animated-stat-card">
+                <span class="stat-label">Today's Sales</span>
+                <h3 class="stat-val" id="stat-sales">GHS 1,240.00</h3>
+                <span class="stat-trend up"><i class="fa-solid fa-arrow-up"></i> +12.4% vs yesterday</span>
+            </div>
+            <div class="animated-stat-card">
+                <span class="stat-label">Wallet Escrow</span>
+                <h3 class="stat-val">GHS <span id="hero-wallet-balance-mock">850.00</span></h3>
+                <span class="stat-trend"><i class="fa-solid fa-shield-halved"></i> 100% Secured</span>
+            </div>
+            <div class="animated-stat-card">
+                <span class="stat-label">Available Listings</span>
+                <h3 class="stat-val">42 Crops</h3>
+                <span class="stat-trend up"><i class="fa-solid fa-circle"></i> Live Techiman Hub</span>
+            </div>
+            <div class="animated-stat-card">
+                <span class="stat-label">Nearby Buyers</span>
+                <h3 class="stat-val">12 Active</h3>
+                <span class="stat-trend"><i class="fa-solid fa-people-group"></i> Bono East cluster</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Sort Bar -->
     <div class="filter-bar card">
-        <div class="search-box">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            <input type="text" id="marketplace-search" placeholder="Search tomato variety, location...">
-        </div>
-        <div class="crop-tags">
-            <button class="tag active" data-crop="">All Vegetables</button>
-            <button class="tag" data-crop="Tomatoes">Tomatoes</button>
-            <button class="tag" data-crop="Habanero Peppers">Peppers</button>
-            <button class="tag" data-crop="Garden Eggs">Garden Eggs</button>
-            <button class="tag" data-crop="Okra">Okra</button>
-            <button class="tag" data-crop="Leafy Greens">Leafy Greens</button>
-        </div>
-        <div class="sort-selector">
-            <label>
+        <div class="search-row-layout">
+            <div class="search-box">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="marketplace-search" placeholder="Search tomato variety, location...">
+            </div>
+            <div class="search-actions-group">
+                <!-- Voice search -->
+                <button class="search-icon-btn" title="Voice Search" onclick="alert('Voice search activated (simulation)')"><i class="fa-solid fa-microphone"></i></button>
+                <!-- Location filter -->
+                <button class="search-icon-btn" title="Filter by Location" onclick="alert('Location filter menu toggled (simulation)')"><i class="fa-solid fa-location-crosshairs"></i></button>
+                <!-- Advanced filters -->
+                <button class="search-icon-btn" title="Advanced Filters" onclick="alert('Advanced filters menu toggled (simulation)')"><i class="fa-solid fa-sliders"></i></button>
+            </div>
+            <!-- Urgency Sort Toggle -->
+            <div class="urgency-toggle-wrapper">
                 <input type="checkbox" id="urgency-sort-toggle"> 
-                <span class="urgency-checkbox-label"><i class="fa-solid fa-triangle-exclamation text-orange"></i> Sort by Spoilage Urgency</span>
-            </label>
+                <label for="urgency-sort-toggle" class="urgency-checkbox-label">
+                    <i class="fa-solid fa-triangle-exclamation text-orange"></i> Sort by Spoilage Urgency
+                </label>
+            </div>
+        </div>
+        
+        <!-- Vegetable Categories Grid Inside .crop-tags -->
+        <div style="width: 100%; margin-top: 16px;">
+            <h3 class="category-section-title">Vegetable Categories</h3>
+            <div class="crop-tags categories-row">
+                <button class="tag active category-card" data-crop="">
+                    <span class="cat-emoji">🌾</span>
+                    <span class="cat-name">All Vegetables</span>
+                    <span class="cat-count">42 Listings</span>
+                </button>
+                <button class="tag category-card" data-crop="Tomatoes">
+                    <span class="cat-emoji">🍅</span>
+                    <span class="cat-name">Tomatoes</span>
+                    <span class="cat-count">18 Listings</span>
+                </button>
+                <button class="tag category-card" data-crop="Habanero Peppers">
+                    <span class="cat-emoji">🌶</span>
+                    <span class="cat-name">Peppers</span>
+                    <span class="cat-count">12 Listings</span>
+                </button>
+                <button class="tag category-card" data-crop="Garden Eggs">
+                    <span class="cat-emoji">🍆</span>
+                    <span class="cat-name">Garden Eggs</span>
+                    <span class="cat-count">6 Listings</span>
+                </button>
+                <button class="tag category-card" data-crop="Okra">
+                    <span class="cat-emoji">🥒</span>
+                    <span class="cat-name">Okra</span>
+                    <span class="cat-count">4 Listings</span>
+                </button>
+                <button class="tag category-card" data-crop="Leafy Greens">
+                    <span class="cat-emoji">🥬</span>
+                    <span class="cat-name">Leafy Greens</span>
+                    <span class="cat-count">2 Listings</span>
+                </button>
+            </div>
         </div>
     </div>
 
@@ -42,4 +113,32 @@
             <!-- Filled dynamically by JS -->
         </div>
     </div>
+
+    <!-- AI INSIGHTS & MARKET INTELLIGENCE -->
+    <div class="urgent-crops-section mt-4" style="background: linear-gradient(135deg, rgba(56, 189, 248, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%); border-color: rgba(56, 189, 248, 0.15);">
+        <h2 class="section-title text-blue font-outfit" style="color: var(--blue-accent);">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> 
+            AI Insights & Market Intelligence
+        </h2>
+        <p class="section-desc text-secondary">Smart recommendations based on regional crop decay curves, local market demand, and nearby transit availability.</p>
+        
+        <div class="ai-insights-grid">
+            <div class="ai-insight-card">
+                <div class="insight-icon"><i class="fa-solid fa-chart-line"></i></div>
+                <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 6px;">Price Trends</h4>
+                <p style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">Tomatoes are predicted to rise 15% next week due to high Kumasi demand. Buy now.</p>
+            </div>
+            <div class="ai-insight-card">
+                <div class="insight-icon"><i class="fa-solid fa-snowflake"></i></div>
+                <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 6px;">Spoilage Warnings</h4>
+                <p style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">Increased humidity in Bono East may reduce pepper shelf-life by 48 hours. Ship urgently.</p>
+            </div>
+            <div class="ai-insight-card">
+                <div class="insight-icon"><i class="fa-solid fa-circle-nodes"></i></div>
+                <h4 style="font-size: 14px; font-weight: 700; margin-bottom: 6px;">Transit Opportunity</h4>
+                <p style="font-size: 11.5px; color: var(--text-secondary); line-height: 1.4;">2 transporters are returning empty from Kumasi to Techiman. Lower freight rates available.</p>
+            </div>
+        </div>
+    </div>
 </section>
+
