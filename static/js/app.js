@@ -3674,10 +3674,10 @@ function renderDiscoverUsers() {
     const filterVal = (document.getElementById('network-search').value || '').toLowerCase().trim();
 
     const filtered = discoverUsersCache.filter(u => {
-        return u.username.toLowerCase().includes(filterVal) ||
-               u.role.toLowerCase().includes(filterVal) ||
-               u.district.toLowerCase().includes(filterVal) ||
-               u.region.toLowerCase().includes(filterVal);
+        return (u.username || '').toLowerCase().includes(filterVal) ||
+               (u.role || '').toLowerCase().includes(filterVal) ||
+               (u.district || '').toLowerCase().includes(filterVal) ||
+               (u.region || '').toLowerCase().includes(filterVal);
     });
 
     if (filtered.length === 0) {
