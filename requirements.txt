@@ -12,3 +12,4 @@ torchvision
 scikit-learn
 pillow
 gunicorn
+django-oauth-toolkit

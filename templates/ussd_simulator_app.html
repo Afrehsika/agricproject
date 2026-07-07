@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>USSD Emulator - Android Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/simulator.css">
+</head>
+<body class="light-mode">
+
+    <!-- Configuration Panel (Off-phone) -->
+    <div class="config-panel">
+        <h2>Gateway Config</h2>
+        
+        <!-- Hidden credentials auto-injected by Django -->
+        <input type="hidden" id="config-client-id" value="{{ client_id }}">
+        <input type="hidden" id="config-client-secret" value="{{ client_secret }}">
+        
+        <div class="input-group">
+            <label>Simulated Phone (SIM)</label>
+            <input type="text" id="config-phone" value="0240001111">
+        </div>
+
+        <div class="input-group">
+            <label>Testing USSD Code</label>
+            <div style="padding: 8px; background: var(--key-bg); border-radius: 6px; text-align: center; font-family: 'Courier New', Courier, monospace; font-size: 18px; font-weight: bold; border: 1px solid var(--border); color: var(--accent);">
+                *920*44#
+            </div>
+        </div>
+
+        <div class="input-group">
+            <label>Quick Select Demo User</label>
+            <select id="demo-user-select" style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--bg-page); color: var(--text-primary); font-family: inherit;">
+                <option value="">-- Select a User --</option>
+                {% for u in users %}
+                <option value="{{ u.phone_number }}">{{ u.username }} ({{ u.get_role_display }}) - {{ u.phone_number }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button id="btn-auth" class="btn-primary">Connect Gateway</button>
+        <div id="auth-status" class="status-msg"></div>
+
+        <div class="toggle-group mt-2">
+            <label>Dark Mode</label>
+            <label class="switch">
+                <input type="checkbox" id="theme-toggle">
+                <span class="slider round"></span>
+            </label>
+        </div>
+    </div>
+
+    <!-- Phone Bezel -->
+    <div class="phone-bezel">
+        <div class="speaker-grill"></div>
+        <div class="camera-hole"></div>
+
+        <!-- Phone Screen -->
+        <div class="phone-screen">
+            
+            <!-- Status Bar -->
+            <div class="status-bar">
+                <div class="status-left">
+                    <span class="time" id="clock">12:00</span>
+                    <span class="carrier">MTN-GH</span>
+                </div>
+                <div class="status-right">
+                    <i class="fa-solid fa-wifi"></i>
+                    <i class="fa-solid fa-signal"></i>
+                    <i class="fa-solid fa-battery-full"></i>
+                </div>
+            </div>
+
+            <!-- Dialer App -->
+            <div class="dialer-app">
+                <div class="dialer-display">
+                    <input type="text" id="dial-input" readonly placeholder="Enter USSD code">
+                    <button class="icon-btn delete-btn" id="btn-delete"><i class="fa-solid fa-delete-left"></i></button>
+                </div>
+
+                <div class="dial-pad">
+                    <div class="dial-row">
+                        <button class="dial-key" data-key="1">1<span class="sub">&nbsp;</span></button>
+                        <button class="dial-key" data-key="2">2<span class="sub">ABC</span></button>
+                        <button class="dial-key" data-key="3">3<span class="sub">DEF</span></button>
+                    </div>
+                    <div class="dial-row">
+                        <button class="dial-key" data-key="4">4<span class="sub">GHI</span></button>
+                        <button class="dial-key" data-key="5">5<span class="sub">JKL</span></button>
+                        <button class="dial-key" data-key="6">6<span class="sub">MNO</span></button>
+                    </div>
+                    <div class="dial-row">
+                        <button class="dial-key" data-key="7">7<span class="sub">PQRS</span></button>
+                        <button class="dial-key" data-key="8">8<span class="sub">TUV</span></button>
+                        <button class="dial-key" data-key="9">9<span class="sub">WXYZ</span></button>
+                    </div>
+                    <div class="dial-row">
+                        <button class="dial-key" data-key="*">*<span class="sub">&nbsp;</span></button>
+                        <button class="dial-key" data-key="0">0<span class="sub">+</span></button>
+                        <button class="dial-key" data-key="#">#<span class="sub">&nbsp;</span></button>
+                    </div>
+                    <div class="dial-row action-row">
+                        <button class="call-btn" id="btn-call"><i class="fa-solid fa-phone"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- USSD Overlay (Hidden by default) -->
+            <div class="ussd-overlay" id="ussd-overlay">
+                <div class="ussd-dialog">
+                    
+                    <div class="ussd-header" id="ussd-header" style="background: var(--accent); color: white; padding: 10px 15px; font-weight: 600; font-size: 14px; display: none;"></div>
+
+                    <div class="loading-state" id="ussd-loading">
+                        <div class="spinner"></div>
+                        <p>USSD code running...</p>
+                    </div>
+
+                    <div class="interactive-state" id="ussd-interactive">
+                        <div class="ussd-text" id="ussd-text">
+                            <!-- Text injected here -->
+                        </div>
+                        <div class="ussd-input-wrapper" id="ussd-input-wrapper">
+                            <input type="text" id="ussd-response" class="ussd-response-input" autocomplete="off">
+                        </div>
+                        <div class="ussd-actions">
+                            <button id="btn-ussd-cancel" class="text-btn">CANCEL</button>
+                            <button id="btn-ussd-send" class="text-btn primary-text">SEND</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script src="/static/js/simulator.js"></script>
+</body>
+</html>

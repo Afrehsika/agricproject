@@ -10,7 +10,7 @@ AgriConnect Market is a premium peer-to-peer web application designed to empower
 2. **Logistics Marketplace**: Automatic matching with transporters. Distance and pricing are estimated using Haversine formulas.
 3. **Trust Circles**: Users must request and accept connections to transact, preventing fraud and building robust local networks.
 4. **AI Pathology & Chatbot**: Instant simulated plant pathology checks and a context-aware chat assistant (AgriBot) built with modern layouts.
-5. **Offline USSD Simulator**: A realistic frontend widget allowing users to perform main dashboard actions offline by dialing `*920*44#`.
+5. **Standalone Web USSD Simulator**: A highly realistic, Material Design 3-inspired smartphone simulator at `/simulator/`. It uses a dedicated Webhook and OAuth2 authentication to mimic production USSD gateways like Africa's Talking.
 
 ---
 
@@ -369,6 +369,34 @@ Chats with the AI expert.
   }
   ```
 - **Response**: Returns context-aware advice for Bono East farmers.
+
+---
+
+### 10. USSD Gateway & OAuth2
+
+#### `POST /api/ussd/`
+A webhook endpoint for USSD gateway integrations (e.g., Africa's Talking). It is secured using OAuth2. The gateway must authenticate as a Client Application and forward the user's phone number and input.
+- **Authentication**: OAuth2 Access Token required (`Authorization: Bearer <token>`).
+- **Request Body** (JSON or Form URL-Encoded):
+  ```json
+  {
+    "phoneNumber": "0240001111",
+    "text": "1*2",
+    "sessionId": "12345",
+    "serviceCode": "*920*44#"
+  }
+  ```
+- **Response**: Returns plain text USSD response strings prefixed with `CON` (Continue) or `END` (End transaction).
+
+#### Web USSD Simulator & Automated OAuth2
+A high-fidelity, standalone web simulator is available at `/simulator/`. It provides a realistic Android smartphone experience to test the USSD flows.
+
+**Setup Instructions:**
+You do not need to manually create OAuth credentials in the Django Admin.
+1. Navigate to `http://127.0.0.1:8000/simulator/`.
+2. The system automatically creates a secure OAuth2 Application and injects the Client ID/Secret.
+3. Use the **Quick Select Demo User** dropdown to pick a user (Farmer, Buyer, or Transporter), which auto-fills their simulated phone number.
+4. Click **Connect Gateway** and dial `*920*44#` on the phone keypad to interact with the API.
 
 ---
 

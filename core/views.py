@@ -221,3 +221,35 @@ class SeedDataView(APIView):
 
 def index_view(request):
     return render(request, 'index.html')
+
+def simulator_view(request):
+    from oauth2_provider.models import Application
+    from users.models import CustomUser
+    
+    client_id = "ussd_auto_client_123"
+    client_secret = "ussd_auto_secret_456"
+    
+    app = Application.objects.filter(name="USSD Simulator Auto").first()
+    if not app:
+        app = Application.objects.create(
+            name="USSD Simulator Auto",
+            client_type=Application.CLIENT_CONFIDENTIAL,
+            authorization_grant_type=Application.GRANT_CLIENT_CREDENTIALS,
+            client_id=client_id,
+            client_secret=client_secret
+        )
+    else:
+        # Force update the credentials in case it was created previously with random hashes
+        app.client_id = client_id
+        # In DOT, assigning a plaintext string to client_secret will hash it on save()
+        app.client_secret = client_secret
+        app.save()
+    
+    users = CustomUser.objects.exclude(is_superuser=True).order_by('role')
+    
+    context = {
+        'client_id': client_id,
+        'client_secret': client_secret,
+        'users': users
+    }
+    return render(request, 'ussd_simulator_app.html', context)
