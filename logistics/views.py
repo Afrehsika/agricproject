@@ -8,6 +8,8 @@ from .serializers import TransportJobSerializer
 from users.notifications import create_alert
 
 
+from django.db import transaction
+
 class TransportJobListView(APIView):
     def get(self, request):
         if request.user.role == 'TRANSPORTER':
@@ -15,11 +17,17 @@ class TransportJobListView(APIView):
             if claimed == 'true':
                 jobs = TransportJob.objects.filter(transporter=request.user).order_by('-id')
             else:
-                jobs = TransportJob.objects.filter(status='PENDING_MATCH', order__payment_status='HELD_IN_ESCROW').order_by('-id')
+                jobs = TransportJob.objects.filter(status='PENDING_MATCH', order__payment_status='HELD_IN_ESCROW')
+                search = request.query_params.get('search')
+                if search:
+                    jobs = jobs.filter(order__produce__name__icontains=search)
+                jobs = jobs.order_by('-id')
         elif request.user.role == 'FARMER':
             jobs = TransportJob.objects.filter(order__produce__farmer=request.user).order_by('-id')
+        elif request.user.role == 'BUYER':
+            jobs = TransportJob.objects.filter(order__buyer=request.user).order_by('-id')
         else:
-            return Response({'detail': 'Only transporters and farmers can access logistics jobs'}, status=status.HTTP_403_FORBIDDEN)
+            return Response({'detail': 'Role not allowed'}, status=status.HTTP_403_FORBIDDEN)
             
         serializer = TransportJobSerializer(jobs, many=True)
         return Response(serializer.data)
@@ -152,18 +160,26 @@ class TransportJobStatusUpdateView(APIView):
 class TransportJobAssignView(APIView):
     """
     POST /api/logistics/<int:pk>/assign/
-    Allows a farmer to directly assign/hire a driver for their produce order's transport job.
+    Allows a farmer or buyer to directly assign/hire a driver for a transport job.
     """
     def post(self, request, pk):
-        if request.user.role != 'FARMER':
-            return Response({'detail': 'Only farmers can assign drivers'}, status=status.HTTP_403_FORBIDDEN)
+        if request.user.role not in ['FARMER', 'BUYER']:
+            return Response({'detail': 'Only farmers or buyers can assign drivers'}, status=status.HTTP_403_FORBIDDEN)
             
         try:
-            job = TransportJob.objects.get(id=pk, order__produce__farmer=request.user)
+            if request.user.role == 'FARMER':
+                job = TransportJob.objects.get(id=pk, order__produce__farmer=request.user)
+            else:
+                job = TransportJob.objects.get(id=pk, order__buyer=request.user)
         except TransportJob.DoesNotExist:
-            return Response({'detail': 'Logistics job not found or not related to your crops'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Logistics job not found'}, status=status.HTTP_404_NOT_FOUND)
             
         driver_id = request.data.get('driver')
+        paid_by = request.data.get('paid_by', 'UNSET')
+        
+        if request.user.role == 'BUYER':
+            paid_by = 'BUYER'
+            
         if not driver_id:
             return Response({'detail': 'driver ID is required'}, status=status.HTTP_400_BAD_REQUEST)
             
@@ -172,30 +188,42 @@ class TransportJobAssignView(APIView):
         try:
             driver = User.objects.get(id=driver_id, role='TRANSPORTER')
         except User.DoesNotExist:
-            return Response({'detail': 'Driver not found or invalid role'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'detail': 'Driver not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+        if paid_by == 'FARMER':
+            with transaction.atomic():
+                farmer = request.user
+                if farmer.wallet_balance < job.estimated_cost:
+                    return Response({'detail': 'Insufficient wallet balance for logistics fee'}, status=status.HTTP_400_BAD_REQUEST)
+                farmer.wallet_balance -= job.estimated_cost
+                farmer.save()
+                job.paid_by = 'FARMER'
+                job.payment_status = 'PAID'
+        else:
+            job.paid_by = 'BUYER'
+            job.payment_status = 'REQUESTED'
             
         job.transporter = driver
         job.status = 'MATCHED'
         job.save()
         
-        # Update order status to SHIPPED
         order = job.order
         order.status = 'SHIPPED'
         order.save()
         
-        # Trigger Alerts for Driver and Buyer
         create_alert(
             user=driver,
             notification_type='SMS',
             title='Logistics Contract Assigned',
-            content=f"Farmer {request.user.username} has assigned you to delivery job for Order #{order.id}."
+            content=f"{request.user.username} has assigned you to delivery job for Order #{order.id}."
         )
-        create_alert(
-            user=order.buyer,
-            notification_type='SMS',
-            title='Logistics Transporter Assigned',
-            content=f"A logistics driver {driver.username} has been assigned by the farmer to your Order #{order.id}."
-        )
+        if request.user.role == 'FARMER':
+            create_alert(
+                user=order.buyer,
+                notification_type='SMS',
+                title='Logistics Transporter Assigned',
+                content=f"Farmer assigned driver {driver.username} to Order #{order.id}."
+            )
         
         return Response(TransportJobSerializer(job).data)
 
@@ -274,4 +302,59 @@ class TransportJobApproveView(APIView):
                 content=f"You have rejected the transporter match for Order #{order.id}. The job is now open for other transporters."
             )
             
+        return Response(TransportJobSerializer(job).data)
+
+
+class TransportJobPaymentRequestView(APIView):
+    def post(self, request, pk):
+        if request.user.role != 'TRANSPORTER':
+            return Response({'detail': 'Only transporters can request payment'}, status=status.HTTP_403_FORBIDDEN)
+            
+        try:
+            job = TransportJob.objects.get(id=pk, transporter=request.user)
+        except TransportJob.DoesNotExist:
+            return Response({'detail': 'Logistics job not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+        if job.paid_by != 'BUYER':
+            return Response({'detail': 'This job is not to be paid by the buyer'}, status=status.HTTP_400_BAD_REQUEST)
+            
+        job.payment_status = 'REQUESTED'
+        job.save()
+        
+        create_alert(
+            user=job.order.buyer,
+            notification_type='SMS',
+            title='Logistics Payment Requested',
+            content=f"Transporter {request.user.username} has requested payment for logistics for Order #{job.order.id}."
+        )
+        
+        return Response(TransportJobSerializer(job).data)
+
+
+class TransportJobClientApproveView(APIView):
+    def post(self, request, pk):
+        if request.user.role != 'BUYER':
+            return Response({'detail': 'Only buyers can approve logistics payments'}, status=status.HTTP_403_FORBIDDEN)
+            
+        try:
+            job = TransportJob.objects.get(id=pk, order__buyer=request.user, payment_status='REQUESTED')
+        except TransportJob.DoesNotExist:
+            return Response({'detail': 'Pending payment request not found'}, status=status.HTTP_404_NOT_FOUND)
+            
+        with transaction.atomic():
+            buyer = request.user
+            if buyer.wallet_balance < job.estimated_cost:
+                return Response({'detail': 'Insufficient wallet balance for logistics fee'}, status=status.HTTP_400_BAD_REQUEST)
+            buyer.wallet_balance -= job.estimated_cost
+            buyer.save()
+            job.payment_status = 'PAID'
+            job.save()
+            
+        create_alert(
+            user=job.transporter,
+            notification_type='SMS',
+            title='Logistics Payment Approved',
+            content=f"Buyer has paid the logistics fee for Order #{job.order.id}."
+        )
+        
         return Response(TransportJobSerializer(job).data)

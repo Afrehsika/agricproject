@@ -18,11 +18,26 @@ class TransportJob(models.Model):
         ('Cargo Truck', 'Cargo Truck'),
     )
     
+    PAID_BY_CHOICES = (
+        ('FARMER', 'Farmer'),
+        ('BUYER', 'Buyer'),
+        ('UNSET', 'Unset'),
+    )
+
+    PAYMENT_STATUS_CHOICES = (
+        ('PENDING', 'Pending'),
+        ('REQUESTED', 'Requested'),
+        ('PAID', 'Paid'),
+    )
+
     order = models.OneToOneField(Order, on_delete=models.CASCADE, related_name='transport_job')
     transporter = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, related_name='transport_jobs')
     vehicle_type = models.CharField(max_length=30, choices=VEHICLE_CHOICES, default='Aboboyaa Tricycle')
     estimated_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(max_length=25, choices=STATUS_CHOICES, default='PENDING_MATCH')
+    
+    paid_by = models.CharField(max_length=10, choices=PAID_BY_CHOICES, default='UNSET')
+    payment_status = models.CharField(max_length=15, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
     
     pickup_time = models.DateTimeField(null=True, blank=True)
     delivery_time = models.DateTimeField(null=True, blank=True)

@@ -63,8 +63,12 @@
     <div id="transporter-logistics-view" class="grid-2-1" style="display: none;">
         <!-- Available Jobs -->
         <div class="card">
-            <div class="card-header border-amber">
-                <h3><i class="fa-solid fa-truck-moving text-amber"></i> Available Logistics Jobs</h3>
+            <div class="card-header border-amber" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <h3 style="margin: 0;"><i class="fa-solid fa-truck-moving text-amber"></i> Available Logistics Jobs</h3>
+                <div class="input-icon-wrapper" style="width: 250px; margin: 0;">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="logistics-board-search" class="form-control" placeholder="Search loads (e.g. Tomato)..." style="padding: 5px 10px 5px 35px; border-radius: 20px; font-size: 13px;">
+                </div>
             </div>
             <div class="card-body">
                 <div id="logistics-open-jobs" class="logistics-jobs-list">

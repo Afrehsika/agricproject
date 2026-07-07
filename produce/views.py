@@ -36,7 +36,34 @@ class ProduceCreateView(APIView):
         if request.user.role != 'FARMER':
             return Response({'detail': 'Only farmers can create listings'}, status=status.HTTP_403_FORBIDDEN)
             
-        serializer = ProduceSerializer(data=request.data)
+        # Handle file upload for crop harvest picture
+        image_file = request.FILES.get('image') or request.data.get('image')
+        image_url = ""
+        
+        # Verify if it's a file upload
+        if image_file and hasattr(image_file, 'name'):
+            import os
+            import uuid
+            from django.core.files.storage import default_storage
+            from django.core.files.base import ContentFile
+            
+            # Generate unique filename to avoid conflict
+            ext = os.path.splitext(image_file.name)[1]
+            filename = f"{uuid.uuid4()}{ext}"
+            
+            # Save files in the static folder under uploads/
+            upload_dir = os.path.join('static', 'uploads')
+            if not os.path.exists(upload_dir):
+                os.makedirs(upload_dir)
+                
+            path = default_storage.save(os.path.join(upload_dir, filename), ContentFile(image_file.read()))
+            image_url = f"/static/uploads/{filename}"
+            
+        data = request.data.copy()
+        if image_url:
+            data['image_url'] = image_url
+            
+        serializer = ProduceSerializer(data=data)
         if serializer.is_valid():
             serializer.save(farmer=request.user)
             return Response(serializer.data, status=status.HTTP_201_CREATED)

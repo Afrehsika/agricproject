@@ -1,35 +1,66 @@
 <!-- Analytics Tab -->
 <section id="tab-analytics" class="tab-pane">
-    <!-- Metrics Row -->
-    <div class="metrics-grid">
-        <div class="metric-card card border-emerald">
-            <span class="text-secondary font-xs block">Safe Escrow Transactions</span>
-            <h2 class="font-outfit weight-800 mt-1">100%</h2>
-            <p class="text-emerald font-xxs mt-2"><i class="fa-solid fa-shield-check"></i> Escrow security active</p>
+    <!-- Metrics Row Redesigned as User Metrics Grid -->
+    <div class="stats-grid-row">
+        <div class="animated-stat-card" style="border-left: 3px solid var(--emerald-green) !important; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 8px;">
+                    <span class="stat-label" id="analytics-card1-title" style="font-size: 10px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.5px; text-transform: uppercase;">Total Revenue</span>
+                    <i class="fa-solid fa-wallet text-emerald" style="font-size: 14px;"></i>
+                </div>
+                <h3 class="stat-val" id="analytics-card1-val" style="margin-top: 12px; font-size: 24px; font-weight: 800; font-family: var(--font-display); color: var(--text-primary);">GHS 0.00</h3>
+            </div>
+            <span class="stat-trend" id="analytics-card1-trend" style="color: var(--emerald-light) !important; font-size: 10px; margin-top: 16px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+                <i class="fa-solid fa-circle-check"></i> Wallet balance included
+            </span>
         </div>
-        <div class="metric-card card border-orange">
-            <span class="text-secondary font-xs block">Post-Harvest Waste Prevented</span>
-            <h2 class="font-outfit weight-800 mt-1">124 Crates</h2>
-            <p class="text-orange font-xxs mt-2"><i class="fa-solid fa-triangle-exclamation"></i> Bono East region focus</p>
+        
+        <div class="animated-stat-card" style="border-left: 3px solid #f97316 !important; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 8px;">
+                    <span class="stat-label" id="analytics-card2-title" style="font-size: 10px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.5px; text-transform: uppercase;">Active Listings</span>
+                    <i class="fa-solid fa-wheat-awn text-orange" style="font-size: 14px; color: #f97316;"></i>
+                </div>
+                <h3 class="stat-val" id="analytics-card2-val" style="margin-top: 12px; font-size: 24px; font-weight: 800; font-family: var(--font-display); color: var(--text-primary);">0 Crops</h3>
+            </div>
+            <span class="stat-trend" id="analytics-card2-trend" style="color: #fb923c !important; font-size: 10px; margin-top: 16px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+                <i class="fa-solid fa-clock"></i> Awaiting buyers
+            </span>
         </div>
-        <div class="metric-card card border-amber">
-            <span class="text-secondary font-xs block">Average Sale Speed</span>
-            <h2 class="font-outfit weight-800 mt-1">32 Hours</h2>
-            <p class="text-amber font-xxs mt-2"><i class="fa-solid fa-bolt"></i> Decay-based promotion result</p>
+
+        <div class="animated-stat-card" style="border-left: 3px solid #f59e0b !important; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 8px;">
+                    <span class="stat-label" id="analytics-card3-title" style="font-size: 10px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.5px; text-transform: uppercase;">Completed Sales</span>
+                    <i class="fa-solid fa-circle-check text-amber" style="font-size: 14px;"></i>
+                </div>
+                <h3 class="stat-val" id="analytics-card3-val" style="margin-top: 12px; font-size: 24px; font-weight: 800; font-family: var(--font-display); color: var(--text-primary);">0 Orders</h3>
+            </div>
+            <span class="stat-trend" id="analytics-card3-trend" style="color: #fcd34d !important; font-size: 10px; margin-top: 16px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+                <i class="fa-solid fa-circle-check"></i> Fulfilled orders
+            </span>
         </div>
-        <div class="metric-card card">
-            <span class="text-secondary font-xs block">Total Active Farmers</span>
-            <h2 class="font-outfit weight-800 mt-1">42</h2>
-            <p class="text-secondary font-xxs mt-2"><i class="fa-solid fa-user-group"></i> Techiman cluster</p>
+
+        <div class="animated-stat-card" style="border-left: 3px solid #3b82f6 !important; display: flex; flex-direction: column; justify-content: space-between; height: 100%;">
+            <div>
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; width: 100%; gap: 8px;">
+                    <span class="stat-label" id="analytics-card4-title" style="font-size: 10px; font-weight: 700; color: var(--text-secondary); letter-spacing: 0.5px; text-transform: uppercase;">Fulfillment Rate</span>
+                    <i class="fa-solid fa-percent text-blue" style="font-size: 14px; color: #3b82f6;"></i>
+                </div>
+                <h3 class="stat-val" id="analytics-card4-val" style="margin-top: 12px; font-size: 24px; font-weight: 800; font-family: var(--font-display); color: var(--text-primary);">100%</h3>
+            </div>
+            <span class="stat-trend" id="analytics-card4-trend" style="color: #93c5fd !important; font-size: 10px; margin-top: 16px; display: inline-flex; align-items: center; gap: 4px; font-weight: 500;">
+                <i class="fa-solid fa-circle-check"></i> Operational average
+            </span>
         </div>
     </div>
 
     <!-- Graphs Row -->
     <div class="grid-2-1 mt-4">
-        <!-- Chart Mockup -->
+        <!-- Chart Panel -->
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-chart-area"></i> Vegetable Market Pricing Averages (GHS/Crate)</h3>
+                <h3 id="analytics-chart-title"><i class="fa-solid fa-chart-area"></i> My Transaction Volume & Value Trends</h3>
             </div>
             <div class="card-body text-center p-4">
                 <div class="chart-mockup-wrapper">
@@ -46,12 +77,12 @@
                         <text x="15" y="125" fill="#64748b" font-size="10">100</text>
                         <text x="20" y="175" fill="#64748b" font-size="10">50</text>
                         
-                        <!-- Tomato Price curve (Techiman) -->
-                        <path d="M 50 130 Q 150 90 250 110 T 450 40" fill="none" stroke="#10b981" stroke-width="4" />
-                        <path d="M 50 130 Q 150 90 250 110 T 450 40 L 450 170 L 50 170 Z" fill="url(#green-grad)" opacity="0.1" />
+                        <!-- Tomato Price curve (Techiman) - Rendered dynamically in app.js -->
+                        <path id="chart-tomato-path" d="M 50 130 C 100 130, 100 90, 150 90 C 200 90, 200 110, 250 110 C 300 110, 300 40, 450 40" fill="none" stroke="#10b981" stroke-width="4" />
+                        <path id="chart-tomato-fill" d="M 50 130 C 100 130, 100 90, 150 90 C 200 90, 200 110, 250 110 C 300 110, 300 40, 450 40 L 450 170 L 50 170 Z" fill="url(#green-grad)" opacity="0.1" />
                         
-                        <!-- Pepper curve (Accra Benchmark) -->
-                        <path d="M 50 80 Q 150 70 250 60 T 450 30" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" />
+                        <!-- Pepper curve (Accra Benchmark) - Rendered dynamically in app.js -->
+                        <path id="chart-pepper-path" d="M 50 80 Q 150 70 250 60 T 450 30" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4" />
                         
                         <!-- Defs for gradient -->
                         <defs>
@@ -61,46 +92,49 @@
                             </linearGradient>
                         </defs>
                         
-                        <text x="50" y="190" fill="#64748b" font-size="10">May 1</text>
-                        <text x="150" y="190" fill="#64748b" font-size="10">May 10</text>
-                        <text x="250" y="190" fill="#64748b" font-size="10">May 20</text>
-                        <text x="350" y="190" fill="#64748b" font-size="10">May 30</text>
-                        <text x="450" y="190" fill="#64748b" font-size="10">June 10</text>
+                        <!-- Dynamic date labels -->
+                        <text id="chart-date-1" x="50" y="190" fill="#64748b" font-size="10" text-anchor="middle">May 1</text>
+                        <text id="chart-date-2" x="150" y="190" fill="#64748b" font-size="10" text-anchor="middle">May 10</text>
+                        <text id="chart-date-3" x="250" y="190" fill="#64748b" font-size="10" text-anchor="middle">May 20</text>
+                        <text id="chart-date-4" x="350" y="190" fill="#64748b" font-size="10" text-anchor="middle">May 30</text>
+                        <text id="chart-date-5" x="450" y="190" fill="#64748b" font-size="10" text-anchor="middle">June 10</text>
+                        
+                        <!-- Interactive hover layers populated by app.js -->
+                        <g id="chart-markers"></g>
+                        <g id="chart-triggers"></g>
                     </svg>
                 </div>
+                <!-- Dynamic Floating Tooltip for mouse hover data feedback -->
+                <div id="chart-tooltip" style="position: absolute; display: none; background: rgba(15, 23, 42, 0.95) !important; border: 1px solid var(--border-color) !important; border-radius: 6px !important; padding: 8px 12px !important; font-size: 11px !important; color: var(--text-primary) !important; pointer-events: none !important; z-index: 1000 !important; box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important; backdrop-filter: blur(4px) !important; text-align: left !important; transition: opacity 0.15s ease-out; opacity: 0; pointer-events: none;"></div>
                 <div class="chart-legend mt-2 flex justify-center gap-4">
-                    <span class="font-xs"><i class="fa-solid fa-circle text-emerald"></i> Techiman Tomatoes (Current)</span>
-                    <span class="font-xs"><i class="fa-solid fa-circle text-amber"></i> Accra Retail Benchmark (Historical)</span>
+                    <span class="font-xs" id="analytics-legend-1"><i class="fa-solid fa-circle text-emerald"></i> Gross Value (GHS)</span>
+                    <span class="font-xs" id="analytics-legend-2"><i class="fa-solid fa-circle text-amber"></i> Avg Order Value (GHS)</span>
                 </div>
             </div>
         </div>
 
-        <!-- Target Regional Yield info -->
+        <!-- Target Operational Insights Info -->
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-circle-info"></i> Region Focus Insights</h3>
+                <h3><i class="fa-solid fa-circle-info"></i> My Operational Insights</h3>
             </div>
             <div class="card-body">
                 <ul class="insight-list">
                     <li>
-                        <span class="insight-label">Sub-Region focus</span>
-                        <strong class="text-right">Bono East (Techiman Municipal)</strong>
-                    </li>
-                    <li>
                         <span class="insight-label">Primary Vegetable crop</span>
-                        <strong class="text-right">Tomatoes, Habanero Peppers</strong>
+                        <strong id="insight-crop" class="text-right">Loading...</strong>
                     </li>
                     <li>
-                        <span class="insight-label">Average Post-Harvest Spoils</span>
-                        <strong class="text-right text-orange">35% annually (unmanaged)</strong>
+                        <span class="insight-label">My Circle Connections</span>
+                        <strong id="insight-connections" class="text-right">Loading...</strong>
                     </li>
                     <li>
-                        <span class="insight-label">Platform Waste Prevented</span>
-                        <strong class="text-right text-emerald">-72% over baseline</strong>
+                        <span class="insight-label">Wallet Escrow Balance</span>
+                        <strong id="insight-escrow" class="text-right text-orange">Loading...</strong>
                     </li>
                     <li>
-                        <span class="insight-label">MoMo Escrow success rate</span>
-                        <strong class="text-right">100%</strong>
+                        <span class="insight-label">Order Success Rate</span>
+                        <strong id="insight-success" class="text-right text-emerald">100%</strong>
                     </li>
                 </ul>
             </div>

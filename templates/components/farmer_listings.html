@@ -100,6 +100,14 @@
                         </div>
 
                         <div class="form-group mt-3">
+                            <label for="produce-image">Harvest Picture</label>
+                            <div class="input-icon-wrapper" style="position: relative; display: flex; align-items: center;">
+                                <i class="fa-solid fa-camera" style="position: absolute; left: 12px; color: var(--text-secondary); pointer-events: none;"></i>
+                                <input type="file" id="produce-image" class="form-control" accept="image/*" style="padding-left: 36px; padding-top: 10px; padding-bottom: 10px; height: auto;">
+                            </div>
+                        </div>
+
+                        <div class="form-group mt-3">
                             <label for="produce-desc">Produce Description</label>
                             <textarea id="produce-desc" class="form-control" rows="2" placeholder="Describe quality, soil organic practice, availability..."></textarea>
                         </div>
@@ -137,6 +145,18 @@
                             <select id="assign-driver-select" class="form-control" required>
                                 <option value="">-- Loading drivers --</option>
                             </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mt-3">
+                        <label>Who will pay for logistics?</label>
+                        <div style="display: flex; gap: 15px; margin-top: 5px;">
+                            <label style="display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                                <input type="radio" name="assign_paid_by" value="FARMER" checked> I will pay (Deduct from my Wallet)
+                            </label>
+                            <label style="display: flex; align-items: center; gap: 5px; font-size: 13px;">
+                                <input type="radio" name="assign_paid_by" value="BUYER"> Client will pay
+                            </label>
                         </div>
                     </div>
                     

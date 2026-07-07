@@ -12,5 +12,5 @@ class TransportJobSerializer(serializers.ModelSerializer):
         model = TransportJob
         fields = ('id', 'order', 'order_details', 'transporter', 'transporter_name', 
                   'transporter_phone', 'vehicle_type', 'estimated_cost', 'status', 
-                  'pickup_time', 'delivery_time')
-        read_only_fields = ('id', 'estimated_cost')
+                  'pickup_time', 'delivery_time', 'paid_by', 'payment_status')
+        read_only_fields = ('id', 'estimated_cost', 'payment_status')
