@@ -592,54 +592,82 @@ function setupEventListeners() {
     if (formPrice) formPrice.addEventListener('input', updateListingAdvisor);
 
     // USSD Floating Widget triggers
-    document.getElementById('ussd-toggle')?.addEventListener('click', () => {
-        const phone = document.getElementById('ussd-phone');
-        if (phone.style.display === 'none') {
-            phone.style.display = 'flex';
+    const ussdToggleBtn = document.getElementById('ussd-toggle');
+    if (ussdToggleBtn) {
+        ussdToggleBtn.addEventListener('click', () => {
+            const phone = document.getElementById('ussd-phone');
+            if (phone.style.display === 'none') {
+                phone.style.display = 'flex';
+                resetUSSD();
+            } else {
+                phone.style.display = 'none';
+            }
+        });
+    }
+
+    const phoneCloseBtn = document.getElementById('phone-close');
+    if (phoneCloseBtn) {
+        phoneCloseBtn.addEventListener('click', () => {
+            document.getElementById('ussd-phone').style.display = 'none';
+        });
+    }
+
+    const ussdCancelBtn = document.getElementById('ussd-btn-cancel');
+    if (ussdCancelBtn) {
+        ussdCancelBtn.addEventListener('click', () => {
             resetUSSD();
-        } else {
-            phone.style.display = 'none';
-        }
-    });
+        });
+    }
 
-    document.getElementById('phone-close')?.addEventListener('click', () => {
-        document.getElementById('ussd-phone').style.display = 'none';
-    });
+    const ussdSendBtn = document.getElementById('ussd-btn-send');
+    if (ussdSendBtn) {
+        ussdSendBtn.addEventListener('click', () => {
+            handleUSSDInput();
+        });
+    }
 
-    document.getElementById('ussd-btn-cancel')?.addEventListener('click', () => {
-        resetUSSD();
-    });
-
-    document.getElementById('ussd-btn-send')?.addEventListener('click', () => {
-        handleUSSDInput();
-    });
-
-    document.getElementById('ussd-user-input')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') handleUSSDInput();
-    });
+    const ussdUserInput = document.getElementById('ussd-user-input');
+    if (ussdUserInput) {
+        ussdUserInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleUSSDInput();
+        });
+    }
 
     // AgriBot Triggers
-    document.getElementById('agribot-toggle')?.addEventListener('click', () => {
-        const box = document.getElementById('agribot-chat-box');
-        box.style.display = box.style.display === 'none' ? 'flex' : 'none';
-    });
+    const botToggleBtn = document.getElementById('agribot-toggle');
+    if (botToggleBtn) {
+        botToggleBtn.addEventListener('click', () => {
+            const box = document.getElementById('agribot-chat-box');
+            box.style.display = box.style.display === 'none' ? 'flex' : 'none';
+        });
+    }
 
-    document.getElementById('agribot-close-btn')?.addEventListener('click', () => {
-        document.getElementById('agribot-chat-box').style.display = 'none';
-    });
+    const botCloseBtn = document.getElementById('agribot-close-btn');
+    if (botCloseBtn) {
+        botCloseBtn.addEventListener('click', () => {
+            document.getElementById('agribot-chat-box').style.display = 'none';
+        });
+    }
 
-    document.getElementById('agribot-send-btn')?.addEventListener('click', sendAgriBotMessage);
-    document.getElementById('agribot-user-text')?.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') sendAgriBotMessage();
-    });
+    const botSendBtn = document.getElementById('agribot-send-btn');
+    if (botSendBtn) {
+        botSendBtn.addEventListener('click', sendAgriBotMessage);
+    }
+    
+    const botUserText = document.getElementById('agribot-user-text');
+    if (botUserText) {
+        botUserText.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendAgriBotMessage();
+        });
+    }
 
     // Disease Scanner dropzone interaction
     const dropzone = document.getElementById('dropzone');
     const scannerInput = document.getElementById('scanner-file-input');
 
-    if (dropzone) {
-        dropzone.addEventListener('click', () => scannerInput?.click());
-        
+    if (dropzone) {        dropzone.addEventListener('click', () => {
+            if (scannerInput) scannerInput.click();
+        });
         dropzone.addEventListener('dragover', (e) => {
             e.preventDefault();
             dropzone.style.borderColor = '#10b981';
@@ -1303,7 +1331,7 @@ async function loadFarmerListings() {
         }
 
         // Fetch and populate buyers and drivers from connections
-        const connRes = await fetch('/api/users/connections/');
+        const connRes = await fetch('/api/connections/');
         if (connRes.ok) {
             const connData = await connRes.json();
             const connectedUsers = connData.connections.map(c => c.user);
@@ -1332,16 +1360,7 @@ async function loadFarmerListings() {
                 });
             }
 
-            const assignDriverSelect = document.getElementById('assign-driver-select');
-            if (assignDriverSelect) {
-                assignDriverSelect.innerHTML = '<option value="">-- Choose Driver --</option>';
-                drivers.forEach(d => {
-                    const opt = document.createElement('option');
-                    opt.value = d.id;
-                    opt.textContent = `${d.username} (${d.district})`;
-                    assignDriverSelect.appendChild(opt);
-                });
-            }
+
         }
 
         // Clear and load drivers onto map
@@ -1833,7 +1852,7 @@ function createJobCard(job, isClaimed) {
     card.innerHTML = `
         <div class="job-header">
             <div class="job-route">
-                <span>${job.order_details.produce_details.farmer_district}</span>
+                <span>${job.order_details.produce_details.farmer_district || 'Unknown District'}, ${job.order_details.produce_details.farmer_region || 'Unknown Region'}</span>
                 <i class="fa-solid fa-arrow-right"></i>
                 <span>${job.order_details.buyer_name} (${job.order_details.delivery_type === 'SELF_PICKUP' ? 'Local' : 'Long-haul'})</span>
             </div>
@@ -3306,7 +3325,7 @@ async function loadFarmerDispatchDropdowns() {
         }
 
         // Fetch and populate buyers and drivers from connections
-        const connRes = await fetch('/api/users/connections/');
+        const connRes = await fetch('/api/connections/');
         if (connRes.ok) {
             const connData = await connRes.json();
             const connectedUsers = connData.connections.map(c => c.user);
@@ -3474,12 +3493,40 @@ async function submitDispatch(e) {
     }
 }
 
-function openAssignDriverModal(jobId) {
+async function openAssignDriverModal(jobId) {
     const jobIdInput = document.getElementById('assign-job-id');
     if (jobIdInput) jobIdInput.value = jobId;
     
     const errorDiv = document.getElementById('assign-driver-error');
     if (errorDiv) errorDiv.style.display = 'none';
+
+    // Fetch freshest connections specifically for this modal
+    const assignDriverSelect = document.getElementById('assign-driver-select');
+    if (assignDriverSelect) {
+        assignDriverSelect.innerHTML = '<option value="">-- Loading drivers --</option>';
+        try {
+            const connRes = await fetch('/api/connections/');
+            if (connRes.ok) {
+                const connData = await connRes.json();
+                const connectedUsers = connData.connections.map(c => c.user);
+                const drivers = connectedUsers.filter(u => u.role === 'TRANSPORTER');
+                
+                assignDriverSelect.innerHTML = '<option value="">-- Choose Driver --</option>';
+                drivers.forEach(d => {
+                    const opt = document.createElement('option');
+                    opt.value = d.id;
+                    opt.textContent = `${d.username} (${d.district})`;
+                    assignDriverSelect.appendChild(opt);
+                });
+                if (drivers.length === 0) {
+                    assignDriverSelect.innerHTML = '<option value="">-- No Drivers in Trust Network --</option>';
+                }
+            }
+        } catch (e) {
+            console.error("Error loading drivers for modal: ", e);
+            assignDriverSelect.innerHTML = '<option value="">-- Error loading drivers --</option>';
+        }
+    }
 
     const modal = document.getElementById('assign-driver-modal');
     if (modal) modal.style.display = 'flex';

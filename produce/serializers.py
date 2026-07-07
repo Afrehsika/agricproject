@@ -7,11 +7,14 @@ class ProduceSerializer(serializers.ModelSerializer):
     farmer_phone = serializers.CharField(source='farmer.phone_number', read_only=True)
     farmer_lat = serializers.FloatField(source='farmer.latitude', read_only=True)
     farmer_lng = serializers.FloatField(source='farmer.longitude', read_only=True)
+    farmer_district = serializers.CharField(source='farmer.district', read_only=True)
+    farmer_region = serializers.CharField(source='farmer.region', read_only=True)
     suggested_price = serializers.FloatField(read_only=True)
 
     class Meta:
         model = Produce
         fields = ('id', 'farmer', 'farmer_name', 'farmer_phone', 'farmer_lat', 'farmer_lng',
+                  'farmer_district', 'farmer_region',
                   'name', 'variety', 'quantity_available', 'unit', 'price_per_unit', 
                   'harvest_date', 'posting_date', 'predicted_rot_date', 'freshness_score', 
                   'suggested_price', 'description', 'status', 'image_url')
