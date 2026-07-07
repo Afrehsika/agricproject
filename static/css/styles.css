@@ -182,14 +182,14 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Subtly style the sidebar scrollbar track */
-.sidebar::-webkit-scrollbar {
+.sidebar-scroll-container::-webkit-scrollbar {
     width: 4px;
 }
-.sidebar::-webkit-scrollbar-thumb {
+.sidebar-scroll-container::-webkit-scrollbar-thumb {
     background: var(--border-color);
     border-radius: 4px;
 }
-.sidebar::-webkit-scrollbar-track {
+.sidebar-scroll-container::-webkit-scrollbar-track {
     background: transparent;
 }
 

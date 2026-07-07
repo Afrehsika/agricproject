@@ -345,6 +345,47 @@ function updateUIForUser() {
         if (navDisease) navDisease.style.display = 'none';
         if (navAnalytics) navAnalytics.style.display = 'flex';
     }
+
+    // Fetch real orders to populate Items Sold / Items Bought dynamically with live sync
+    fetch('/api/orders/create/')
+        .then(res => res.ok ? res.json() : [])
+        .then(orders => {
+            const sidebarSalesLabel = document.getElementById('sidebar-sales-label');
+            const sidebarSalesValue = document.getElementById('sidebar-sales-value');
+            const heroSalesLabel = document.getElementById('hero-sales-label');
+            const heroSalesValue = document.getElementById('hero-sales-value');
+            const heroSalesTrend = document.getElementById('hero-sales-trend');
+
+            let label = "Items Sold";
+            if (currentUser.role === 'BUYER') {
+                label = "Items Bought";
+            } else if (currentUser.role === 'TRANSPORTER') {
+                label = "Jobs Completed";
+            }
+
+            // Calculate total quantity of items sold or bought across all orders
+            const totalQuantity = orders.reduce((sum, order) => sum + parseInt(order.quantity || 0), 0);
+            
+            // Format suffix (e.g. "5 Baskets" or "10 Crates", fallback to "Crops")
+            let unitSuffix = "Crops";
+            if (orders.length > 0) {
+                const firstOrder = orders[0];
+                if (firstOrder.produce_details && firstOrder.produce_details.unit) {
+                    unitSuffix = firstOrder.produce_details.unit;
+                }
+            }
+
+            const valueText = `${totalQuantity} ${unitSuffix}`;
+
+            if (sidebarSalesLabel) sidebarSalesLabel.textContent = label;
+            if (sidebarSalesValue) sidebarSalesValue.textContent = valueText;
+            if (heroSalesLabel) heroSalesLabel.textContent = label;
+            if (heroSalesValue) heroSalesValue.textContent = valueText;
+            if (heroSalesTrend) {
+                heroSalesTrend.innerHTML = `<i class="fa-solid fa-circle-check"></i> Live Sync (${orders.length} orders)`;
+            }
+        })
+        .catch(err => console.error("Error fetching order stats:", err));
 }
 
 // Event Listeners

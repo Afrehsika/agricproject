@@ -1,115 +1,118 @@
 <!-- Sidebar Navigation -->
-<aside class="sidebar" style="position: relative !important; overflow: visible !important; z-index: 10 !important;">
+<aside class="sidebar" style="position: relative !important; overflow: visible !important; z-index: 10 !important; padding: 0 !important; background-color: #0b0f19 !important;">
     <!-- Collapsible Toggle Button with bulletproof inline styles -->
     <button id="sidebar-collapse-btn" onclick="document.getElementById('app-container').classList.toggle('sidebar-collapsed'); setTimeout(() => { if (window.map) window.map.invalidateSize(); }, 360);" title="Toggle Sidebar" style="background: var(--bg-card) !important; border: 1px solid var(--border-color) !important; color: var(--text-secondary) !important; border-radius: 50% !important; width: 28px !important; height: 28px !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; position: absolute !important; right: -14px !important; top: 22px !important; z-index: 1002 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important; padding: 0 !important; outline: none !important;">
         <i class="fa-solid fa-chevron-left" style="font-size: 10px;"></i>
     </button>
 
-    <div class="sidebar-header">
-        <div class="logo">
-            <i class="fa-solid fa-seedling text-emerald"></i>
-            <span>AgriConnect <span class="accent">Market</span></span>
-        </div>
-        <div class="tagline">Techiman Vegetable Hub</div>
-    </div>
-    
-    <!-- Active User Panel -->
-    <div class="user-panel-card">
-        <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-            <div class="user-avatar" style="font-size: 38px; color: var(--emerald-green); display: flex; align-items: center; justify-content: center;">
-                <i class="fa-solid fa-circle-user"></i>
+    <!-- Scrollable container for sidebar content to prevent toggle clipping and squeeze bugs -->
+    <div class="sidebar-scroll-container" style="display: flex; flex-direction: column; height: 100%; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 24px; box-sizing: border-box;">
+        <div class="sidebar-header">
+            <div class="logo">
+                <i class="fa-solid fa-seedling text-emerald"></i>
+                <span>AgriConnect <span class="accent">Market</span></span>
             </div>
-            <div class="user-info" style="display: flex; flex-direction: column; overflow: hidden; flex-grow: 1;">
-                <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; width: 100%;">
-                    <h4 id="logged-username" style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">Loading...</h4>
-                    <span class="verification-badge" style="display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; background: rgba(16, 185, 129, 0.15); color: var(--emerald-green); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 50px; padding: 1px 6px; font-size: 8px; font-weight: 700; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-circle-check"></i> Verified</span>
-                </div>
-                <span class="user-role-badge" id="logged-role" style="font-size: 11px; margin-top: 2px; color: var(--emerald-light); font-weight: 500;">Role</span>
-                <span class="user-location" style="font-size: 9px; color: var(--text-secondary); margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> Techiman, Bono East</span>
-            </div>
+            <div class="tagline">Techiman Vegetable Hub</div>
         </div>
         
-        <!-- Quick Stats Widget -->
-        <div id="sidebar-stats-card" style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
-            <div class="sidebar-stat-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-                <span style="color: var(--text-secondary);">Today's Sales</span>
-                <strong style="color: var(--text-primary); font-weight: 700;">GHS 380.00</strong>
+        <!-- Active User Panel -->
+        <div class="user-panel-card">
+            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
+                <div class="user-avatar" style="font-size: 38px; color: var(--emerald-green); display: flex; align-items: center; justify-content: center;">
+                    <i class="fa-solid fa-circle-user"></i>
+                </div>
+                <div class="user-info" style="display: flex; flex-direction: column; overflow: hidden; flex-grow: 1;">
+                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; width: 100%;">
+                        <h4 id="logged-username" style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">Loading...</h4>
+                        <span class="verification-badge" style="display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; background: rgba(16, 185, 129, 0.15); color: var(--emerald-green); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 50px; padding: 1px 6px; font-size: 8px; font-weight: 700; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-circle-check"></i> Verified</span>
+                    </div>
+                    <span class="user-role-badge" id="logged-role" style="font-size: 11px; margin-top: 2px; color: var(--emerald-light); font-weight: 500;">Role</span>
+                    <span class="user-location" style="font-size: 9px; color: var(--text-secondary); margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> Techiman, Bono East</span>
+                </div>
             </div>
-            <div class="sidebar-stat-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-                <span style="color: var(--text-secondary);">Active Listings</span>
-                <strong style="color: var(--text-primary); font-weight: 700;">6 Crops</strong>
+            
+            <!-- Quick Stats Widget -->
+            <div id="sidebar-stats-card" style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                <div class="sidebar-stat-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                    <span id="sidebar-sales-label" style="color: var(--text-secondary);">Items Sold</span>
+                    <strong id="sidebar-sales-value" style="color: var(--text-primary); font-weight: 700;">0 Orders</strong>
+                </div>
+                <div class="sidebar-stat-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
+                    <span style="color: var(--text-secondary);">Active Listings</span>
+                    <strong style="color: var(--text-primary); font-weight: 700;">6 Crops</strong>
+                </div>
+            </div>
+
+            <div class="wallet-actions-container mt-2" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 8px;">
+                <button id="sidebar-fund-btn" class="btn btn-primary btn-sm" style="font-size: 11px; font-weight: 700; width: 100%;">
+                    <i class="fa-solid fa-plus-circle"></i> Fund Wallet
+                </button>
+                <button id="sidebar-withdraw-btn" class="btn btn-orange btn-sm" style="font-size: 11px; font-weight: 700; display: none; width: 100%;">
+                    <i class="fa-solid fa-money-bill-transfer"></i> Withdraw
+                </button>
             </div>
         </div>
 
-        <div class="wallet-actions-container mt-2" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 8px;">
-            <button id="sidebar-fund-btn" class="btn btn-primary btn-sm" style="font-size: 11px; font-weight: 700; width: 100%;">
-                <i class="fa-solid fa-plus-circle"></i> Fund Wallet
+        <nav class="sidebar-menu">
+            <!-- Section: Marketplace -->
+            <div class="sidebar-section-header">Marketplace</div>
+            <ul>
+                <li class="menu-item active" data-tab="marketplace" id="nav-marketplace">
+                    <i class="fa-solid fa-shop"></i> <span>Marketplace</span>
+                </li>
+            </ul>
+
+            <!-- Section: My Farm -->
+            <div class="sidebar-section-header">My Farm & services</div>
+            <ul>
+                <li class="menu-item" data-tab="farmer-listings" id="nav-farmer-listings">
+                    <i class="fa-solid fa-wheat-awn"></i> <span>Crop Listings</span>
+                </li>
+                <li class="menu-item" data-tab="disease-scanner" id="nav-disease-scanner">
+                    <i class="fa-solid fa-microscope"></i> <span>Disease Scanner</span>
+                </li>
+            </ul>
+
+            <!-- Section: Orders & Transport -->
+            <div class="sidebar-section-header">Logistics & Orders</div>
+            <ul>
+                <li class="menu-item" data-tab="orders" id="nav-orders" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fa-solid fa-receipt"></i> <span>My Orders</span>
+                    </div>
+                    <span id="sidebar-cart-badge" class="badge badge-green" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
+                </li>
+                <li class="menu-item" data-tab="logistics" id="nav-logistics">
+                    <i class="fa-solid fa-truck-fast"></i> <span>Logistics & Dispatch</span>
+                </li>
+            </ul>
+
+            <!-- Section: Community & Insights -->
+            <div class="sidebar-section-header">Circle & Analytics</div>
+            <ul>
+                <li class="menu-item" data-tab="network" id="nav-network">
+                    <i class="fa-solid fa-circle-nodes"></i> <span>My Circle</span>
+                </li>
+                <li class="menu-item" data-tab="messages" id="nav-messages" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <i class="fa-solid fa-envelope"></i> <span>Messages</span>
+                    </div>
+                    <span id="sidebar-message-badge" class="badge badge-orange" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
+                </li>
+                <li class="menu-item" data-tab="analytics" id="nav-analytics">
+                    <i class="fa-solid fa-chart-pie"></i> <span>Analytics & Wallet</span>
+                </li>
+            </ul>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button id="seed-demo-btn" class="btn btn-secondary btn-sm btn-block mb-2">
+                <i class="fa-solid fa-database"></i> Reset Demo Data
             </button>
-            <button id="sidebar-withdraw-btn" class="btn btn-orange btn-sm" style="font-size: 11px; font-weight: 700; display: none; width: 100%;">
-                <i class="fa-solid fa-money-bill-transfer"></i> Withdraw
+            <button id="logout-btn" class="btn btn-orange btn-sm btn-block">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
             </button>
         </div>
-    </div>
-
-    <nav class="sidebar-menu">
-        <!-- Section: Marketplace -->
-        <div class="sidebar-section-header">Marketplace</div>
-        <ul>
-            <li class="menu-item active" data-tab="marketplace" id="nav-marketplace">
-                <i class="fa-solid fa-shop"></i> <span>Marketplace</span>
-            </li>
-        </ul>
-
-        <!-- Section: My Farm -->
-        <div class="sidebar-section-header">My Farm & services</div>
-        <ul>
-            <li class="menu-item" data-tab="farmer-listings" id="nav-farmer-listings">
-                <i class="fa-solid fa-wheat-awn"></i> <span>Crop Listings</span>
-            </li>
-            <li class="menu-item" data-tab="disease-scanner" id="nav-disease-scanner">
-                <i class="fa-solid fa-microscope"></i> <span>Disease Scanner</span>
-            </li>
-        </ul>
-
-        <!-- Section: Orders & Transport -->
-        <div class="sidebar-section-header">Logistics & Orders</div>
-        <ul>
-            <li class="menu-item" data-tab="orders" id="nav-orders" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <i class="fa-solid fa-receipt"></i> <span>My Orders</span>
-                </div>
-                <span id="sidebar-cart-badge" class="badge badge-green" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
-            </li>
-            <li class="menu-item" data-tab="logistics" id="nav-logistics">
-                <i class="fa-solid fa-truck-fast"></i> <span>Logistics & Dispatch</span>
-            </li>
-        </ul>
-
-        <!-- Section: Community & Insights -->
-        <div class="sidebar-section-header">Circle & Analytics</div>
-        <ul>
-            <li class="menu-item" data-tab="network" id="nav-network">
-                <i class="fa-solid fa-circle-nodes"></i> <span>My Circle</span>
-            </li>
-            <li class="menu-item" data-tab="messages" id="nav-messages" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <i class="fa-solid fa-envelope"></i> <span>Messages</span>
-                </div>
-                <span id="sidebar-message-badge" class="badge badge-orange" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
-            </li>
-            <li class="menu-item" data-tab="analytics" id="nav-analytics">
-                <i class="fa-solid fa-chart-pie"></i> <span>Analytics & Wallet</span>
-            </li>
-        </ul>
-    </nav>
-
-    <div class="sidebar-footer">
-        <button id="seed-demo-btn" class="btn btn-secondary btn-sm btn-block mb-2">
-            <i class="fa-solid fa-database"></i> Reset Demo Data
-        </button>
-        <button id="logout-btn" class="btn btn-orange btn-sm btn-block">
-            <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
-        </button>
     </div>
 </aside>
 
