@@ -13,3 +13,5 @@ scikit-learn
 pillow
 gunicorn
 django-oauth-toolkit
+dj-database-url
+psycopg2-binary
