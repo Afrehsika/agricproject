@@ -73,6 +73,10 @@ if DATABASE_URL:
     DATABASES = {
         'default': dj_database_url.config(default=DATABASE_URL, conn_max_age=600)
     }
+    if 'OPTIONS' not in DATABASES['default']:
+        DATABASES['default']['OPTIONS'] = {}
+    # Disable server side binding to fix Django 5+ issues with Neon/PgBouncer transaction pooling
+    DATABASES['default']['OPTIONS']['server_side_binding'] = False
 else:
     DATABASES = {
         'default': {

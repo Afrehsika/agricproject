@@ -30,6 +30,7 @@ def _estimate_logistics(buyer, produce, quantity):
 
 
 class OrderCreateView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def get(self, request):
         if request.user.role == 'BUYER':
             orders = Order.objects.filter(buyer=request.user).order_by('-id')
@@ -129,6 +130,7 @@ class OrderCreateView(APIView):
 
 
 class OrderPayView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     """Pay for a pending order using the buyer's platform wallet (pre-funded via Paystack)."""
     def post(self, request, pk):
         try:
@@ -255,6 +257,7 @@ class OrderPayView(APIView):
 
 
 class OrderConfirmDeliveryView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     def post(self, request, pk):
         try:
             order = Order.objects.get(id=pk, buyer=request.user)
@@ -341,6 +344,7 @@ class OrderConfirmDeliveryView(APIView):
 # ------------------------------------------------------------------
 
 class CartView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     """GET (list cart), POST (add/update item)"""
     def get(self, request):
         if request.user.role != 'BUYER':
@@ -400,6 +404,7 @@ class CartView(APIView):
 
 
 class CartItemDeleteView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     """DELETE /api/cart/<id>/"""
     def delete(self, request, pk):
         try:
@@ -411,6 +416,7 @@ class CartItemDeleteView(APIView):
 
 
 class CartCheckoutView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     """
     POST /api/cart/checkout/
     Converts all cart items to orders, debiting wallet for each.
@@ -569,6 +575,7 @@ class CartCheckoutView(APIView):
 
 
 class OrderDispatchView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
     """
     POST /api/orders/dispatch/
     Let farmers create a direct dispatch order for a client/buyer.

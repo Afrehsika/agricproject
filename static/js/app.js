@@ -1,5 +1,13 @@
 // AgriConnect Ghana Application Client Logic
 
+const originalFetch = window.fetch;
+window.fetch = function(url, options = {}) {
+    if (options.credentials === undefined) {
+        options.credentials = 'same-origin';
+    }
+    return originalFetch(url, options);
+};
+
 let currentUser = null;
 let currentTab = 'marketplace';
 let map = null;
@@ -3014,7 +3022,13 @@ async function loadCart() {
 }
 
 async function checkoutCart() {
+    const btn = document.getElementById('cart-checkout-btn');
+    const originalText = btn.innerHTML;
     try {
+        if (btn) {
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
+        }
         const res = await fetch('/api/cart/checkout/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
@@ -3045,6 +3059,11 @@ async function checkoutCart() {
         }
     } catch (e) {
         console.error("Error during checkout:", e);
+    } finally {
+        if (btn) {
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        }
     }
 }
 
