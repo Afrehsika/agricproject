@@ -2946,6 +2946,7 @@ async function addToCart(produceId, qty) {
         }
     } catch (e) {
         console.error("Error adding to cart:", e);
+        alert("Client error adding to cart: " + e.message);
     }
 }
 
