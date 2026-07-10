@@ -4,6 +4,7 @@
   
   [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
   [![Django](https://img.shields.io/badge/Django-4.x-092E20.svg)](https://www.djangoproject.com/)
+  [![Neon Postgres](https://img.shields.io/badge/Neon-Postgres-00E599.svg?logo=postgresql&logoColor=white)](https://neon.tech/)
   [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 </div>
 
@@ -20,9 +21,10 @@ It facilitates secure transactions via **digital escrow**, calculates dynamic **
 1. **Digital Escrow & Wallet**: Protects funds securely during the order lifecycle. Payments are held by the platform and released to farmers instantly when the buyer confirms delivery.
 2. **Logistics Marketplace**: Automatic matching with transporters. Distance and pricing are estimated dynamically using Haversine formulas.
 3. **Trust Circles**: Users must request and accept connections to transact, preventing fraud and building robust local networks.
-4. **AI Pathology & Chatbot**: Instant simulated plant pathology checks and a context-aware chat assistant (AgriBot) built with modern layouts.
-5. **Real-Time Notifications**: Fully integrated with the Arkesel SMS API and SMTP Mailers to dispatch real notifications to users.
-6. **Standalone USSD Simulator**: A highly realistic, Material Design 3-inspired smartphone simulator at `/simulator/` mimicking offline USSD gateways.
+4. **Neon Serverless Postgres**: Highly scalable database architecture utilizing Neon for fast, reliable, and serverless Postgres data storage.
+5. **AI Pathology & Chatbot**: Instant simulated plant pathology checks and a context-aware chat assistant (AgriBot) built with modern layouts.
+6. **Real-Time Notifications**: Fully integrated with the Arkesel SMS API and SMTP Mailers to dispatch real notifications to users.
+7. **Standalone USSD Simulator**: A highly realistic, Material Design 3-inspired smartphone simulator at `/simulator/` mimicking offline USSD gateways.
 
 ---
 

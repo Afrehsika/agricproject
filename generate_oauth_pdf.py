@@ -64,15 +64,42 @@ def create_pdf():
 
     # OAuth Setup
     Story.append(Paragraph("OAuth2 Setup Instructions", styles['Heading2']))
-    setup_text = """
-    To connect a USSD emulator or external gateway securely:<br/><br/>
+    
+    Story.append(Paragraph("<b>Step 1: Create OAuth Application</b>", styles['Normal']))
+    step1_text = """
     1. Log into the Django Admin portal (/admin/).<br/>
     2. Add a new application under <b>Django OAuth Toolkit</b>.<br/>
     3. Set <b>Client Type</b> to <i>Confidential</i> and <b>Authorization Grant Type</b> to <i>Client credentials</i>.<br/>
-    4. Save the application.<br/>
-    5. Use the generated <i>Client ID</i> and <i>Client Secret</i> to request access tokens from /o/token/.
+    4. Give the application a descriptive name (e.g., "USSD Gateway").<br/>
+    5. Save the application.<br/>
+    6. Note down the generated <i>Client ID</i> and <i>Client Secret</i>.
     """
-    Story.append(Paragraph(setup_text, styles['Normal']))
+    Story.append(Paragraph(step1_text, styles['Normal']))
+    Story.append(Spacer(1, 12))
+
+    Story.append(Paragraph("<b>Step 2: Obtain Access Token</b>", styles['Normal']))
+    Story.append(Paragraph("The external gateway or emulator must request an access token by sending a POST request to the token endpoint:", styles['Normal']))
+    
+    token_code = """
+    POST /o/token/<br/>
+    Content-Type: application/x-www-form-urlencoded<br/><br/>
+    grant_type=client_credentials&amp;<br/>
+    client_id=&lt;YOUR_CLIENT_ID&gt;&amp;<br/>
+    client_secret=&lt;YOUR_CLIENT_SECRET&gt;
+    """
+    Story.append(Paragraph(token_code, styles['CustomCode']))
+    Story.append(Paragraph("This will return a JSON response containing an access_token. This token must be included in the Authorization header (Bearer &lt;token&gt;) of all subsequent requests to the /api/ussd/ endpoint.", styles['Normal']))
+    Story.append(Spacer(1, 12))
+
+    Story.append(Paragraph("<b>Step 3: Using the USSD Emulator</b>", styles['Normal']))
+    step3_text = """
+    If you are using the provided local USSD emulator, you need to configure it with the credentials you just created.<br/>
+    1. Open the emulator script (e.g., ussd_emulator.py).<br/>
+    2. Locate the configuration variables (CLIENT_ID, CLIENT_SECRET).<br/>
+    3. Paste your <i>Client ID</i> and <i>Client Secret</i> into the respective variables.<br/>
+    4. Start the emulator. It is designed to automatically handle fetching and refreshing the OAuth2 access token before dispatching USSD session data to the Django backend.
+    """
+    Story.append(Paragraph(step3_text, styles['Normal']))
 
     doc.build(Story)
     print(f"Successfully generated {pdf_filename} in the current directory.")
