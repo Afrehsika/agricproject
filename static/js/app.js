@@ -84,7 +84,13 @@ function initMap() {
 }
 
 function showDashboard() {
-    document.getElementById('login-portal').style.display = 'none';
+    document.body.classList.add('dashboard-mode');
+    const landing = document.getElementById('landing-page');
+    if (landing) landing.style.display = 'none';
+    
+    const portal = document.getElementById('login-portal');
+    if (portal) portal.style.display = 'none';
+    
     document.getElementById('app-container').style.display = 'flex';
     updateUIForUser();
     
@@ -116,7 +122,13 @@ function showDashboard() {
 }
 
 function showLoginPortal() {
-    document.getElementById('login-portal').style.display = 'flex';
+    document.body.classList.remove('dashboard-mode');
+    const landing = document.getElementById('landing-page');
+    if (landing) landing.style.display = 'block';
+    
+    const portal = document.getElementById('login-portal');
+    if (portal) portal.style.display = 'none';
+    
     document.getElementById('app-container').style.display = 'none';
     currentUser = null;
     
@@ -135,6 +147,43 @@ function showLoginPortal() {
     // Reset seen notifications cache
     seenNotificationIds.clear();
 }
+
+window.openLoginPortal = function(mode = 'login') {
+    const portal = document.getElementById('login-portal');
+    if (portal) portal.style.display = 'flex';
+    const tabLogin = document.getElementById('tab-btn-login');
+    const tabRegister = document.getElementById('tab-btn-register');
+    const formLogin = document.getElementById('login-form');
+    const formRegister = document.getElementById('register-form');
+    
+    if (mode === 'register' && tabRegister) {
+        tabRegister.click();
+    } else if (tabLogin) {
+        tabLogin.click();
+    }
+};
+
+window.closeLoginPortal = function() {
+    const portal = document.getElementById('login-portal');
+    if (portal) portal.style.display = 'none';
+};
+
+window.switchLandingRole = function(role) {
+    const roles = ['farmer', 'buyer', 'transporter'];
+    roles.forEach(r => {
+        const content = document.getElementById(`role-step-${r}`);
+        if (content) content.style.display = (r === role) ? 'block' : 'none';
+    });
+    
+    const btns = document.querySelectorAll('.role-tab-btn');
+    btns.forEach(btn => {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(role)) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+};
 
 function setupLoginHandlers() {
     const tabLogin = document.getElementById('tab-btn-login');

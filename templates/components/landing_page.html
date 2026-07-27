@@ -1,0 +1,1178 @@
+<!-- 🌟 Public Landing Page Component -->
+<div id="landing-page" class="landing-page-wrapper">
+    <!-- Navbar Header -->
+    <header class="landing-header">
+        <div class="landing-container nav-container">
+            <div class="logo">
+                <i class="fa-solid fa-leaf text-emerald"></i>
+                <span>AgriConnect <span class="accent">Market</span></span>
+            </div>
+            
+            <nav class="landing-nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How It Works</a>
+                <a href="#escrow-sec" class="nav-link">Digital Escrow</a>
+                <a href="#impact-stats" class="nav-link">Impact</a>
+                <a href="/simulator/" target="_blank" class="nav-link ussd-badge-link">
+                    <i class="fa-solid fa-mobile-screen-button"></i> USSD Simulator (*920*44#)
+                </a>
+            </nav>
+
+            <div class="landing-auth-actions">
+                <button class="btn btn-emerald-outline" onclick="openLoginPortal('login')">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In
+                </button>
+                <button class="btn btn-emerald-gradient" onclick="openLoginPortal('login')">
+                    <i class="fa-solid fa-rocket"></i> Launch Market
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="landing-hero">
+        <div class="hero-bg-shapes">
+            <div class="shape shape-1"></div>
+            <div class="shape shape-2"></div>
+        </div>
+        <div class="landing-container hero-grid">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <i class="fa-solid fa-shield-halved"></i>
+                    <span>Ghana's Premier Agri-Escrow & Haulage Hub</span>
+                </div>
+                <h1 class="hero-title">
+                    Empowering Smallholder Farmers & Wholesale Buyers with <span class="gradient-text">Digital Escrow</span>
+                </h1>
+                <p class="hero-description">
+                    Connect Techiman vegetable farmers with Kumasi & Accra buyers directly. Secure payments in escrow, match with local transporters, diagnose crop diseases with AI, and trade offline via USSD.
+                </p>
+                <div class="hero-cta-group">
+                    <button class="btn btn-hero-primary" onclick="openLoginPortal('login')">
+                        <i class="fa-solid fa-store"></i> Explore Marketplace
+                    </button>
+                    <button class="btn btn-hero-secondary" onclick="openLoginPortal('register')">
+                        <i class="fa-solid fa-user-plus"></i> Join as Farmer / Buyer
+                    </button>
+                    <a href="/simulator/" class="btn btn-hero-ussd" target="_blank">
+                        <i class="fa-solid fa-phone"></i> Test USSD (*920*44#)
+                    </a>
+                </div>
+                
+                <div class="hero-trust-metrics">
+                    <div class="metric-item">
+                        <strong>GH¢ 0.00</strong>
+                        <span>Fraud Losses with Escrow</span>
+                    </div>
+                    <div class="metric-divider"></div>
+                    <div class="metric-item">
+                        <strong>100%</strong>
+                        <span>Mobile Money Instant Payouts</span>
+                    </div>
+                    <div class="metric-divider"></div>
+                    <div class="metric-item">
+                        <strong>&lt; 24 Hrs</strong>
+                        <span>Techiman-to-Market Haulage</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="hero-visual">
+                <div class="visual-card-glass main-card">
+                    <div class="card-header-badge">
+                        <i class="fa-solid fa-shield-heart text-emerald"></i> Protected Transaction
+                    </div>
+                    <div class="visual-produce-demo">
+                        <img src="https://images.unsplash.com/photo-1595855759920-86582396756a?auto=format&fit=crop&w=400&q=80" alt="Fresh Tomatoes">
+                        <div class="produce-details">
+                            <h3>Power Rano Tomatoes</h3>
+                            <div class="price-tag">GHS 150.00 <span class="unit">/ Crate</span></div>
+                            <p><i class="fa-solid fa-location-dot text-emerald"></i> Techiman Municipal • Kofi Mensah</p>
+                        </div>
+                    </div>
+                    <div class="escrow-flow-pill">
+                        <span class="step active"><i class="fa-solid fa-lock"></i> Escrow Locked</span>
+                        <span class="line"></span>
+                        <span class="step"><i class="fa-solid fa-truck"></i> Dispatched</span>
+                        <span class="line"></span>
+                        <span class="step"><i class="fa-solid fa-circle-check"></i> Released</span>
+                    </div>
+                </div>
+
+                <div class="floating-badge badge-ai">
+                    <i class="fa-solid fa-seedling text-emerald"></i>
+                    <div>
+                        <strong>AI Pathology Diagnostics</strong>
+                        <span>98.4% Leaf Diagnostic Accuracy</span>
+                    </div>
+                </div>
+
+                <div class="floating-badge badge-logistics">
+                    <i class="fa-solid fa-truck-fast text-amber"></i>
+                    <div>
+                        <strong>Haversine Matchmaking</strong>
+                        <span>Auto-matching KIA Bongo & Tricycles</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Key Features Section -->
+    <section id="features" class="landing-section features-section">
+        <div class="landing-container">
+            <div class="section-header text-center">
+                <span class="sub-title uppercase">Core Capabilities</span>
+                <h2 class="section-title">Built specifically for Ghana's vegetable value chain</h2>
+                <p class="section-desc">Eliminating produce wastage, payment default, and high transport friction.</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon icon-emerald">
+                        <i class="fa-solid fa-shield-alt"></i>
+                    </div>
+                    <h3>Digital Escrow Protection</h3>
+                    <p>Buyer funds are safely locked in platform escrow when orders are placed. Money is automatically released to the farmer's Mobile Money wallet only when delivery is verified.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-amber">
+                        <i class="fa-solid fa-truck-ramp-box"></i>
+                    </div>
+                    <h3>Smart Haulage Matchmaking</h3>
+                    <p>Calculates precise distances using Haversine formula and connects farmers with local tricycle (Aboboyaa) operators and KIA Bongo trucks for instant dispatch.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-cyan">
+                        <i class="fa-solid fa-microscope"></i>
+                    </div>
+                    <h3>AI Pathology Leaf Scanner</h3>
+                    <p>Upload a photo of tomato, pepper, or garden egg leaves to instantly detect pathogens (Early Blight, Leaf Mold, Bacterial Spot) with recommended treatment steps.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-purple">
+                        <i class="fa-solid fa-users-between-lines"></i>
+                    </div>
+                    <h3>Trust Circle Network</h3>
+                    <p>Verify connections between smallholders, Kumasi restaurants, and Accra retailers. Build reputation scores and prevent bad actors from entering the network.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-green">
+                        <i class="fa-solid fa-mobile-retro"></i>
+                    </div>
+                    <h3>Offline USSD Gateway (*920*44#)</h3>
+                    <p>Farmers without smartphones or internet access can dial the shortcode to list harvest, check pending orders, and accept transport requests from feature phones.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon icon-rose">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                    <h3>MoMo & Paystack Integration</h3>
+                    <p>Seamlessly top-up escrow balances, request instant withdrawals, or pay via MTN Mobile Money, Telecel Cash, or AT Money directly within the app.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="landing-section how-section">
+        <div class="landing-container">
+            <div class="section-header text-center">
+                <span class="sub-title uppercase">Step-By-Step Workflow</span>
+                <h2 class="section-title">How AgriConnect Market Works</h2>
+            </div>
+
+            <div class="roles-tab-headers">
+                <button class="role-tab-btn active" onclick="switchLandingRole('farmer')">
+                    <i class="fa-solid fa-wheat-awn"></i> For Farmers
+                </button>
+                <button class="role-tab-btn" onclick="switchLandingRole('buyer')">
+                    <i class="fa-solid fa-basket-shopping"></i> For Buyers
+                </button>
+                <button class="role-tab-btn" onclick="switchLandingRole('transporter')">
+                    <i class="fa-solid fa-truck"></i> For Transporters
+                </button>
+            </div>
+
+            <div class="role-steps-content active" id="role-step-farmer">
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-num">01</div>
+                        <h4>List Your Crops</h4>
+                        <p>Post your harvested tomatoes, peppers, or garden eggs with quantity, crate price, and harvest date via Web or USSD.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">02</div>
+                        <h4>Receive Escrow Orders</h4>
+                        <p>Receive order alerts knowing the buyer's money is 100% committed and secured in digital escrow.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">03</div>
+                        <h4>Handover to Driver</h4>
+                        <p>Hand over produce crates to the matched local transporter at your farm gate or Techiman market point.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">04</div>
+                        <h4>Get Paid Instantly</h4>
+                        <p>As soon as the buyer confirms delivery, funds release directly to your Mobile Money account.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="role-steps-content" id="role-step-buyer" style="display: none;">
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-num">01</div>
+                        <h4>Browse Fresh Listings</h4>
+                        <p>Search farm-fresh produce by location, harvest freshness score, and flash sale discounts.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">02</div>
+                        <h4>Fund Escrow Payment</h4>
+                        <p>Deposit funds via MoMo or card. Money stays safely locked in escrow until produce arrives.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">03</div>
+                        <h4>Track Haulage Live</h4>
+                        <p>Monitor your driver's dispatch progress on the interactive map from Techiman to Kumasi or Accra.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">04</div>
+                        <h4>Confirm & Release</h4>
+                        <p>Inspect crates upon arrival and click 'Confirm Delivery' to release funds to the farmer.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="role-steps-content" id="role-step-transporter" style="display: none;">
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-num">01</div>
+                        <h4>View Haulage Jobs</h4>
+                        <p>Check available crop transport jobs nearby based on distance, weight, and delivery location.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">02</div>
+                        <h4>Accept Job</h4>
+                        <p>Claim transport requests for your tricycle or KIA Bongo with transparent pricing per km.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">03</div>
+                        <h4>Pick Up & Deliver</h4>
+                        <p>Collect crates from the farmer and transport safely to the designated buyer location.</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">04</div>
+                        <h4>Receive Delivery Fee</h4>
+                        <p>Collect instant transport fare payout directly into your Mobile Money wallet upon job completion.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Digital Escrow Highlight Banner -->
+    <section id="escrow-sec" class="landing-section escrow-banner-section">
+        <div class="landing-container">
+            <div class="escrow-banner-card">
+                <div class="escrow-banner-text">
+                    <span class="escrow-badge"><i class="fa-solid fa-shield-halved"></i> 100% Security Guarantee</span>
+                    <h2>Zero Fraud. Zero Payment Default. Complete Peace of Mind.</h2>
+                    <p>AgriConnect Market eliminates payment risks. Farmers never ship without locked escrow funds, and buyers never pay upfront without delivery guarantees.</p>
+                    <button class="btn btn-hero-primary mt-3" onclick="openLoginPortal('login')">
+                        <i class="fa-solid fa-arrow-right font-sm"></i> Start Trading Safely
+                    </button>
+                </div>
+                <div class="escrow-banner-graphic">
+                    <div class="shield-circle">
+                        <i class="fa-solid fa-lock"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Impact Stats Section -->
+    <section id="impact-stats" class="landing-section stats-section">
+        <div class="landing-container">
+            <div class="stats-grid text-center">
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-wheat-awn"></i></div>
+                    <h3 class="stat-value">500+</h3>
+                    <p class="stat-label">Crates Harvested & Traded</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                    <h3 class="stat-value">GH¢ 120k+</h3>
+                    <p class="stat-label">Processed via MoMo Escrow</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-truck-fast"></i></div>
+                    <h3 class="stat-value">150+</h3>
+                    <p class="stat-label">Dispatched Haulage Trips</p>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon"><i class="fa-solid fa-mobile-retro"></i></div>
+                    <h3 class="stat-value">100%</h3>
+                    <p class="stat-label">USSD Offline Compatible</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="landing-cta-section">
+        <div class="landing-container text-center">
+            <h2 class="cta-title">Ready to transform your agricultural trade in Ghana?</h2>
+            <p class="cta-subtitle">Join smallholders, restaurants, and transporters building a fairer agricultural market.</p>
+            <div class="cta-btn-group">
+                <button class="btn btn-emerald-gradient btn-lg" onclick="openLoginPortal('login')">
+                    <i class="fa-solid fa-right-to-bracket"></i> Sign In to Account
+                </button>
+                <button class="btn btn-white-outline btn-lg" onclick="openLoginPortal('register')">
+                    <i class="fa-solid fa-user-plus"></i> Create New Account
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Landing Footer -->
+    <footer class="landing-footer">
+        <div class="landing-container footer-content">
+            <div class="footer-col brand-col">
+                <div class="logo">
+                    <i class="fa-solid fa-leaf text-emerald"></i>
+                    <span>AgriConnect <span class="accent">Market</span></span>
+                </div>
+                <p>Digital Escrow & Logistics Marketplace empowering vegetable value chains in Techiman, Kumasi & Accra.</p>
+                <p class="copyright">© 2026 AgriConnect Ghana. All rights reserved.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Platform</h4>
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How It Works</a>
+                <a href="#escrow-sec">Digital Escrow</a>
+                <a href="/simulator/" target="_blank">USSD Simulator</a>
+            </div>
+            <div class="footer-col">
+                <h4>Roles</h4>
+                <a href="#" onclick="openLoginPortal('login')">Farmers (Sellers)</a>
+                <a href="#" onclick="openLoginPortal('login')">Buyers (Restaurants)</a>
+                <a href="#" onclick="openLoginPortal('login')">Transporters (Logistics)</a>
+            </div>
+            <div class="footer-col">
+                <h4>Contact & Techiman Hub</h4>
+                <p><i class="fa-solid fa-location-dot text-emerald"></i> Techiman Municipal, Bono East Region, Ghana</p>
+                <p><i class="fa-solid fa-phone text-emerald"></i> +233 (0) 24 115 7835</p>
+                <p><i class="fa-solid fa-envelope text-emerald"></i> support@agriconnect.gh</p>
+            </div>
+        </div>
+    </footer>
+</div>
+
+<style>
+/* 🌟 Landing Page Styling System */
+.landing-page-wrapper {
+    width: 100%;
+    min-height: 100vh;
+    background-color: #f8fafc;
+    color: #0f172a;
+    font-family: var(--font-sans);
+    overflow-x: hidden;
+}
+
+.landing-container {
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+/* Header Navbar */
+.landing-header {
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid #e2e8f0;
+    padding: 16px 0;
+}
+
+.nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.landing-header .logo {
+    color: #0f172a !important;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+.landing-header .logo span {
+    color: #0f172a !important;
+}
+
+.landing-header .logo .accent {
+    color: #059669 !important;
+    font-weight: 800;
+}
+
+.landing-header .logo i {
+    color: #10b981 !important;
+}
+
+.landing-nav-links {
+    display: flex;
+    align-items: center;
+    gap: 28px;
+}
+
+.landing-nav-links .nav-link {
+    text-decoration: none;
+    color: #475569;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.landing-nav-links .nav-link:hover {
+    color: #10b981;
+}
+
+.ussd-badge-link {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #047857 !important;
+    padding: 6px 12px;
+    border-radius: 50px;
+    font-size: 12px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.ussd-badge-link:hover {
+    background: #d1fae5;
+    border-color: #34d399;
+}
+
+.landing-auth-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.btn-emerald-outline {
+    background: transparent;
+    border: 1px solid #10b981;
+    color: #059669;
+    padding: 9px 18px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.btn-emerald-outline:hover {
+    background: #ecfdf5;
+}
+
+.btn-emerald-gradient {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 13px;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+    transition: all 0.2s ease;
+}
+
+.btn-emerald-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+}
+
+/* Hero Section */
+.landing-hero {
+    position: relative;
+    padding: 80px 0 100px 0;
+    background: radial-gradient(circle at 80% 20%, #ecfdf5 0%, #f8fafc 60%);
+    overflow: hidden;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 50px;
+    align-items: center;
+}
+
+.hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #d1fae5;
+    color: #065f46;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 50px;
+    margin-bottom: 20px;
+    border: 1px solid #a7f3d0;
+}
+
+.hero-title {
+    font-size: 46px;
+    line-height: 1.15;
+    font-weight: 800;
+    letter-spacing: -1px;
+    color: #0f172a;
+    margin-bottom: 20px;
+}
+
+.gradient-text {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.hero-description {
+    font-size: 17px;
+    color: #475569;
+    line-height: 1.6;
+    margin-bottom: 32px;
+}
+
+.hero-cta-group {
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    margin-bottom: 40px;
+}
+
+.btn-hero-primary {
+    background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+    color: white;
+    padding: 14px 26px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 15px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.35);
+    transition: all 0.25s ease;
+}
+
+.btn-hero-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.45);
+}
+
+.btn-hero-secondary {
+    background: #ffffff;
+    color: #0f172a;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 15px;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+    transition: all 0.25s ease;
+}
+
+.btn-hero-secondary:hover {
+    background: #f1f5f9;
+    transform: translateY(-2px);
+}
+
+.btn-hero-ussd {
+    background: #fffbeb;
+    color: #92400e;
+    padding: 14px 22px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 15px;
+    border: 1px solid #fde68a;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.25s ease;
+}
+
+.btn-hero-ussd:hover {
+    background: #fef3c7;
+    transform: translateY(-2px);
+}
+
+.hero-trust-metrics {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding-top: 20px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.metric-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.metric-item strong {
+    font-size: 20px;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.metric-item span {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.metric-divider {
+    width: 1px;
+    height: 36px;
+    background: #cbd5e1;
+}
+
+/* Hero Visual Card */
+.hero-visual {
+    position: relative;
+}
+
+.visual-card-glass {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 24px;
+    box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.12);
+}
+
+.card-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f0fdf4;
+    color: #166534;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+    border: 1px solid #bbf7d0;
+}
+
+.visual-produce-demo {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.visual-produce-demo img {
+    width: 110px;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 14px;
+}
+
+.produce-details h3 {
+    font-size: 18px;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.produce-details .price-tag {
+    font-size: 20px;
+    font-weight: 800;
+    color: #059669;
+    margin-bottom: 6px;
+}
+
+.produce-details .unit {
+    font-size: 12px;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.produce-details p {
+    font-size: 12px;
+    color: #475569;
+}
+
+.escrow-flow-pill {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 12px 16px;
+}
+
+.escrow-flow-pill .step {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.escrow-flow-pill .step.active {
+    color: #059669;
+}
+
+.escrow-flow-pill .line {
+    flex: 1;
+    height: 2px;
+    background: #cbd5e1;
+    margin: 0 8px;
+}
+
+.floating-badge {
+    position: absolute;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 12px 18px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.badge-ai {
+    top: -20px;
+    right: -20px;
+}
+
+.badge-logistics {
+    bottom: -20px;
+    left: -20px;
+}
+
+.floating-badge i {
+    font-size: 24px;
+}
+
+.floating-badge div {
+    display: flex;
+    flex-direction: column;
+}
+
+.floating-badge strong {
+    font-size: 13px;
+    color: #0f172a;
+}
+
+.floating-badge span {
+    font-size: 11px;
+    color: #64748b;
+}
+
+/* Sections */
+.landing-section {
+    padding: 90px 0;
+}
+
+.section-header {
+    margin-bottom: 50px;
+}
+
+.section-header .sub-title {
+    color: #059669;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 2px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.section-header .section-title {
+    font-size: 36px;
+    color: #0f172a;
+    font-weight: 800;
+}
+
+.section-header .section-desc {
+    font-size: 16px;
+    color: #64748b;
+    margin-top: 8px;
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 28px;
+}
+
+.feature-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 16px 35px -10px rgba(15, 23, 42, 0.1);
+    border-color: #34d399;
+}
+
+.feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.icon-emerald { background: #ecfdf5; color: #10b981; }
+.icon-amber { background: #fffbeb; color: #f59e0b; }
+.icon-cyan { background: #f0f9ff; color: #0ea5e9; }
+.icon-purple { background: #faf5ff; color: #a855f7; }
+.icon-green { background: #f0fdf4; color: #16a34a; }
+.icon-rose { background: #fff1f2; color: #f43f5e; }
+
+.feature-card h3 {
+    font-size: 20px;
+    color: #0f172a;
+    margin-bottom: 10px;
+}
+
+.feature-card p {
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* How Section */
+.how-section {
+    background: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.roles-tab-headers {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.role-tab-btn {
+    background: #f1f5f9;
+    border: 1px solid #cbd5e1;
+    color: #475569;
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.role-tab-btn.active, .role-tab-btn:hover {
+    background: #10b981;
+    color: #ffffff;
+    border-color: #10b981;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.3);
+}
+
+.steps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 24px;
+}
+
+.step-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    padding: 24px;
+    position: relative;
+}
+
+.step-num {
+    font-size: 32px;
+    font-weight: 900;
+    color: #10b981;
+    font-family: var(--font-display);
+    margin-bottom: 12px;
+    opacity: 0.8;
+}
+
+.step-card h4 {
+    font-size: 17px;
+    color: #0f172a;
+    margin-bottom: 8px;
+}
+
+.step-card p {
+    font-size: 13px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+/* Escrow Banner Section */
+.escrow-banner-section {
+    padding: 60px 0;
+}
+
+.escrow-banner-card {
+    background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
+    border-radius: 28px;
+    padding: 50px 60px;
+    color: #ffffff;
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    align-items: center;
+    gap: 40px;
+    box-shadow: 0 20px 40px rgba(6, 78, 59, 0.25);
+}
+
+.escrow-badge {
+    background: rgba(52, 211, 153, 0.2);
+    color: #6ee7b7;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 50px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 16px;
+}
+
+.escrow-banner-text h2 {
+    font-size: 32px;
+    margin-bottom: 16px;
+    line-height: 1.25;
+}
+
+.escrow-banner-text p {
+    color: #a7f3d0;
+    font-size: 15px;
+    line-height: 1.6;
+}
+
+.shield-circle {
+    width: 140px;
+    height: 140px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.08);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    color: #34d399;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(52, 211, 153, 0.3);
+}
+
+/* Stats Section */
+.stats-section {
+    background: #f8fafc;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 30px 20px;
+    box-shadow: var(--shadow-soft);
+}
+
+.stat-icon {
+    font-size: 32px;
+    color: #10b981;
+    margin-bottom: 12px;
+}
+
+.stat-value {
+    font-size: 34px;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 6px;
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 600;
+}
+
+/* CTA Section */
+.landing-cta-section {
+    background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+    padding: 80px 0;
+    color: #ffffff;
+}
+
+.cta-title {
+    font-size: 36px;
+    margin-bottom: 14px;
+}
+
+.cta-subtitle {
+    font-size: 17px;
+    color: #a7f3d0;
+    margin-bottom: 32px;
+}
+
+.cta-btn-group {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+}
+
+.btn-lg {
+    padding: 14px 28px;
+    font-size: 16px;
+}
+
+.btn-white-outline {
+    background: transparent;
+    border: 2px solid #ffffff;
+    color: #ffffff;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-white-outline:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Footer */
+.landing-footer {
+    background: #0f172a;
+    color: #cbd5e1;
+    padding: 60px 0 30px 0;
+    border-top: 1px solid #1e293b;
+}
+
+.footer-content {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+    gap: 40px;
+}
+
+.footer-col h4 {
+    color: #ffffff;
+    font-size: 15px;
+    margin-bottom: 16px;
+}
+
+.footer-col a {
+    display: block;
+    color: #94a3b8;
+    text-decoration: none;
+    font-size: 13px;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+}
+
+.footer-col a:hover {
+    color: #34d399;
+}
+
+.footer-col p {
+    font-size: 13px;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin-bottom: 10px;
+}
+
+.brand-col .logo {
+    color: #ffffff;
+    font-size: 22px;
+    margin-bottom: 14px;
+}
+
+.copyright {
+    margin-top: 20px;
+    font-size: 12px !important;
+    color: #64748b !important;
+}
+
+@media (max-width: 900px) {
+    .hero-grid {
+        grid-template-columns: 1fr;
+    }
+    .landing-nav-links {
+        display: none;
+    }
+    .escrow-banner-card {
+        grid-template-columns: 1fr;
+        padding: 30px;
+    }
+    .footer-content {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+</style>
+
+<script>
+window.openLoginPortal = window.openLoginPortal || function(mode) {
+    var portal = document.getElementById('login-portal');
+    if (portal) portal.style.display = 'flex';
+    var tabLogin = document.getElementById('tab-btn-login');
+    var tabRegister = document.getElementById('tab-btn-register');
+    
+    if (mode === 'register' && tabRegister) {
+        tabRegister.click();
+    } else if (tabLogin) {
+        tabLogin.click();
+    }
+};
+
+window.closeLoginPortal = window.closeLoginPortal || function() {
+    var portal = document.getElementById('login-portal');
+    if (portal) portal.style.display = 'none';
+};
+
+window.switchLandingRole = window.switchLandingRole || function(role) {
+    var roles = ['farmer', 'buyer', 'transporter'];
+    roles.forEach(function(r) {
+        var content = document.getElementById('role-step-' + r);
+        if (content) content.style.display = (r === role) ? 'block' : 'none';
+    });
+    
+    var btns = document.querySelectorAll('.role-tab-btn');
+    btns.forEach(function(btn) {
+        if (btn.getAttribute('onclick') && btn.getAttribute('onclick').indexOf(role) !== -1) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+};
+</script>
