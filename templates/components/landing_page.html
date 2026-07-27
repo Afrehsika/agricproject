@@ -1141,9 +1141,9 @@
 </style>
 
 <script>
-window.openLoginPortal = window.openLoginPortal || function(mode) {
+window.openLoginPortal = function(mode) {
     var portal = document.getElementById('login-portal');
-    if (portal) portal.style.display = 'flex';
+    if (portal) portal.style.setProperty('display', 'flex', 'important');
     var tabLogin = document.getElementById('tab-btn-login');
     var tabRegister = document.getElementById('tab-btn-register');
     
@@ -1154,9 +1154,9 @@ window.openLoginPortal = window.openLoginPortal || function(mode) {
     }
 };
 
-window.closeLoginPortal = window.closeLoginPortal || function() {
+window.closeLoginPortal = function() {
     var portal = document.getElementById('login-portal');
-    if (portal) portal.style.display = 'none';
+    if (portal) portal.style.setProperty('display', 'none', 'important');
 };
 
 window.switchLandingRole = window.switchLandingRole || function(role) {

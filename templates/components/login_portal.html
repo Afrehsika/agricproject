@@ -89,21 +89,21 @@
         <div class="demo-profiles-container">
             <h5 class="text-secondary text-center font-xxs weight-600 tracking-wider uppercase mb-3">Quick-Demo Access (No Password)</h5>
             <div class="demo-profiles-grid">
-                <button class="btn btn-demo-login demo-farmer" id="demo-login-farmer">
+                <button type="button" class="btn btn-demo-login demo-farmer" id="demo-login-farmer" onclick="quickDemoLogin('Kofi_Mensah')">
                     <i class="fa-solid fa-wheat-awn text-emerald"></i>
                     <div>
                         <strong>Kofi Mensah</strong>
                         <span>Farmer profile</span>
                     </div>
                 </button>
-                <button class="btn btn-demo-login demo-buyer" id="demo-login-buyer">
+                <button type="button" class="btn btn-demo-login demo-buyer" id="demo-login-buyer" onclick="quickDemoLogin('Kumasi_Restaurant_Hub')">
                     <i class="fa-solid fa-cart-shopping text-sky"></i>
                     <div>
                         <strong>Restaurant Hub</strong>
                         <span>Buyer profile</span>
                     </div>
                 </button>
-                <button class="btn btn-demo-login demo-transporter" id="demo-login-transporter">
+                <button type="button" class="btn btn-demo-login demo-transporter" id="demo-login-transporter" onclick="quickDemoLogin('KIA_Bongo_Kojo')">
                     <i class="fa-solid fa-truck text-amber"></i>
                     <div>
                         <strong>Kojo Logistics</strong>
@@ -132,6 +132,10 @@
     align-items: center;
     overflow-y: auto;
     padding: 20px;
+}
+
+#login-portal[style*="display: none"] {
+    display: none !important;
 }
 
 .login-portal-card {

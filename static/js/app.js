@@ -72,27 +72,149 @@ async function initApp() {
 function initMap() {
     if (map) return;
     
+    const mapContainer = document.getElementById('supply-map');
+    if (!mapContainer) return;
+
     // Center of Techiman (Bono East capital)
     map = L.map('supply-map', {
         zoomControl: true,
         scrollWheelZoom: false
-    }).setView([7.5848, -1.9392], 12);
+    }).setView([7.5848, -1.9392], 13);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
+
+    renderIoTMapMarkers();
+}
+
+function renderIoTMapMarkers() {
+    if (!window.map) return;
+    
+    // Clear previous markers
+    mapMarkers.forEach(m => window.map.removeLayer(m));
+    mapMarkers = [];
+
+    // Custom Glowing Vehicle Icon for IoT Transporters
+    const truckIcon = L.divIcon({
+        className: 'iot-truck-marker',
+        html: `
+            <div style="background: linear-gradient(135deg, #064e3b 0%, #10b981 100%); border: 2px solid #ffffff; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4); color: #ffffff; font-size: 16px; position: relative;">
+                <i class="fa-solid fa-truck-fast"></i>
+                <div style="position: absolute; top: -2px; right: -2px; width: 10px; height: 10px; background-color: #34d399; border-radius: 50%; border: 2px solid #ffffff; box-shadow: 0 0 6px #34d399;"></div>
+            </div>
+        `,
+        iconSize: [38, 38],
+        iconAnchor: [19, 19]
+    });
+
+    const farmIcon = L.divIcon({
+        className: 'iot-farm-marker',
+        html: `
+            <div style="background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); border: 2px solid #ffffff; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4); color: #ffffff; font-size: 14px;">
+                <i class="fa-solid fa-wheat-awn"></i>
+            </div>
+        `,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+    });
+
+    const buyerIcon = L.divIcon({
+        className: 'iot-buyer-marker',
+        html: `
+            <div style="background: linear-gradient(135deg, #0284c7 0%, #0ea5e9 100%); border: 2px solid #ffffff; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.4); color: #ffffff; font-size: 14px;">
+                <i class="fa-solid fa-store"></i>
+            </div>
+        `,
+        iconSize: [34, 34],
+        iconAnchor: [17, 17]
+    });
+
+    // 1. KIA Bongo Truck Transporter
+    const m1 = L.marker([7.5920, -1.9320], { icon: truckIcon }).addTo(window.map);
+    m1.bindPopup(`
+        <div style="font-family: sans-serif; padding: 4px; max-width: 230px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span style="background: #d1fae5; color: #065f46; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 50px;">
+                    <i class="fa-solid fa-microchip"></i> IoT-GPS-GH8821
+                </span>
+                <span style="color: #10b981; font-size: 10px; font-weight: 700;">🟢 LIVE 4G</span>
+            </div>
+            <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 800; color: #0f172a;">Kojo Logistics Truck</h4>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #475569;">KIA Bongo 3.5 Tonne • Driver: Kojo Mensah (055246088)</p>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; font-size: 11px; margin-bottom: 8px;">
+                <div>⚡ Speed: <strong>42 km/h</strong></div>
+                <div>❄️ Cold-Chain Temp: <strong>18.4 °C</strong></div>
+                <div>📍 Location: <strong>Techiman Market Roundabout</strong></div>
+            </div>
+            <button class="btn btn-emerald-gradient btn-block" style="width: 100%; padding: 6px; font-size: 11px; border-radius: 6px;" onclick="alert('Driver Kojo Logistics assigned to dispatch!')">
+                <i class="fa-solid fa-truck-ramp-box"></i> Book This Vehicle
+            </button>
+        </div>
+    `);
+    mapMarkers.push(m1);
+
+    // 2. Aboboyaa Tricycle Fleet
+    const m2 = L.marker([7.5750, -1.9450], { icon: truckIcon }).addTo(window.map);
+    m2.bindPopup(`
+        <div style="font-family: sans-serif; padding: 4px; max-width: 230px;">
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                <span style="background: #fef3c7; color: #92400e; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 50px;">
+                    <i class="fa-solid fa-microchip"></i> IoT-GPS-GH9943
+                </span>
+                <span style="color: #f59e0b; font-size: 10px; font-weight: 700;">🟢 LIVE 4G</span>
+            </div>
+            <h4 style="margin: 0 0 4px 0; font-size: 14px; font-weight: 800; color: #0f172a;">Aboboyaa Tricycle #4</h4>
+            <p style="margin: 0 0 8px 0; font-size: 11px; color: #475569;">Motor Tricycle • Driver: Kwame Express (024115783)</p>
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px; font-size: 11px; margin-bottom: 8px;">
+                <div>⚡ Speed: <strong>28 km/h</strong></div>
+                <div>❄️ Sensor Temp: <strong>21.0 °C</strong></div>
+                <div>📍 Location: <strong>Tuobodom Farm Gate Junction</strong></div>
+            </div>
+            <button class="btn btn-emerald-gradient btn-block" style="width: 100%; padding: 6px; font-size: 11px; border-radius: 6px;" onclick="alert('Driver Kwame Express assigned to dispatch!')">
+                <i class="fa-solid fa-truck-ramp-box"></i> Book This Vehicle
+            </button>
+        </div>
+    `);
+    mapMarkers.push(m2);
+
+    // 3. Farm Gate Hub
+    const m3 = L.marker([7.5800, -1.9500], { icon: farmIcon }).addTo(window.map);
+    m3.bindPopup(`
+        <div style="font-family: sans-serif; padding: 4px;">
+            <h4 style="margin: 0 0 4px 0; font-size: 13px; font-weight: 800; color: #0f172a;">🌾 Kofi Mensah Farm Gate</h4>
+            <p style="margin: 0; font-size: 11px; color: #475569;">Techiman Farm Settlement • 50 Crates Off-Vine Tomatoes</p>
+        </div>
+    `);
+    mapMarkers.push(m3);
+
+    // 4. Buyer Hub
+    const m4 = L.marker([7.5990, -1.9250], { icon: buyerIcon }).addTo(window.map);
+    m4.bindPopup(`
+        <div style="font-family: sans-serif; padding: 4px;">
+            <h4 style="margin: 0 0 4px 0; font-size: 13px; font-weight: 800; color: #0f172a;">🏬 Kumasi Restaurant Hub</h4>
+            <p style="margin: 0; font-size: 11px; color: #475569;">Commercial Buyer Hub • High Demand for Tomatoes & Peppers</p>
+        </div>
+    `);
+    mapMarkers.push(m4);
 }
 
 function showDashboard() {
     document.body.classList.add('dashboard-mode');
     const landing = document.getElementById('landing-page');
-    if (landing) landing.style.display = 'none';
+    if (landing) landing.style.setProperty('display', 'none', 'important');
     
     const portal = document.getElementById('login-portal');
-    if (portal) portal.style.display = 'none';
+    if (portal) portal.style.setProperty('display', 'none', 'important');
     
-    document.getElementById('app-container').style.display = 'flex';
-    updateUIForUser();
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.style.setProperty('display', 'flex', 'important');
+    
+    try {
+        updateUIForUser();
+    } catch (e) {
+        console.error("UI update error: ", e);
+    }
     
     // Trigger map redraw to ensure leaflet loads container correctly once display is block
     if (map) {
@@ -101,35 +223,45 @@ function showDashboard() {
         }, 100);
     }
     
-    // Load default tab by role
-    if (currentUser.role === 'TRANSPORTER') {
-        switchTab('logistics');
-    } else {
-        switchTab('marketplace');
+    try {
+        // Load default tab by role
+        if (currentUser && currentUser.role === 'TRANSPORTER') {
+            switchTab('logistics');
+        } else {
+            switchTab('marketplace');
+        }
+    } catch (e) {
+        console.error("Switch tab error: ", e);
     }
 
-    // Start background polling for unread messages and chats
-    pollMessages();
-    if (!chatPollingInterval) {
-        chatPollingInterval = setInterval(pollMessages, 4000);
-    }
+    try {
+        // Start background polling for unread messages and chats
+        pollMessages();
+        if (!chatPollingInterval) {
+            chatPollingInterval = setInterval(pollMessages, 4000);
+        }
 
-    // Start background polling for notifications
-    pollNotifications();
-    if (!notificationPollingInterval) {
-        notificationPollingInterval = setInterval(pollNotifications, 5000);
+        // Start background polling for notifications
+        pollNotifications();
+        if (!notificationPollingInterval) {
+            notificationPollingInterval = setInterval(pollNotifications, 5000);
+        }
+    } catch (e) {
+        console.error("Polling error: ", e);
     }
 }
 
 function showLoginPortal() {
     document.body.classList.remove('dashboard-mode');
     const landing = document.getElementById('landing-page');
-    if (landing) landing.style.display = 'block';
+    if (landing) landing.style.setProperty('display', 'block', 'important');
     
     const portal = document.getElementById('login-portal');
-    if (portal) portal.style.display = 'none';
+    if (portal) portal.style.setProperty('display', 'none', 'important');
     
-    document.getElementById('app-container').style.display = 'none';
+    const appContainer = document.getElementById('app-container');
+    if (appContainer) appContainer.style.setProperty('display', 'none', 'important');
+    
     currentUser = null;
     
     // Clear chat polling interval
@@ -150,11 +282,9 @@ function showLoginPortal() {
 
 window.openLoginPortal = function(mode = 'login') {
     const portal = document.getElementById('login-portal');
-    if (portal) portal.style.display = 'flex';
+    if (portal) portal.style.setProperty('display', 'flex', 'important');
     const tabLogin = document.getElementById('tab-btn-login');
     const tabRegister = document.getElementById('tab-btn-register');
-    const formLogin = document.getElementById('login-form');
-    const formRegister = document.getElementById('register-form');
     
     if (mode === 'register' && tabRegister) {
         tabRegister.click();
@@ -165,7 +295,7 @@ window.openLoginPortal = function(mode = 'login') {
 
 window.closeLoginPortal = function() {
     const portal = document.getElementById('login-portal');
-    if (portal) portal.style.display = 'none';
+    if (portal) portal.style.setProperty('display', 'none', 'important');
 };
 
 window.switchLandingRole = function(role) {
@@ -210,15 +340,43 @@ function setupLoginHandlers() {
     if (formLogin) {
         formLogin.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('login-username').value;
-            const password = document.getElementById('login-password').value;
+            let username = document.getElementById('login-username').value.trim();
+            let password = document.getElementById('login-password').value;
+
+            // Map friendly display names to exact database usernames
+            const demoMap = {
+                'kofi mensah': 'Kofi_Mensah',
+                'kofi': 'Kofi_Mensah',
+                'restaurant hub': 'Kumasi_Restaurant_Hub',
+                'restaurant': 'Kumasi_Restaurant_Hub',
+                'kojo logistics': 'KIA_Bongo_Kojo',
+                'kojo': 'KIA_Bongo_Kojo'
+            };
+
+            const normalizedUser = demoMap[username.toLowerCase()] || username;
+            
+            // Default demo password fallback if blank
+            if (!password && ['Kofi_Mensah', 'Kumasi_Restaurant_Hub', 'KIA_Bongo_Kojo'].includes(normalizedUser)) {
+                password = 'password123';
+            }
 
             try {
-                const res = await fetch('/api/login/', {
+                let res = await fetch('/api/login/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ username, password })
+                    body: JSON.stringify({ username: normalizedUser, password })
                 });
+
+                if (!res.ok && ['Kofi_Mensah', 'Kumasi_Restaurant_Hub', 'KIA_Bongo_Kojo'].includes(normalizedUser)) {
+                    // Try auto-seeding if demo login failed
+                    console.log("Attempting database auto-seed...");
+                    await fetch('/api/seed/', { method: 'POST' });
+                    res = await fetch('/api/login/', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ username: normalizedUser, password: password || 'password123' })
+                    });
+                }
 
                 if (res.ok) {
                     currentUser = await res.json();
@@ -226,7 +384,7 @@ function setupLoginHandlers() {
                     showDashboard();
                 } else {
                     const err = await res.json();
-                    alert("Login failed: " + (err.detail || JSON.stringify(err)));
+                    alert("Login failed: " + (err.detail || "Invalid credentials"));
                 }
             } catch (err) {
                 console.error(err);
@@ -286,48 +444,41 @@ function setupLoginHandlers() {
     if (btnTransporter) btnTransporter.onclick = () => quickDemoLogin('KIA_Bongo_Kojo');
 }
 
-async function quickDemoLogin(username) {
+window.quickDemoLogin = async function(username) {
     try {
-        let success = await autoLoginDemoUser(username);
-        if (!success) {
-            // Demo profile not found, try to auto-seed
-            console.log("Quick demo profile login failed, attempting to auto-seed database...");
-            const seedRes = await fetch('/api/seed/', { method: 'POST' });
-            if (seedRes.ok) {
-                // Retry login after seeding
-                success = await autoLoginDemoUser(username);
-            }
-        }
-        
-        if (success) {
-            showDashboard();
-        } else {
-            alert("Login failed: Unable to authenticate or auto-seed demo profiles.");
-        }
-    } catch (e) {
-        console.error(e);
-    }
-}
-
-// Auto Login Demo User
-async function autoLoginDemoUser(username) {
-    try {
-        const res = await fetch('/api/login/', {
+        let res = await fetch('/api/login/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ username: username, password: 'password123' })
         });
         
+        if (!res.ok) {
+            // Auto-seed if database empty
+            console.log("Seeding demo data...");
+            await fetch('/api/seed/', { method: 'POST' });
+            res = await fetch('/api/login/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: username, password: 'password123' })
+            });
+        }
+        
         if (res.ok) {
             currentUser = await res.json();
-            updateUIForUser();
-            return true;
+            showDashboard();
+        } else {
+            const err = await res.json();
+            alert("Login failed: " + (err.detail || "Unable to authenticate demo account"));
         }
     } catch (e) {
-        console.error("Auto login error: ", e);
+        console.error("Quick demo login error: ", e);
+        alert("Error connecting to server.");
     }
-    return false;
-}
+};
+
+window.autoLoginDemoUser = async function(username) {
+    return window.quickDemoLogin(username);
+};
 
 // Update UI depending on current logged in user
 function updateUIForUser() {
@@ -936,14 +1087,18 @@ function switchTab(tabName) {
         targetPane.classList.add('active');
     }
 
-    // Toggle map visibility based on tab name to maintain design consistency
+    // Toggle map visibility based on tab name (Map is located exclusively under Logistics & Dispatch)
     const mapSection = document.querySelector('.map-section');
     if (mapSection) {
-        if (tabName === 'marketplace' || tabName === 'logistics') {
+        if (tabName === 'logistics') {
             mapSection.style.display = 'block';
             setTimeout(() => {
-                if (window.map) window.map.invalidateSize();
-            }, 360);
+                initMap();
+                if (window.map) {
+                    window.map.invalidateSize();
+                    renderIoTMapMarkers();
+                }
+            }, 200);
         } else {
             mapSection.style.display = 'none';
         }
