@@ -75,8 +75,10 @@ if DATABASE_URL:
     }
     if 'OPTIONS' not in DATABASES['default']:
         DATABASES['default']['OPTIONS'] = {}
-    # Disable server side binding to fix Django 5+ issues with Neon/PgBouncer transaction pooling
+    # Disable server side binding & cursors to fix Django 5+ issues with Neon/PgBouncer transaction pooling
     DATABASES['default']['OPTIONS']['server_side_binding'] = False
+    DATABASES['default']['DISABLE_SERVER_SIDE_CURSORS'] = True
+
 else:
     DATABASES = {
         'default': {

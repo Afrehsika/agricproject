@@ -1706,13 +1706,19 @@ async function loadOrders() {
                         <p class="font-xs mt-1 mb-1" style="color: var(--text-primary);"><strong>Reason:</strong> ${d.reason_display}</p>
                         <p class="font-xs text-secondary mb-1"><strong>Details:</strong> ${d.description}</p>
                         ${d.resolution_notes ? `<p class="font-xs text-emerald mt-1"><strong>Resolution Note:</strong> ${d.resolution_notes}</p>` : ''}
-                        ${(currentUser.is_staff || currentUser.role === 'BUYER' || currentUser.role === 'FARMER') && (d.status === 'OPEN' || d.status === 'UNDER_REVIEW') ? `
+                        ${(currentUser.is_staff || currentUser.is_superuser) && (d.status === 'OPEN' || d.status === 'UNDER_REVIEW') ? `
                             <button class="btn btn-secondary btn-sm mt-2 resolve-dispute-trigger-btn" data-dispute-id="${d.id}" data-order-id="${order.id}">
-                                <i class="fa-solid fa-gavel"></i> Resolve / Mediate Dispute
+                                <i class="fa-solid fa-gavel"></i> Resolve / Mediate Dispute (Admin)
                             </button>
-                        ` : ''}
+                        ` : ((d.status === 'OPEN' || d.status === 'UNDER_REVIEW') ? `
+                            <div class="mt-2 text-amber font-xs font-semibold">
+                                <i class="fa-solid fa-clock-rotate-left"></i> Awaiting Platform Admin Mediation & Resolution
+                            </div>
+                        ` : '')}
                     </div>
                 `;
+
+
             }
 
             // Actions for the buyer and farmer

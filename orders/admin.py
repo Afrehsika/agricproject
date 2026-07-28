@@ -1,10 +1,19 @@
 from decimal import Decimal
 from django.contrib import admin, messages
 from django.db import transaction
+from django.urls import path
+from django.shortcuts import redirect
 from django.utils.html import format_html
 from .models import Order, Dispute
 from payments.models import WalletTransaction
 from users.notifications import create_alert
+
+
+class DisputeInline(admin.StackedInline):
+    model = Dispute
+    extra = 0
+    readonly_fields = ('raised_by', 'reason', 'description', 'evidence_url', 'status', 'resolution', 'refund_amount', 'release_amount', 'resolution_notes', 'resolved_by', 'created_at')
+    can_delete = False
 
 
 @admin.register(Order)
@@ -13,6 +22,45 @@ class OrderAdmin(admin.ModelAdmin):
     list_filter = ('status', 'payment_status', 'delivery_type', 'created_at')
     search_fields = ('id', 'buyer__username', 'produce__name')
     ordering = ('-id',)
+    readonly_fields = ('admin_dispute_mediation_banner',)
+    inlines = [DisputeInline]
+
+    fields = (
+        'admin_dispute_mediation_banner',
+        'buyer', 'produce', 'quantity', 'total_price', 'status', 'payment_status', 'delivery_type'
+    )
+
+    def admin_dispute_mediation_banner(self, obj):
+        if not obj or not obj.id:
+            return ""
+        dispute = obj.disputes.order_by('-created_at').first()
+        if not dispute:
+            return format_html('<span style="color: #64748b; font-size: 12px;">No disputes raised for this order.</span>')
+        
+        if dispute.status in ['RESOLVED_REFUND', 'RESOLVED_RELEASE', 'RESOLVED_PARTIAL', 'CANCELLED']:
+            return format_html(
+                '<div style="padding: 12px 16px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; color: #065f46; margin-bottom: 10px;">'
+                '<strong>✅ Dispute #{} Resolved ({})</strong><br>Resolution Notes: {}'
+                '</div>',
+                dispute.id, dispute.get_status_display(), dispute.resolution_notes or 'No notes provided.'
+            )
+
+        return format_html(
+            '<div style="padding: 16px; background: #fff1f2; border: 2px solid #f43f5e; border-radius: 8px; margin-bottom: 15px;">'
+            '<h4 style="margin: 0 0 6px 0; color: #be123c; font-size: 15px;">⚠️ Active Dispute #{} - {}</h4>'
+            '<p style="margin: 0 0 10px 0; font-size: 12px; color: #881337;"><strong>Reason:</strong> {} | <strong>Raised by:</strong> {}<br><strong>Details:</strong> {}</p>'
+            '<p style="margin: 0 0 12px 0; font-size: 12px; color: #475569;">Select an arbitration action to resolve this dispute and execute escrow wallet transfers immediately:</p>'
+            '<div style="display: flex; gap: 10px; flex-wrap: wrap;">'
+            '<a class="button" style="background: #7c3aed; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/full-refund/">⚖️ Grant Full Refund (100%)</a>'
+            '<a class="button" style="background: #059669; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/release-farmer/">🌾 Release Escrow to Farmer</a>'
+            '<a class="button" style="background: #0284c7; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/partial-split/">✂️ Partial Split 50/50</a>'
+            '</div>'
+            '</div>',
+            dispute.id, dispute.get_status_display(), dispute.get_reason_display(), dispute.raised_by.username, dispute.description,
+            dispute.id, dispute.id, dispute.id
+        )
+    admin_dispute_mediation_banner.short_description = "Dispute Mediation Panel"
+
 
 
 @admin.register(Dispute)
@@ -23,7 +71,13 @@ class DisputeAdmin(admin.ModelAdmin):
     )
     list_filter = ('status', 'reason', 'resolution', 'created_at')
     search_fields = ('id', 'order__id', 'raised_by__username', 'description', 'resolution_notes')
-    readonly_fields = ('created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at', 'admin_mediation_panel')
+    fields = (
+        'admin_mediation_panel',
+        'order', 'raised_by', 'reason', 'description', 'evidence_url',
+        'status', 'resolution', 'refund_amount', 'release_amount', 'resolution_notes', 'resolved_by',
+        'created_at', 'updated_at'
+    )
     actions = ['action_resolve_full_refund', 'action_resolve_release_farmer', 'action_resolve_partial_split_50_50']
 
     def order_link(self, obj):
@@ -43,7 +97,60 @@ class DisputeAdmin(admin.ModelAdmin):
         return format_html('<span style="background:{}; color:#fff; padding:3px 8px; border-radius:4px; font-weight:bold; font-size:11px;">{}</span>', color, obj.get_status_display())
     status_badge.short_description = "Dispute Status"
 
-    @admin.action(description="⚖️ Mediate: Grant Full Refund to Buyer (100%)")
+    def admin_mediation_panel(self, obj):
+        if not obj or not obj.id:
+            return "Save dispute first to enable mediation actions."
+        if obj.status in ['RESOLVED_REFUND', 'RESOLVED_RELEASE', 'RESOLVED_PARTIAL', 'CANCELLED']:
+            return format_html(
+                '<div style="padding: 12px 16px; background: #ecfdf5; border: 1px solid #10b981; border-radius: 8px; color: #065f46;">'
+                '<strong>✅ Dispute Resolved ({})</strong><br>Resolution Notes: {}'
+                '</div>',
+                obj.get_status_display(), obj.resolution_notes or 'No notes provided.'
+            )
+        
+        return format_html(
+            '<div style="padding: 16px; background: #f8fafc; border: 2px solid #6366f1; border-radius: 8px; margin-bottom: 10px;">'
+            '<h4 style="margin: 0 0 8px 0; color: #4338ca; font-size: 15px;">⚖️ Administrative Dispute Mediation Engine</h4>'
+            '<p style="margin: 0 0 14px 0; font-size: 12px; color: #475569;">Select an arbitration resolution below to execute escrow wallet transfers and update order state:</p>'
+            '<div style="display: flex; gap: 10px; flex-wrap: wrap;">'
+            '<a class="button" style="background: #7c3aed; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/full-refund/">⚖️ Grant Full Refund (100%)</a>'
+            '<a class="button" style="background: #059669; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/release-farmer/">🌾 Release Escrow to Farmer</a>'
+            '<a class="button" style="background: #0284c7; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/partial-split/">✂️ Partial Split 50/50</a>'
+            '</div>'
+            '</div>',
+            obj.id, obj.id, obj.id
+        )
+    admin_mediation_panel.short_description = "Admin Mediation Actions"
+
+    def get_urls(self):
+        urls = super().get_urls()
+        custom_urls = [
+            path('<path:object_id>/resolve-action/<str:action_type>/', self.admin_site.admin_view(self.process_resolve_action), name='dispute-resolve-action'),
+        ]
+        return custom_urls + urls
+
+    def process_resolve_action(self, request, object_id, action_type):
+        try:
+            dispute = Dispute.objects.get(pk=object_id)
+        except Dispute.DoesNotExist:
+            self.message_user(request, "Dispute not found", level=messages.ERROR)
+            return redirect('/admin/orders/dispute/')
+
+        if dispute.status in ['RESOLVED_REFUND', 'RESOLVED_RELEASE', 'RESOLVED_PARTIAL', 'CANCELLED']:
+            self.message_user(request, "This dispute is already resolved.", level=messages.WARNING)
+            return redirect(f'/admin/orders/dispute/{object_id}/change/')
+
+        queryset = Dispute.objects.filter(pk=object_id)
+        if action_type == 'full-refund':
+            self.action_resolve_full_refund(request, queryset)
+        elif action_type == 'release-farmer':
+            self.action_resolve_release_farmer(request, queryset)
+        elif action_type == 'partial-split':
+            self.action_resolve_partial_split_50_50(request, queryset)
+        
+        return redirect(f'/admin/orders/dispute/{object_id}/change/')
+
+    @admin.action(description="⚖️ Mediate: Grant Full Refund to Buyer (100%%)")
     def action_resolve_full_refund(self, request, queryset):
         count = 0
         for dispute in queryset:
@@ -222,5 +329,6 @@ class DisputeAdmin(admin.ModelAdmin):
 
                 count += 1
         self.message_user(request, f"Successfully resolved {count} dispute(s) with 50/50 partial split.", messages.SUCCESS)
+
 
 

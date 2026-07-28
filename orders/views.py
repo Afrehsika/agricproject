@@ -987,17 +987,21 @@ class DisputeResolveView(APIView):
 
     def post(self, request, pk):
         _ensure_dispute_table_schema()
+
+        if not (request.user.is_staff or request.user.is_superuser):
+            return Response({'detail': 'Only platform administrators can resolve disputes'}, status=status.HTTP_403_FORBIDDEN)
+
         try:
             dispute = Dispute.objects.get(id=pk)
-
         except Dispute.DoesNotExist:
             return Response({'detail': 'Dispute not found'}, status=status.HTTP_404_NOT_FOUND)
 
         if dispute.status in ['RESOLVED_REFUND', 'RESOLVED_RELEASE', 'RESOLVED_PARTIAL', 'CANCELLED']:
             return Response({'detail': 'This dispute is already resolved or closed'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Only staff or parties by agreement can resolve
+        # Only staff can resolve
         order = dispute.order
+
         resolution = request.data.get('resolution')  # 'REFUND_BUYER', 'RELEASE_FARMER', 'PARTIAL_SPLIT', 'DISMISS'
         notes = request.data.get('notes', 'Resolved via platform escrow mediation')
         restock = request.data.get('restock_inventory', False)
