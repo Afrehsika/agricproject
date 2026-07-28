@@ -200,7 +200,14 @@ function renderIoTMapMarkers() {
 }
 
 function showDashboard() {
+    try {
+        localStorage.setItem('agri_is_logged_in', 'true');
+        document.documentElement.classList.add('preload-dashboard-mode');
+    } catch (e) {}
+
     document.body.classList.add('dashboard-mode');
+    const landingWrapper = document.getElementById('landing-page-wrapper');
+    if (landingWrapper) landingWrapper.style.setProperty('display', 'none', 'important');
     const landing = document.getElementById('landing-page');
     if (landing) landing.style.setProperty('display', 'none', 'important');
     
@@ -224,8 +231,10 @@ function showDashboard() {
     }
     
     try {
-        // Load default tab by role
-        if (currentUser && currentUser.role === 'TRANSPORTER') {
+        const savedTab = localStorage.getItem('agri_active_tab');
+        if (savedTab && ['marketplace', 'farmer-listings', 'orders', 'logistics', 'disease-scanner', 'network', 'messages', 'analytics'].includes(savedTab)) {
+            switchTab(savedTab);
+        } else if (currentUser && currentUser.role === 'TRANSPORTER') {
             switchTab('logistics');
         } else {
             switchTab('marketplace');
@@ -252,7 +261,14 @@ function showDashboard() {
 }
 
 function showLoginPortal() {
+    try {
+        localStorage.removeItem('agri_is_logged_in');
+        document.documentElement.classList.remove('preload-dashboard-mode');
+    } catch (e) {}
+
     document.body.classList.remove('dashboard-mode');
+    const landingWrapper = document.getElementById('landing-page-wrapper');
+    if (landingWrapper) landingWrapper.style.setProperty('display', 'block', 'important');
     const landing = document.getElementById('landing-page');
     if (landing) landing.style.setProperty('display', 'block', 'important');
     
@@ -261,6 +277,7 @@ function showLoginPortal() {
     
     const appContainer = document.getElementById('app-container');
     if (appContainer) appContainer.style.setProperty('display', 'none', 'important');
+
     
     currentUser = null;
     
@@ -279,6 +296,7 @@ function showLoginPortal() {
     // Reset seen notifications cache
     seenNotificationIds.clear();
 }
+
 
 window.openLoginPortal = function(mode = 'login') {
     const portal = document.getElementById('login-portal');
@@ -1097,8 +1115,12 @@ function setupEventListeners() {
 // Tab switcher logic
 function switchTab(tabName) {
     currentTab = tabName;
+    try {
+        localStorage.setItem('agri_active_tab', tabName);
+    } catch (e) {}
     
     // Manage Sidebar active class
+
     document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
         if (item.getAttribute('data-tab') === tabName) {
             item.classList.add('active');

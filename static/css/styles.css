@@ -45,7 +45,18 @@ html {
     overflow-y: auto;
 }
 
+/* Prevent Landing Page Flash on Refresh for Logged In Users */
+html.preload-dashboard-mode #landing-page,
+html.preload-dashboard-mode #landing-page-wrapper {
+    display: none !important;
+}
+html.preload-dashboard-mode #app-container {
+    display: flex !important;
+}
+
+
 body {
+
     background-color: var(--bg-main);
     color: var(--text-primary);
     font-family: var(--font-sans);

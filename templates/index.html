@@ -15,16 +15,30 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'css/styles.css' %}?v=3.0">
+    <!-- Prevent Landing Page Flash on Refresh for Logged-In Users -->
+    <script>
+        (function() {
+            try {
+                if (localStorage.getItem('agri_is_logged_in') === 'true') {
+                    document.documentElement.classList.add('preload-dashboard-mode');
+                }
+            } catch (e) {}
+        })();
+    </script>
 </head>
-<body>
+
+<body class="{% if user.is_authenticated %}dashboard-mode{% endif %}">
     <!-- 🌿 Public Landing Page -->
-    {% include 'components/landing_page.html' %}
+    <div id="landing-page-wrapper" style="{% if user.is_authenticated %}display: none !important;{% endif %}">
+        {% include 'components/landing_page.html' %}
+    </div>
 
     <!-- 🔑 Login / Register Portal Overlay -->
     {% include 'components/login_portal.html' %}
 
     <!-- 📊 Main Dashboard Application Workspace -->
-    <div class="app-container" id="app-container" style="display: none;">
+    <div class="app-container" id="app-container" style="{% if user.is_authenticated %}display: flex !important;{% else %}display: none !important;{% endif %}">
+
         {% include 'components/sidebar.html' %}
         <div id="sidebar-overlay" class="sidebar-overlay"></div>
 
