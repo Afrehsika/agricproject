@@ -23,14 +23,19 @@ class ProduceSerializer(serializers.ModelSerializer):
     farmer_district = serializers.CharField(source='farmer.district', read_only=True)
     farmer_region = serializers.CharField(source='farmer.region', read_only=True)
     suggested_price = serializers.FloatField(read_only=True)
+    calculated_recommendation_price = serializers.FloatField(read_only=True)
     storage_facility_details = StorageFacilitySerializer(source='storage_facility', read_only=True)
 
     class Meta:
         model = Produce
         fields = ('id', 'farmer', 'farmer_name', 'farmer_phone', 'farmer_lat', 'farmer_lng',
                   'farmer_district', 'farmer_region', 'storage_facility', 'storage_facility_details',
-                  'name', 'variety', 'quantity_available', 'unit', 'price_per_unit', 
+                  'name', 'variety', 'quantity_available', 'unit', 'price_per_unit', 'original_listing_price',
+                  'demand_level', 'recommended_discount_price', 'discount_recommendation_status',
+                  'calculated_recommendation_price',
                   'harvest_date', 'posting_date', 'predicted_rot_date', 'freshness_score', 
                   'suggested_price', 'description', 'status', 'image_url')
-        read_only_fields = ('id', 'farmer', 'predicted_rot_date', 'freshness_score', 'suggested_price')
+        read_only_fields = ('id', 'farmer', 'predicted_rot_date', 'freshness_score', 'suggested_price', 'calculated_recommendation_price')
+
+
 

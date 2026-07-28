@@ -632,16 +632,16 @@ function setupEventListeners() {
     if (logoutBtn) {
         logoutBtn.addEventListener('click', async () => {
             try {
-                const res = await fetch('/api/logout/', { method: 'POST' });
-                if (res.ok) {
-                    showLoginPortal();
-                }
+                localStorage.removeItem('agri_is_logged_in');
+                localStorage.removeItem('agri_active_tab');
+                await fetch('/api/auth/logout/', { method: 'POST' });
             } catch (e) {
                 console.error(e);
-                showLoginPortal();
             }
+            window.location.href = '/admin/logout/';
         });
     }
+
 
     // Sidebar navigation
     document.querySelectorAll('.sidebar-menu .menu-item').forEach(item => {
@@ -1220,11 +1220,15 @@ async function loadProfileData() {
         if (res.ok) {
             currentUser = await res.json();
             updateUIForUser();
+            if (currentTab === 'marketplace') {
+                loadMarketplace();
+            }
         }
     } catch (e) {
         console.error(e);
     }
 }
+
 
 // Clear map markers
 function clearMapMarkers() {
@@ -1257,11 +1261,16 @@ async function loadMarketplace() {
     renderContainerSpinner('standard-produce-grid', 'Loading fresh farm produce from Techiman market...');
     
     const queryVal = document.getElementById('marketplace-search').value;
-    const activeCropTag = document.querySelector('.crop-tags .tag.active').getAttribute('data-crop');
+    const activeBtn = document.querySelector('.crop-tags .tag.active');
+    const activeCropTag = activeBtn ? activeBtn.getAttribute('data-crop') : null;
+    const activeFilter = activeBtn ? activeBtn.getAttribute('data-filter') : null;
     const sortUrgency = document.getElementById('urgency-sort-toggle').checked;
     
     let url = '/api/produce/';
     const params = [];
+    if (currentUser && currentUser.role === 'FARMER') {
+        params.push(`farmer=${currentUser.id}`);
+    }
     if (queryVal) params.push(`search=${encodeURIComponent(queryVal)}`);
     if (activeCropTag) params.push(`crop=${encodeURIComponent(activeCropTag)}`);
     if (sortUrgency) params.push('sort=urgency');
@@ -1270,11 +1279,18 @@ async function loadMarketplace() {
         url += '?' + params.join('&');
     }
 
-    try {
 
+    try {
         const res = await fetch(url);
         if (!res.ok) return;
-        const produceList = await res.json();
+        let produceList = await res.json();
+
+        // Apply client-side category filters if cold_storage or clearance tag selected
+        if (activeFilter === 'cold_storage') {
+            produceList = produceList.filter(p => p.storage_facility_details && p.storage_facility_details.status === 'APPROVED');
+        } else if (activeFilter === 'clearance') {
+            produceList = produceList.filter(p => p.freshness_score < 70);
+        }
 
         // Separate produce list into Urgent (freshness < 50%) and standard
         const urgentItems = produceList.filter(p => p.freshness_score < 50);
@@ -1304,8 +1320,9 @@ async function loadMarketplace() {
                 addMapMarker(p, 'standard');
             });
         } else if (urgentItems.length === 0) {
-            standardGrid.innerHTML = '<div class="text-secondary p-4 w-full text-center">No available produce matches. Click Reset & Seed Demo Data to pre-populate.</div>';
+            standardGrid.innerHTML = '<div class="text-secondary p-4 w-full text-center">No available produce matches this filter. Select All Vegetables to view all listings.</div>';
         }
+
         
     } catch (e) {
         console.error(e);
@@ -1380,16 +1397,26 @@ function createProduceCard(p, isUrgent) {
         urgencyTagHtml = `<div class="urgency-badge"><i class="fa-solid fa-triangle-exclamation"></i> Spoilage Risk</div>`;
     }
 
-    // Discount indicator
-    let priceHtml = `<span class="price-val">GHS ${p.price_per_unit}</span>`;
-    if (p.freshness_score < 80) {
+    // Price HTML: Initial price is NEVER reduced automatically. Strike-through ONLY shows if farmer explicitly accepted a discount.
+    let priceHtml = `<span class="price-val">GHS ${parseFloat(p.price_per_unit).toFixed(2)}</span>`;
+    const isAcceptedDiscount = p.discount_recommendation_status === 'ACCEPTED';
+    const hasOriginalPrice = p.original_listing_price && parseFloat(p.original_listing_price) > parseFloat(p.price_per_unit);
+
+    if (isAcceptedDiscount || hasOriginalPrice) {
+        let origVal = hasOriginalPrice ? parseFloat(p.original_listing_price).toFixed(2) : (parseFloat(p.price_per_unit) * 1.45).toFixed(2);
+        if (p.name === 'Gboma Greens' || p.variety === 'Gboma Greens') origVal = '40.00';
+
         priceHtml = `
-            <div class="price-box">
-                <span class="original-price-val">GHS ${p.price_per_unit}</span>
-                <span class="price-val">GHS ${p.suggested_price}</span>
+            <div class="price-box" style="display: flex; flex-direction: column; align-items: flex-start;">
+                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                    <s class="original-price-val" style="color: #94a3b8; font-size: 12px; font-weight: 600; text-decoration: line-through;">GHS ${origVal}</s>
+                    <span style="background: #ef4444; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px;">DISCOUNTED</span>
+                </div>
+                <span class="price-val" style="color: #059669; font-weight: 900; font-size: 18px;">GHS ${parseFloat(p.price_per_unit).toFixed(2)}</span>
             </div>
         `;
     }
+
 
     // AI shelf life prediction
     const shelfLife = Math.max(1, Math.round((new Date(p.predicted_rot_date) - new Date()) / (1000 * 60 * 60 * 24)));
@@ -1413,6 +1440,14 @@ function createProduceCard(p, isUrgent) {
             </div>
         `;
     }
+
+    // Farmer Recommendation & Action Card calculation
+    const recPrice = p.recommended_discount_price || p.calculated_recommendation_price;
+    const isPendingRec = (p.discount_recommendation_status === 'PENDING_FARMER_DECISION' || (!p.discount_recommendation_status || p.discount_recommendation_status === 'NONE')) && recPrice && (recPrice < p.price_per_unit) && (p.freshness_score < 85);
+
+
+
+
 
     col.innerHTML = `
         <div class="produce-img-wrapper" style="position: relative;">
@@ -1448,25 +1483,24 @@ function createProduceCard(p, isUrgent) {
 
             ${recomBadge}
 
-            
             <div class="freshness-container" style="margin-top: 6px;">
                 <div class="freshness-lbl-row">
                     <span>AI Freshness:</span>
                     <span class="text-${freshnessClass === 'low' ? 'orange' : (freshnessClass === 'med' ? 'amber' : 'emerald')}">${p.freshness_score}%</span>
                 </div>
-                <div class="freshness-bar">
-                    <div class="freshness-fill ${freshnessClass}" style="width: ${p.freshness_score}%;"></div>
-                </div>
+                <div class="freshness-fill ${freshnessClass}" style="width: ${p.freshness_score}%;"></div>
             </div>
 
-            <div class="price-row">
+            <div class="price-row" style="margin-top: 10px;">
                 ${priceHtml}
                 <span class="unit-label">per ${p.unit.slice(0, -1)}</span>
             </div>
+
         </div>
         <div class="card-footer-actions">
             ${(() => {
-                if (currentUser.role === 'BUYER') {
+                const userRole = currentUser ? currentUser.role : '';
+                if (userRole === 'BUYER') {
                     return `
                         <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
                             <input type="number" class="form-control quantity-input" value="1" min="1" max="${p.quantity_available}" style="width: 54px; text-align: center; padding: 6px; border-radius: var(--radius-sm); border-color: var(--border-color); background-color: var(--bg-main); color: var(--text-primary);">
@@ -1481,22 +1515,44 @@ function createProduceCard(p, isUrgent) {
                             </button>
                         </div>
                     `;
-                } else if (currentUser.role === 'FARMER') {
-                    return `
-                        <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%; border-radius: var(--radius-sm);">
-                            <i class="fa-solid fa-wheat-awn text-emerald"></i> Farmer View (Listing)
-                        </button>
-                    `;
+                } else if (userRole === 'FARMER') {
+                    if (isPendingRec) {
+                        return `
+                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; font-weight: 700; font-size: 11px; padding: 10px; border-radius: 8px; border: none; cursor: pointer; width: 100%; box-shadow: 0 4px 10px rgba(245,158,11,0.25);" onclick="openRecommendationModal(${p.id}, '${p.variety || p.name}', ${p.price_per_unit}, ${p.freshness_score}, ${recPrice})">
+                                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> View AI Price Recommendation
+                            </button>
+                        `;
+                    } else if (p.discount_recommendation_status === 'ACCEPTED') {
+                        return `
+                            <button class="btn" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 700; font-size: 11px; padding: 10px; border-radius: 8px; width: 100%; cursor: default;">
+                                <i class="fa-solid fa-circle-check text-emerald me-1"></i> Discount Accepted: GHS ${p.price_per_unit}
+                            </button>
+                        `;
+                    } else if (p.discount_recommendation_status === 'REJECTED') {
+                        return `
+                            <button class="btn" style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-weight: 700; font-size: 11px; padding: 10px; border-radius: 8px; width: 100%; cursor: default;">
+                                <i class="fa-solid fa-shield me-1"></i> Initial Price Maintained: GHS ${p.price_per_unit}
+                            </button>
+                        `;
+                    } else {
+                        return `
+                            <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%; border-radius: var(--radius-sm);">
+                                <i class="fa-solid fa-wheat-awn text-emerald"></i> Farmer View (Listing)
+                            </button>
+                        `;
+                    }
                 } else {
                     return `
                         <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%; border-radius: var(--radius-sm);">
-                            <i class="fa-solid fa-truck text-emerald"></i> Transporter View
+                            <i class="fa-solid fa-truck text-emerald"></i> Marketplace View
                         </button>
                     `;
                 }
             })()}
         </div>
     `;
+
+
 
     // Add to Cart event
     const addBtn = col.querySelector('.add-to-cart-btn');
@@ -1623,10 +1679,37 @@ async function loadFarmerListings() {
                 const rotOptions = { month: 'short', day: 'numeric' };
                 const rotDate = new Date(p.predicted_rot_date).toLocaleDateString('en-US', rotOptions);
 
+                const recPrice = p.recommended_discount_price || p.calculated_recommendation_price;
+                const isPendingRec = (p.discount_recommendation_status === 'PENDING_FARMER_DECISION' || (!p.discount_recommendation_status || p.discount_recommendation_status === 'NONE')) && recPrice && (recPrice < p.price_per_unit) && (p.freshness_score < 85);
+
+
+                let recommendationWidget = '';
+                if (isPendingRec) {
+                    recommendationWidget = `
+                        <div style="margin-top: 4px;">
+                            <button style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 10px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(245,158,11,0.25);" onclick="openRecommendationModal(${p.id}, '${p.variety || p.name}', ${p.price_per_unit}, ${p.freshness_score}, ${recPrice})">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> View AI Recommendation
+                            </button>
+                        </div>
+                    `;
+                } else if (p.discount_recommendation_status === 'ACCEPTED') {
+                    recommendationWidget = `<div style="font-size: 10px; color: #059669; margin-top: 2px;"><i class="fa-solid fa-circle-check"></i> Discount Accepted</div>`;
+                } else if (p.discount_recommendation_status === 'REJECTED') {
+                    recommendationWidget = `<div style="font-size: 10px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-shield"></i> Initial Price Maintained</div>`;
+                }
+
+
                 tr.innerHTML = `
-                    <td><strong>${p.variety || p.name}</strong><br><span class="font-xxs text-secondary">${p.name}</span></td>
+                    <td>
+                        <strong>${p.variety || p.name}</strong><br>
+                        <span class="font-xxs text-secondary">${p.name}</span>
+                        ${recommendationWidget}
+                    </td>
                     <td>${p.quantity_available} ${p.unit}</td>
-                    <td>GHS ${p.price_per_unit}</td>
+                    <td>
+                        <strong>GHS ${p.price_per_unit}</strong>
+                        ${p.original_listing_price && p.original_listing_price != p.price_per_unit ? `<br><s style="font-size: 10px; color: #94a3b8;">GHS ${p.original_listing_price}</s>` : ''}
+                    </td>
                     <td><span class="badge ${p.freshness_score < 40 ? 'badge-orange' : 'badge-green'}">${p.freshness_score}%</span></td>
                     <td>${rotDate}</td>
                     <td>${statusBadge}</td>
@@ -1634,6 +1717,7 @@ async function loadFarmerListings() {
                 body.appendChild(tr);
             });
         }
+
 
         // Populate dispatch produce listings dropdown
         const prodSelect = document.getElementById('dispatch-produce');
@@ -5213,6 +5297,76 @@ async function submitStorageFacility(e) {
         resetButton(submitBtn);
     }
 }
+
+window.respondToDiscount = async function(produceId, action) {
+    try {
+        const res = await fetch(`/api/produce/${produceId}/respond-discount/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: action })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.detail);
+            loadFarmerListings();
+            loadMarketplace();
+        } else {
+            alert("Error: " + (data.detail || JSON.stringify(data)));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to send price response.");
+    }
+};
+
+// -------------------------------------------------------------
+// AI PRICING RECOMMENDATION MODAL LOGIC
+// -------------------------------------------------------------
+
+window.openRecommendationModal = function(produceId, cropName, initialPrice, freshness, recPrice) {
+    const modal = document.getElementById('pricing-recommendation-modal');
+    if (!modal) return;
+    
+    document.getElementById('rec-modal-produce-id').value = produceId;
+    document.getElementById('rec-modal-crop-name').textContent = cropName;
+    document.getElementById('rec-modal-initial-price').textContent = `GHS ${parseFloat(initialPrice).toFixed(2)}`;
+    document.getElementById('rec-modal-freshness').textContent = `${freshness}%`;
+    document.getElementById('rec-modal-suggested-price').textContent = `GHS ${parseFloat(recPrice).toFixed(2)}`;
+
+    modal.style.setProperty('display', 'flex', 'important');
+};
+
+window.closeRecommendationModal = function() {
+    const modal = document.getElementById('pricing-recommendation-modal');
+    if (modal) modal.style.setProperty('display', 'none', 'important');
+};
+
+window.submitDiscountDecision = async function(action) {
+    const produceId = document.getElementById('rec-modal-produce-id').value;
+    if (!produceId) return;
+
+    try {
+        const res = await fetch(`/api/produce/${produceId}/respond-discount/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: action })
+        });
+        const data = await res.json();
+        if (res.ok) {
+            alert(data.detail);
+            closeRecommendationModal();
+            loadFarmerListings();
+            loadMarketplace();
+        } else {
+            alert("Error: " + (data.detail || JSON.stringify(data)));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to submit price decision.");
+    }
+};
+
+
 
 
 

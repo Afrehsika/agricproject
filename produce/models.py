@@ -67,6 +67,19 @@ class Produce(models.Model):
         ('RESERVED', 'Reserved'),
         ('SOLD', 'Sold'),
     )
+
+    DEMAND_CHOICES = (
+        ('HIGH', 'High Demand'),
+        ('MEDIUM', 'Medium Demand'),
+        ('LOW', 'Low Demand'),
+    )
+
+    RECOMMENDATION_STATUS_CHOICES = (
+        ('NONE', 'No Recommendation Needed'),
+        ('PENDING_FARMER_DECISION', 'Pending Farmer Decision'),
+        ('ACCEPTED', 'Accepted by Farmer'),
+        ('REJECTED', 'Rejected by Farmer'),
+    )
     
     farmer = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='produces')
     storage_facility = models.ForeignKey(StorageFacility, on_delete=models.SET_NULL, null=True, blank=True, related_name='stored_produces')
@@ -75,7 +88,13 @@ class Produce(models.Model):
     quantity_available = models.IntegerField(validators=[MinValueValidator(1)])
     unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='Crates')
     price_per_unit = models.DecimalField(max_digits=10, decimal_places=2)
+    original_listing_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
+    # Market Demand & Recommendation Tracking
+    demand_level = models.CharField(max_length=20, choices=DEMAND_CHOICES, default='MEDIUM')
+    recommended_discount_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    discount_recommendation_status = models.CharField(max_length=30, choices=RECOMMENDATION_STATUS_CHOICES, default='NONE')
+
     harvest_date = models.DateField()
     posting_date = models.DateField(default=datetime.date.today)
     predicted_rot_date = models.DateField(blank=True, null=True)
@@ -98,12 +117,17 @@ class Produce(models.Model):
     }
 
     def save(self, *args, **kwargs):
+        # Store original listing price on first save
+        if not self.original_listing_price:
+            self.original_listing_price = self.price_per_unit
+
         # Determine average shelf life for the selected crop
         base_shelf_life = self.SHELF_LIVES.get(self.name, 7)
         
         # Shelf life multiplier based on verified storage facility badge
+        has_approved_storage = bool(self.storage_facility and self.storage_facility.status == 'APPROVED')
         multiplier = 1.0
-        if self.storage_facility and self.storage_facility.status == 'APPROVED':
+        if has_approved_storage:
             badge_multipliers = {
                 'GOLD_COLD_CHAIN': 2.5,
                 'SILVER_COOL_ROOM': 1.8,
@@ -124,22 +148,48 @@ class Produce(models.Model):
             
         freshness = int((1.0 - (elapsed_days / shelf_life_days)) * 100)
         self.freshness_score = max(0, min(100, freshness))
+
+        # Dynamic Demand & Storage Recommendation Rules:
+        # Rule A: High Demand OR Gold Cold-Chain Storage -> Nothing happens to initial price!
+        is_gold_cold_chain = has_approved_storage and self.storage_facility.badge == 'GOLD_COLD_CHAIN'
+        if self.demand_level == 'HIGH' or is_gold_cold_chain:
+            if self.discount_recommendation_status != 'ACCEPTED':
+                self.recommended_discount_price = None
+                self.discount_recommendation_status = 'NONE'
+        else:
+            # Rule B: Low/Medium Demand AND No/Low Cold Storage AND Freshness Dropping (< 85% or Low Demand)
+            if self.freshness_score < 85 or self.demand_level == 'LOW':
+                discount_rate = 0.15 if self.freshness_score >= 60 else (0.30 if self.freshness_score >= 35 else 0.45)
+                base_ref_price = float(self.original_listing_price or self.price_per_unit)
+                suggested_val = round(base_ref_price * (1.0 - discount_rate), 2)
+
+                if self.discount_recommendation_status not in ['ACCEPTED', 'REJECTED']:
+                    self.recommended_discount_price = suggested_val
+                    self.discount_recommendation_status = 'PENDING_FARMER_DECISION'
+
         
         super().save(*args, **kwargs)
 
     @property
+    def calculated_recommendation_price(self):
+        """On-the-fly calculation for crops losing freshness"""
+        if self.recommended_discount_price:
+            return float(self.recommended_discount_price)
+        if self.freshness_score < 85 and self.demand_level != 'HIGH':
+            discount_rate = 0.15 if self.freshness_score >= 60 else (0.30 if self.freshness_score >= 35 else 0.45)
+            base_ref = float(self.original_listing_price or self.price_per_unit)
+            return round(base_ref * (1.0 - discount_rate), 2)
+        return None
+
+    @property
     def suggested_price(self):
-        """AI pricing engine suggesting discounts based on freshness and urgency"""
-        base_price = float(self.price_per_unit)
-        if self.freshness_score >= 80:
-            return round(base_price, 2)  # Full value
-        elif self.freshness_score >= 50:
-            return round(base_price * 0.85, 2)  # 15% discount (moderate urgency)
-        elif self.freshness_score >= 20:
-            return round(base_price * 0.60, 2)  # 40% discount (high urgency)
-        else:
-            return round(base_price * 0.30, 2)  # 70% discount (clearance/flash sale)
+        """Returns recommended discount price if pending/accepted, or price_per_unit"""
+        if self.recommended_discount_price:
+            return float(self.recommended_discount_price)
+        return float(self.price_per_unit)
 
     def __str__(self):
         return f"{self.variety or self.name} - {self.quantity_available} {self.unit} by {self.farmer.username}"
+
+
 

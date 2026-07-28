@@ -1,0 +1,48 @@
+<!-- 💡 AI Dynamic Pricing Recommendation Modal -->
+<div id="pricing-recommendation-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 500px; width: 92%;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #fff; padding: 16px 20px; border-radius: var(--radius-md) var(--radius-md) 0 0;">
+            <h3 style="margin: 0; font-size: 15px; font-weight: 700;">
+                <i class="fa-solid fa-wand-magic-sparkles text-emerald me-2"></i> AI Price Recommendation Advisor
+            </h3>
+            <button class="close-modal-btn" onclick="closeRecommendationModal()" style="color: #fff; background: transparent; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+        </div>
+        
+        <div class="modal-body p-4">
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+                <h4 id="rec-modal-crop-name" style="margin: 0; font-size: 15px; font-weight: 800; color: #065f46;">Produce Listing</h4>
+                <div style="display: flex; gap: 14px; margin-top: 6px; font-size: 12px; color: #047857;">
+                    <span>Initial Price: <strong id="rec-modal-initial-price">GHS 0.00</strong></span> • 
+                    <span>AI Freshness: <strong id="rec-modal-freshness" style="color: #d97706;">100%</strong></span>
+                </div>
+            </div>
+
+            <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #fde68a; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                <div style="font-size: 12px; font-weight: 800; color: #92400e; display: flex; align-items: center; gap: 8px;">
+                    <i class="fa-solid fa-lightbulb text-amber" style="font-size: 18px;"></i> Recommended Discount Price
+                </div>
+                <div style="font-size: 26px; font-weight: 900; color: #b45309; margin: 8px 0;" id="rec-modal-suggested-price">
+                    GHS 0.00
+                </div>
+                <p style="margin: 0; font-size: 11px; color: #78350f; line-height: 1.5;">
+                    Market demand is moderate and no cold storage is attached. Accepting this recommendation will apply a discount to boost sales velocity before predicted rot!
+                </p>
+            </div>
+
+            <input type="hidden" id="rec-modal-produce-id">
+
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button class="btn btn-emerald-gradient" style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; border-radius: 10px;" onclick="submitDiscountDecision('accept')">
+                    <i class="fa-solid fa-check me-1"></i> Accept & Set Discount Price
+                </button>
+                <button class="btn btn-secondary" style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; border-radius: 10px;" onclick="submitDiscountDecision('reject')">
+                    <i class="fa-solid fa-xmark me-1"></i> Keep Initial Price
+                </button>
+            </div>
+        </div>
+
+        <div class="modal-footer p-3" style="border-top: 1px solid var(--border-color); text-align: right; background: var(--bg-main);">
+            <button class="btn btn-secondary" onclick="closeRecommendationModal()" style="padding: 6px 16px; font-size: 12px;">Cancel</button>
+        </div>
+    </div>
+</div>

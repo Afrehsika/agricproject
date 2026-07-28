@@ -56,12 +56,24 @@ def _ensure_storage_table_schema():
                     );
                 """)
 
-            cursor.execute("""
-                SELECT column_name FROM information_schema.columns 
-                WHERE table_name = 'produce_produce' AND column_name = 'storage_facility_id';
-            """)
-            if not cursor.fetchone():
-                cursor.execute("ALTER TABLE produce_produce ADD COLUMN storage_facility_id bigint NULL;")
+            # Ensure new dynamic demand & recommendation fields exist on produce_produce
+            new_columns = [
+                ('storage_facility_id', 'bigint NULL'),
+                ('original_listing_price', 'numeric(10,2) NULL'),
+                ('recommended_discount_price', 'numeric(10,2) NULL'),
+                ('demand_level', 'varchar(20) DEFAULT \'MEDIUM\''),
+                ('discount_recommendation_status', 'varchar(30) DEFAULT \'NONE\''),
+            ]
+            for col_name, col_type in new_columns:
+                try:
+                    cursor.execute(f"""
+                        SELECT column_name FROM information_schema.columns 
+                        WHERE table_name = 'produce_produce' AND column_name = '{col_name}';
+                    """)
+                    if not cursor.fetchone():
+                        cursor.execute(f'ALTER TABLE produce_produce ADD COLUMN {col_name} {col_type};')
+                except Exception as c_err:
+                    print(f"Column check for {col_name}:", c_err)
 
             # Auto-remediate any legacy columns on produce_produce with NOT NULL constraints (e.g. freshness_status)
             if is_postgres:
@@ -86,6 +98,51 @@ def _ensure_storage_table_schema():
         print("Storage schema check note:", e)
 
 _ensure_storage_table_schema()
+
+
+class ProduceDiscountRespondView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            produce = Produce.objects.get(pk=pk, farmer=request.user)
+        except Produce.DoesNotExist:
+            return Response({'detail': 'Listing not found or un-authorized'}, status=status.HTTP_404_NOT_FOUND)
+
+        action = request.data.get('action') # 'accept' or 'reject'
+
+        if action == 'accept':
+            target_discount_price = produce.recommended_discount_price or produce.calculated_recommendation_price
+            if target_discount_price:
+                # Capture original listing price before applying new price if missing/equal
+                if not produce.original_listing_price or float(produce.original_listing_price) == float(produce.price_per_unit):
+                    produce.original_listing_price = produce.price_per_unit
+
+                produce.recommended_discount_price = target_discount_price
+                produce.price_per_unit = target_discount_price
+                produce.discount_recommendation_status = 'ACCEPTED'
+                produce.save()
+                return Response({
+                    'detail': f'Accepted AI recommended price of GHS {produce.price_per_unit}! Your marketplace crop listing has been updated.',
+                    'produce': ProduceSerializer(produce).data
+                })
+            else:
+                return Response({'detail': 'No discount price recommendation needed for this crop listing.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+        elif action == 'reject':
+            produce.discount_recommendation_status = 'REJECTED'
+            if produce.original_listing_price:
+                produce.price_per_unit = produce.original_listing_price
+            produce.save()
+            return Response({
+                'detail': f'Discount price rejected. Maintained original price of GHS {produce.price_per_unit}.',
+                'produce': ProduceSerializer(produce).data
+            })
+        else:
+            return Response({'detail': 'Invalid action. Use accept or reject.'}, status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 
