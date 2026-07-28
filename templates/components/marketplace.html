@@ -20,12 +20,12 @@
             </div>
             <div class="animated-stat-card">
                 <span class="stat-label">Available Listings</span>
-                <h3 class="stat-val">42 Crops</h3>
+                <h3 class="stat-val" id="hero-available-count">0 Crops</h3>
                 <span class="stat-trend up"><i class="fa-solid fa-circle"></i> Live Techiman Hub</span>
             </div>
             <div class="animated-stat-card">
                 <span class="stat-label">Nearby Buyers</span>
-                <h3 class="stat-val">12 Active</h3>
+                <h3 class="stat-val" id="hero-nearby-count">12 Active</h3>
                 <span class="stat-trend"><i class="fa-solid fa-people-group"></i> Bono East cluster</span>
             </div>
         </div>
@@ -62,47 +62,39 @@
                 <button class="tag active category-card" data-crop="">
                     <span class="cat-emoji">🌾</span>
                     <span class="cat-name">All Vegetables</span>
-                    <span class="cat-count">42 Listings</span>
                 </button>
                 <button class="tag category-card" data-crop="Tomatoes">
                     <span class="cat-emoji">🍅</span>
                     <span class="cat-name">Tomatoes</span>
-                    <span class="cat-count">18 Listings</span>
                 </button>
                 <button class="tag category-card" data-crop="Habanero Peppers">
                     <span class="cat-emoji">🌶</span>
                     <span class="cat-name">Peppers</span>
-                    <span class="cat-count">12 Listings</span>
                 </button>
                 <button class="tag category-card" data-crop="Garden Eggs">
                     <span class="cat-emoji">🍆</span>
                     <span class="cat-name">Garden Eggs</span>
-                    <span class="cat-count">6 Listings</span>
                 </button>
                 <button class="tag category-card" data-crop="Okra">
                     <span class="cat-emoji">🥒</span>
                     <span class="cat-name">Okra</span>
-                    <span class="cat-count">4 Listings</span>
                 </button>
                 <button class="tag category-card" data-crop="Leafy Greens">
                     <span class="cat-emoji">🥬</span>
                     <span class="cat-name">Leafy Greens</span>
-                    <span class="cat-count">2 Listings</span>
                 </button>
                 <button class="tag category-card" data-filter="cold_storage">
                     <span class="cat-emoji">❄️</span>
-                    <span class="cat-name">Cold Storage Verified</span>
-                    <span class="cat-count">Inspected</span>
+                    <span class="cat-name">Cold Storage</span>
                 </button>
                 <button class="tag category-card" data-filter="clearance">
                     <span class="cat-emoji">⚠️</span>
                     <span class="cat-name">Clearance Deals</span>
-                    <span class="cat-count">&lt; 70% Freshness</span>
                 </button>
-
             </div>
         </div>
     </div>
+
 
     <!-- 🚨 SAVE THE CROP URGENT SECTION 🚨 -->
     <div class="urgent-crops-section" id="urgent-crops-container" style="display: none;">

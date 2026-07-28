@@ -510,6 +510,94 @@ h1, h2, h3, h4, h5, h6 {
     border-color: #475569;
 }
 
+/* Premium Modern Marketplace Hero Stat Cards & High Contrast Readability */
+.stats-grid-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+    margin-bottom: 20px;
+}
+
+.animated-stat-card {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 16px !important;
+    padding: 16px 20px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.animated-stat-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08) !important;
+    border-color: #94a3b8 !important;
+}
+
+.animated-stat-card .stat-label {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.6px !important;
+    color: #475569 !important; /* Crisp readable dark slate */
+}
+
+.animated-stat-card .stat-val {
+    font-size: 22px !important;
+    font-weight: 900 !important;
+    color: #0f172a !important; /* Deep dark midnight for 100% legibility */
+    margin: 6px 0 4px 0 !important;
+}
+
+.animated-stat-card .stat-trend {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    color: #047857 !important; /* Vibrant emerald green */
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Category Card Count & Text Legibility */
+.crop-tags .category-card {
+    background: #ffffff !important;
+    border: 1.5px solid #cbd5e1 !important;
+    border-radius: 12px !important;
+    padding: 10px 14px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.crop-tags .category-card:hover,
+.crop-tags .category-card.active {
+    background: #ecfdf5 !important;
+    border-color: #10b981 !important;
+}
+
+.crop-tags .category-card .cat-name {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    color: #0f172a !important; /* Deep dark slate for maximum readability */
+}
+
+/* Tab Pane Display Rules */
+.tab-pane {
+    display: none !important;
+}
+
+.tab-pane.active {
+    display: block !important;
+}
+
+
+
 /* Pulse keyframes for Urgent Crops */
 @keyframes urgent-glow {
     0% { border-color: var(--orange-alert); box-shadow: 0 0 5px rgba(249, 115, 22, 0.2); }

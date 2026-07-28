@@ -1144,12 +1144,15 @@ function switchTab(tabName) {
     // Manage Page content panes
     document.querySelectorAll('.content-body .tab-pane').forEach(pane => {
         pane.classList.remove('active');
+        pane.style.setProperty('display', 'none', 'important');
     });
     
     const targetPane = document.getElementById(`tab-${tabName}`);
     if (targetPane) {
         targetPane.classList.add('active');
+        targetPane.style.setProperty('display', 'block', 'important');
     }
+
 
     // Toggle map visibility based on tab name (Map is located exclusively under Logistics & Dispatch)
     const mapSection = document.querySelector('.map-section');
@@ -1323,11 +1326,21 @@ async function loadMarketplace() {
             standardGrid.innerHTML = '<div class="text-secondary p-4 w-full text-center">No available produce matches this filter. Select All Vegetables to view all listings.</div>';
         }
 
+        // Update dynamic stat card count
+        const allRes = await fetch('/api/produce/');
+        if (allRes.ok) {
+            const rawList = await allRes.json();
+            const totalCount = rawList.length;
+            const heroAvail = document.getElementById('hero-available-count');
+            if (heroAvail) heroAvail.textContent = `${totalCount} Crops`;
+        }
+
         
     } catch (e) {
         console.error(e);
     }
 }
+
 
 // Add markers to Leaflet map
 function addMapMarker(p, type) {
@@ -5365,6 +5378,242 @@ window.submitDiscountDecision = async function(action) {
         alert("Failed to submit price decision.");
     }
 };
+
+// -------------------------------------------------------------
+// TAB DATA LOADERS & DATA SPINNERS
+// -------------------------------------------------------------
+
+async function loadOrders() {
+    const container = document.getElementById('orders-list-container');
+    if (container) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 45px 20px; width: 100%;" class="data-loading-spinner-box">
+                <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #10b981; margin-bottom: 12px; display: inline-block;"></i>
+                <p style="font-size: 13px; font-weight: 500; color: var(--text-secondary); margin: 0;">Loading your escrow transactions and active orders...</p>
+            </div>
+        `;
+    }
+
+    try {
+        const res = await fetch('/api/orders/create/');
+        if (!res.ok) return;
+        const orders = await res.json();
+        
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (orders.length === 0) {
+            container.innerHTML = '<div class="text-secondary p-4 text-center">You have no active transactions or orders yet.</div>';
+            return;
+        }
+
+        orders.forEach(o => {
+            const div = document.createElement('div');
+            div.className = 'order-card card glass mb-3 p-3';
+            div.style.cssText = 'border: 1px solid var(--border-color); border-radius: 12px; background: var(--bg-card);';
+            
+            let statusBadge = '<span class="badge badge-green">Escrow Completed</span>';
+            if (o.status === 'PENDING') statusBadge = '<span class="badge badge-orange">Payment Pending</span>';
+            else if (o.status === 'PAID') statusBadge = '<span class="badge badge-blue">Escrow Locked & Transporter Matched</span>';
+            else if (o.status === 'DELIVERED') statusBadge = '<span class="badge badge-green">Delivered</span>';
+
+            let actionBtns = '';
+            if (currentUser && currentUser.role === 'BUYER' && o.status === 'PENDING') {
+                actionBtns = `
+                    <button class="btn btn-emerald-gradient btn-sm" onclick='showMoMoPaymentDialog(${JSON.stringify(o)})'>
+                        <i class="fa-solid fa-mobile-retro me-1"></i> Pay GHS ${o.total_price} via MoMo Escrow
+                    </button>
+                `;
+            } else if (currentUser && currentUser.role === 'BUYER' && o.status === 'PAID') {
+                actionBtns = `
+                    <button class="btn btn-emerald-gradient btn-sm" onclick="alert('Escrow released to farmer! Order completed.')">
+                        <i class="fa-solid fa-check-double me-1"></i> Confirm Receipt & Release Escrow
+                    </button>
+                `;
+            }
+
+            div.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 10px;">
+                    <div>
+                        <div style="font-size: 11px; font-weight: 700; color: #10b981; text-transform: uppercase;">Order #${o.id}</div>
+                        <h4 style="margin: 4px 0; font-size: 16px; font-weight: 800;">${o.produce_name || 'Farm Yield Produce'}</h4>
+                        <div style="font-size: 12px; color: var(--text-secondary);">
+                            Quantity: <strong>${o.quantity} units</strong> • Total: <strong style="color: #059669;">GHS ${o.total_price}</strong>
+                        </div>
+                        <div style="font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
+                            Buyer: ${o.buyer_name || 'Me'} • Farmer: ${o.farmer_name || 'Local Farmer'}
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        ${statusBadge}
+                        <div style="margin-top: 8px;">${actionBtns}</div>
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    } catch (e) {
+        console.error(e);
+        if (container) container.innerHTML = '<div class="text-danger p-4 text-center">Failed to load orders. Please refresh.</div>';
+    }
+}
+
+async function loadNetwork() {
+    const activeGrid = document.getElementById('active-connections-grid');
+    const discoverGrid = document.getElementById('discover-users-grid');
+    
+    if (activeGrid) renderContainerSpinner('active-connections-grid', 'Loading your trust circle connections...');
+    if (discoverGrid) renderContainerSpinner('discover-users-grid', 'Loading AgriConnect network directory...');
+
+    try {
+        const [connRes, discRes] = await Promise.all([
+            fetch('/api/connections/'),
+            fetch('/api/users/discover/')
+        ]);
+
+        if (connRes.ok && activeGrid) {
+            const connData = await connRes.json();
+            const connections = connData.connections || [];
+            activeGrid.innerHTML = '';
+            
+            const activeCountEl = document.getElementById('active-connection-count');
+            if (activeCountEl) activeCountEl.textContent = `${connections.length} Connected`;
+
+            if (connections.length === 0) {
+                activeGrid.innerHTML = '<div class="text-secondary p-3 w-full text-center font-sm">No connections in your circle yet. Discover people below to send an invite!</div>';
+            } else {
+                connections.forEach(c => {
+                    const u = c.user;
+                    const card = document.createElement('div');
+                    card.className = 'card p-3';
+                    card.style.cssText = 'border: 1px solid #cbd5e1; border-radius: 12px; background: #ffffff;';
+                    card.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="width: 38px; height: 38px; border-radius: 50%; background: #ecfdf5; color: #047857; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+                                ${u.username.charAt(0)}
+                            </div>
+                            <div>
+                                <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #0f172a;">${u.username.replace(/_/g, ' ')}</h4>
+                                <div style="font-size: 11px; color: #64748b;">${u.role} • ${u.district || 'Bono East'}</div>
+                            </div>
+                        </div>
+                    `;
+                    activeGrid.appendChild(card);
+                });
+            }
+        }
+
+        if (discRes.ok && discoverGrid) {
+            const users = await discRes.json();
+            discoverGrid.innerHTML = '';
+
+            if (users.length === 0) {
+                discoverGrid.innerHTML = '<div class="text-secondary p-4 w-full text-center">No additional network members found.</div>';
+            } else {
+                users.forEach(u => {
+                    const card = document.createElement('div');
+                    card.className = 'card p-3';
+                    card.style.cssText = 'border: 1px solid #cbd5e1; border-radius: 12px; background: #ffffff;';
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h4 style="margin: 0; font-size: 14px; font-weight: 800; color: #0f172a;">${u.username.replace(/_/g, ' ')}</h4>
+                                <span class="badge badge-green" style="font-size: 10px;">${u.role}</span>
+                                <div style="font-size: 11px; color: #64748b; margin-top: 2px;">${u.district || 'Techiman'}, ${u.region || 'Bono East'}</div>
+                            </div>
+                            <button class="btn btn-sm btn-emerald-gradient" onclick="sendConnectionInvite(${u.id})">
+                                <i class="fa-solid fa-user-plus me-1"></i> Connect
+                            </button>
+                        </div>
+                    `;
+                    discoverGrid.appendChild(card);
+                });
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+window.sendConnectionInvite = async function(userId) {
+    try {
+        const res = await fetch('/api/connections/request/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ receiver_id: userId })
+        });
+        if (res.ok) {
+            alert("Connection invite sent successfully!");
+            loadNetwork();
+        } else {
+            const err = await res.json();
+            alert(err.detail || "Unable to send invite.");
+        }
+    } catch (e) {
+        console.error(e);
+    }
+};
+
+async function loadChats() {
+    const container = document.getElementById('chats-list-container');
+    if (container) renderContainerSpinner('chats-list-container', 'Loading messaging channels...');
+    
+    try {
+        const res = await fetch('/api/messages/chats/');
+        if (!res.ok) return;
+        const chats = await res.json();
+        
+        if (!container) return;
+        container.innerHTML = '';
+
+        if (chats.length === 0) {
+            container.innerHTML = `
+                <div class="text-secondary p-4 text-center font-sm" style="margin-top: 30px;">
+                    <i class="fa-solid fa-comment-slash" style="font-size: 24px; display: block; margin-bottom: 8px; color: #94a3b8;"></i>
+                    No active chats. Start messaging by clicking "Connect" in My Circle!
+                </div>
+            `;
+            return;
+        }
+
+        chats.forEach(c => {
+            const div = document.createElement('div');
+            div.className = 'chat-thread-item p-3';
+            div.style.cssText = 'border-bottom: 1px solid var(--border-color); cursor: pointer; display: flex; align-items: center; gap: 10px;';
+            div.onclick = () => openChatThread(c.partner.id, c.partner.username, c.partner.role);
+
+            div.innerHTML = `
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: #10b981; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+                    ${c.partner.username.charAt(0)}
+                </div>
+                <div style="flex-grow: 1;">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong style="font-size: 13px; color: var(--text-primary);">${c.partner.username.replace(/_/g, ' ')}</strong>
+                        ${c.unread_count > 0 ? `<span class="badge badge-orange" style="font-size: 9px;">${c.unread_count} new</span>` : ''}
+                    </div>
+                    <div style="font-size: 11px; color: var(--text-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 180px;">
+                        ${c.last_message || 'Tap to chat'}
+                    </div>
+                </div>
+            `;
+            container.appendChild(div);
+        });
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function loadWalletTransactions() {
+    const card1Val = document.getElementById('analytics-card1-val');
+    if (card1Val && currentUser) {
+        card1Val.textContent = `GHS ${parseFloat(currentUser.wallet_balance).toFixed(2)}`;
+    }
+}
+
+function renderAnalyticsChart() {
+    // Analytics chart handler
+}
+
 
 
 
