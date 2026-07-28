@@ -1,7 +1,22 @@
 import math
 from rest_framework import serializers
 from produce.serializers import ProduceSerializer
-from .models import Order, CartItem
+from .models import Order, CartItem, Dispute
+
+
+class DisputeSerializer(serializers.ModelSerializer):
+    raised_by_name = serializers.CharField(source='raised_by.username', read_only=True)
+    resolved_by_name = serializers.CharField(source='resolved_by.username', read_only=True, allow_null=True)
+    reason_display = serializers.CharField(source='get_reason_display', read_only=True)
+    status_display = serializers.CharField(source='get_status_display', read_only=True)
+
+    class Meta:
+        model = Dispute
+        fields = ('id', 'order', 'raised_by', 'raised_by_name', 'reason', 'reason_display',
+                  'description', 'evidence_url', 'status', 'status_display', 'resolution',
+                  'refund_amount', 'release_amount', 'resolution_notes', 'resolved_by',
+                  'resolved_by_name', 'created_at', 'updated_at')
+        read_only_fields = ('id', 'raised_by', 'created_at', 'updated_at')
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -9,12 +24,13 @@ class OrderSerializer(serializers.ModelSerializer):
     buyer_phone = serializers.CharField(source='buyer.phone_number', read_only=True)
     produce_details = ProduceSerializer(source='produce', read_only=True)
     transporter_details = serializers.SerializerMethodField(read_only=True)
+    latest_dispute = serializers.SerializerMethodField(read_only=True)
 
     class Meta:
         model = Order
         fields = ('id', 'buyer', 'buyer_name', 'buyer_phone', 'produce', 'produce_details',
                   'quantity', 'total_price', 'status', 'payment_status', 'delivery_type',
-                  'created_at', 'transporter_details')
+                  'created_at', 'transporter_details', 'latest_dispute')
         read_only_fields = ('id', 'buyer', 'total_price')
 
     def get_transporter_details(self, obj):
@@ -39,6 +55,17 @@ class OrderSerializer(serializers.ModelSerializer):
             }
         except TransportJob.DoesNotExist:
             return None
+
+    def get_latest_dispute(self, obj):
+        try:
+            dispute = obj.disputes.order_by('-created_at').first()
+            if dispute:
+                return DisputeSerializer(dispute).data
+        except Exception:
+            return None
+        return None
+
+
 
 
 class CartItemSerializer(serializers.ModelSerializer):

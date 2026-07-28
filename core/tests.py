@@ -6,7 +6,7 @@ from rest_framework import status
 import datetime
 
 from produce.models import Produce
-from orders.models import Order
+from orders.models import Order, Dispute
 from logistics.models import TransportJob
 
 User = get_user_model()
@@ -33,7 +33,8 @@ class AgriConnectTestCase(TestCase):
             role='BUYER',
             phone_number='0242222222',
             latitude=7.5820,
-            longitude=-1.9380
+            longitude=-1.9380,
+            wallet_balance=1000.00
         )
 
         # Create a Transporter
@@ -150,6 +151,137 @@ class AgriConnectTestCase(TestCase):
         self.farmer.refresh_from_db()
         self.assertEqual(float(self.farmer.wallet_balance), 600.00)
 
+    def test_buyer_rejection_and_dispute_creation(self):
+        """Test buyer rejecting shipment due to spoiled produce, creating dispute and locking escrow"""
+        harvest_date = datetime.date.today()
+        produce = Produce.objects.create(
+            farmer=self.farmer,
+            name='Tomatoes',
+            variety='Power Rano',
+            quantity_available=10,
+            unit='Crates',
+            price_per_unit=100.00,
+            harvest_date=harvest_date,
+            posting_date=harvest_date
+        )
+
+        self.client.force_authenticate(user=self.buyer)
+        order_response = self.client.post(reverse('api-order-create'), {
+            'produce': produce.id,
+            'quantity': 5,
+            'delivery_type': 'PLATFORM_DELIVERY'
+        })
+        order_id = order_response.data['id']
+        self.client.post(reverse('api-order-pay', kwargs={'pk': order_id}))
+
+        # Buyer rejects shipment upon delivery
+        reject_response = self.client.post(reverse('api-order-reject', kwargs={'pk': order_id}), {
+            'reason': 'SPOILED_ROTTEN',
+            'description': 'Tomatoes arrived crushed and spoiled during transport',
+            'evidence_url': 'https://example.com/spoiled.jpg'
+        })
+
+        self.assertEqual(reject_response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(reject_response.data['order']['status'], 'REJECTED')
+        self.assertEqual(reject_response.data['order']['payment_status'], 'DISPUTED')
+        self.assertEqual(reject_response.data['dispute']['reason'], 'SPOILED_ROTTEN')
+        self.assertEqual(Dispute.objects.filter(order_id=order_id).count(), 1)
+
+    def test_dispute_resolution_full_refund(self):
+        """Test resolving a dispute with 100% refund back to buyer and restocking produce"""
+        harvest_date = datetime.date.today()
+        produce = Produce.objects.create(
+            farmer=self.farmer,
+            name='Habanero Peppers',
+            variety='Scotch Bonnet',
+            quantity_available=5,
+            unit='Bags',
+            price_per_unit=200.00,
+            harvest_date=harvest_date,
+            posting_date=harvest_date
+        )
+
+        self.client.force_authenticate(user=self.buyer)
+        order_resp = self.client.post(reverse('api-order-create'), {
+            'produce': produce.id,
+            'quantity': 2,
+            'delivery_type': 'PLATFORM_DELIVERY'
+        })
+        order_id = order_resp.data['id']
+        self.client.post(reverse('api-order-pay', kwargs={'pk': order_id}))
+
+        initial_buyer_balance = float(self.buyer.refresh_from_db() or self.buyer.wallet_balance)
+
+        # Buyer rejects
+        reject_resp = self.client.post(reverse('api-order-reject', kwargs={'pk': order_id}), {
+            'reason': 'WRONG_VARIETY_QUALITY',
+            'description': 'Received green peppers instead of Scotch Bonnet'
+        })
+        dispute_id = reject_resp.data['dispute']['id']
+
+        # Admin resolves with full refund to buyer + restock
+        resolve_resp = self.client.post(reverse('api-dispute-resolve', kwargs={'pk': dispute_id}), {
+            'resolution': 'REFUND_BUYER',
+            'notes': 'Verified wrong variety sent. Full refund granted to buyer.',
+            'restock_inventory': True
+        })
+
+        self.assertEqual(resolve_resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resolve_resp.data['order']['payment_status'], 'REFUNDED')
+        
+        # Verify buyer received refund
+        self.buyer.refresh_from_db()
+        self.assertGreater(float(self.buyer.wallet_balance), initial_buyer_balance)
+
+        # Verify produce inventory was restocked (5 - 2 + 2 = 5)
+        produce.refresh_from_db()
+        self.assertEqual(produce.quantity_available, 5)
+
+    def test_dispute_resolution_partial_split(self):
+        """Test resolving dispute with partial split refund between buyer and farmer"""
+        harvest_date = datetime.date.today()
+        produce = Produce.objects.create(
+            farmer=self.farmer,
+            name='Garden Eggs',
+            variety='Local White',
+            quantity_available=10,
+            unit='Baskets',
+            price_per_unit=100.00,
+            harvest_date=harvest_date,
+            posting_date=harvest_date
+        )
+
+        self.client.force_authenticate(user=self.buyer)
+        order_resp = self.client.post(reverse('api-order-create'), {
+            'produce': produce.id,
+            'quantity': 2,
+            'delivery_type': 'PLATFORM_DELIVERY'
+        })
+        order_id = order_resp.data['id']
+        self.client.post(reverse('api-order-pay', kwargs={'pk': order_id}))
+
+        # Reject
+        reject_resp = self.client.post(reverse('api-order-reject', kwargs={'pk': order_id}), {
+            'reason': 'QUANTITY_SHORTAGE',
+            'description': '1 basket was damaged, 1 basket was good'
+        })
+        dispute_id = reject_resp.data['dispute']['id']
+
+        # Admin resolves with 50/50 split (100 refund to buyer, 100 release to farmer)
+        resolve_resp = self.client.post(reverse('api-dispute-resolve', kwargs={'pk': dispute_id}), {
+            'resolution': 'PARTIAL_SPLIT',
+            'refund_amount': '100.00',
+            'release_amount': '100.00',
+            'notes': '50% refund due to 1 damaged basket.'
+        })
+
+        self.assertEqual(resolve_resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resolve_resp.data['order']['payment_status'], 'PARTIALLY_REFUNDED')
+
+        # Farmer should have received 100.00
+        self.farmer.refresh_from_db()
+        self.assertEqual(float(self.farmer.wallet_balance), 100.00)
+
     def test_crop_disease_scanner_simulated(self):
         """Test crop disease scanner simulated fallback"""
         self.client.force_authenticate(user=self.farmer)
@@ -160,3 +292,4 @@ class AgriConnectTestCase(TestCase):
         self.assertEqual(response.data['status'], 'SUCCESS')
         self.assertEqual(response.data['crop_analyzed'], 'Tomatoes')
         self.assertIn('(Simulated)', response.data['diagnosis'])
+

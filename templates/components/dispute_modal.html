@@ -1,0 +1,50 @@
+<!-- ⚠️ BUYER REJECTION & DISPUTE MODAL -->
+<div class="modal-backdrop" id="dispute-modal" style="display: none;">
+    <div class="momo-dialog" style="border-color: #ef4444; max-width: 520px; width: 90%;">
+        <div class="momo-header" style="background-color: #dc2626; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div class="momo-provider-logo" style="background-color: #fff; color: #dc2626; font-size: 16px;">
+                    <i class="fa-solid fa-triangle-exclamation"></i>
+                </div>
+                <h4 style="font-family: var(--font-display); font-weight: 700; margin: 0;">Reject Cargo & Open Dispute</h4>
+            </div>
+            <button id="dispute-close-btn" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="momo-body p-4 text-left">
+            <p class="font-xs text-secondary mb-3">
+                Rejecting shipment for <strong id="dispute-modal-order-title" class="text-primary">Order #</strong> will hold escrow payment locked until our arbitration team resolves your claim.
+            </p>
+            <form id="dispute-form">
+                <input type="hidden" id="dispute-order-id">
+                
+                <div class="form-group mb-3">
+                    <label class="font-xs font-semibold mb-1" style="display: block;">Primary Reason for Rejection</label>
+                    <select id="dispute-reason" class="form-control" style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-primary);" required>
+                        <option value="SPOILED_ROTTEN">🍅 Spoiled / Rotten / Overripe Produce</option>
+                        <option value="WRONG_VARIETY_QUALITY">⚖️ Wrong Variety or Substandard Quality</option>
+                        <option value="QUANTITY_SHORTAGE">📦 Quantity Shortage / Missing Items</option>
+                        <option value="DAMAGED_IN_TRANSIT">🚚 Cargo Damaged in Transit</option>
+                        <option value="OTHER">❓ Other Quality Dispute</option>
+                    </select>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="font-xs font-semibold mb-1" style="display: block;">Detailed Explanation / Inspection Notes</label>
+                    <textarea id="dispute-description" class="form-control" rows="3" placeholder="Describe the condition upon arrival, defects observed, or discrepancies..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-primary);" required></textarea>
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="font-xs font-semibold mb-1" style="display: block;">Photo Evidence URL (Optional)</label>
+                    <input type="url" id="dispute-evidence-url" class="form-control" placeholder="https://..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-primary);">
+                </div>
+
+                <div class="momo-actions mt-4" style="display: flex; gap: 12px;">
+                    <button type="button" id="dispute-cancel-btn" class="btn btn-secondary" style="flex: 1;">Cancel</button>
+                    <button type="submit" class="btn btn-danger" style="flex: 2; background-color: #dc2626; color: #fff;">
+                        <i class="fa-solid fa-paper-plane"></i> Submit Rejection & Dispute
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -735,6 +735,36 @@ function setupEventListeners() {
         });
     }
 
+    // Dispute modal listeners
+    const disputeForm = document.getElementById('dispute-form');
+    if (disputeForm) {
+        disputeForm.addEventListener('submit', (e) => submitDispute(e));
+    }
+    const disputeCloseBtn = document.getElementById('dispute-close-btn');
+    if (disputeCloseBtn) {
+        disputeCloseBtn.addEventListener('click', closeDisputeModal);
+    }
+    const disputeCancelBtn = document.getElementById('dispute-cancel-btn');
+    if (disputeCancelBtn) {
+        disputeCancelBtn.addEventListener('click', closeDisputeModal);
+    }
+
+    // Mediation modal listeners
+    const mediationForm = document.getElementById('mediation-form');
+    if (mediationForm) {
+        mediationForm.addEventListener('submit', (e) => submitMediation(e));
+    }
+    const mediationCloseBtn = document.getElementById('mediation-close-btn');
+    if (mediationCloseBtn) {
+        mediationCloseBtn.addEventListener('click', closeMediationModal);
+    }
+    const mediationCancelBtn = document.getElementById('mediation-cancel-btn');
+    if (mediationCancelBtn) {
+        mediationCancelBtn.addEventListener('click', closeMediationModal);
+    }
+
+
+
     // Dynamic AI Pricing & Rot calculations in Farmer Listing form
     const formCrop = document.getElementById('produce-crop');
     const formHarvestDate = document.getElementById('produce-harvest-date');
@@ -1621,7 +1651,11 @@ async function loadOrders() {
             } else if (order.payment_status === 'RELEASED') {
                 paymentBadge = `<span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Released to Farmer</span>`;
             } else if (order.payment_status === 'REFUNDED') {
-                paymentBadge = `<span class="badge badge-red">Refunded</span>`;
+                paymentBadge = `<span class="badge badge-purple"><i class="fa-solid fa-rotate-left"></i> Refunded to Buyer</span>`;
+            } else if (order.payment_status === 'DISPUTED') {
+                paymentBadge = `<span class="badge badge-red"><i class="fa-solid fa-triangle-exclamation"></i> Disputed (Escrow Locked)</span>`;
+            } else if (order.payment_status === 'PARTIALLY_REFUNDED') {
+                paymentBadge = `<span class="badge badge-amber"><i class="fa-solid fa-scale-balanced"></i> Partially Refunded</span>`;
             }
 
             // Stepper timeline configuration
@@ -1629,6 +1663,8 @@ async function loadOrders() {
             let currentStageIndex = stages.indexOf(order.status);
             if (order.payment_status === 'RELEASED') {
                 currentStageIndex = 3; // Fully complete
+            } else if (order.status === 'REJECTED' || order.status === 'DISPUTED') {
+                currentStageIndex = 2; // Frozen at transit / delivered
             }
             
             const progressPercent = (currentStageIndex / (stages.length - 1)) * 100;
@@ -1657,6 +1693,28 @@ async function loadOrders() {
                 `;
             });
 
+            // Dispute info card HTML
+            let disputeCardHtml = '';
+            if (order.latest_dispute) {
+                const d = order.latest_dispute;
+                disputeCardHtml = `
+                    <div class="dispute-box mt-3 p-3" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; border-radius: var(--radius-sm);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <strong style="color: #ef4444; font-size: 13px;"><i class="fa-solid fa-triangle-exclamation"></i> Dispute #${d.id} (${d.status_display})</strong>
+                            <span class="font-xxs text-secondary">Raised by ${d.raised_by_name}</span>
+                        </div>
+                        <p class="font-xs mt-1 mb-1" style="color: var(--text-primary);"><strong>Reason:</strong> ${d.reason_display}</p>
+                        <p class="font-xs text-secondary mb-1"><strong>Details:</strong> ${d.description}</p>
+                        ${d.resolution_notes ? `<p class="font-xs text-emerald mt-1"><strong>Resolution Note:</strong> ${d.resolution_notes}</p>` : ''}
+                        ${(currentUser.is_staff || currentUser.role === 'BUYER' || currentUser.role === 'FARMER') && (d.status === 'OPEN' || d.status === 'UNDER_REVIEW') ? `
+                            <button class="btn btn-secondary btn-sm mt-2 resolve-dispute-trigger-btn" data-dispute-id="${d.id}" data-order-id="${order.id}">
+                                <i class="fa-solid fa-gavel"></i> Resolve / Mediate Dispute
+                            </button>
+                        ` : ''}
+                    </div>
+                `;
+            }
+
             // Actions for the buyer and farmer
             let actionButtonsHtml = '';
             if (currentUser.role === 'BUYER') {
@@ -1679,15 +1737,20 @@ async function loadOrders() {
                                 <i class="fa-solid fa-user-check"></i> Approve Driver (${order.transporter_details.username})
                             </button>
                             <button class="btn btn-danger reject-driver-btn" data-job-id="${order.transporter_details.job_id}" data-id="${order.id}" style="width: auto; padding: 8px 16px;">
-                                <i class="fa-solid fa-user-xmark"></i> Reject
+                                <i class="fa-solid fa-user-xmark"></i> Reject Driver
                             </button>
                         </div>
                     `;
-                } else if (order.payment_status === 'HELD_IN_ESCROW' && order.status === 'DELIVERED') {
+                } else if (order.payment_status === 'HELD_IN_ESCROW' && (order.status === 'DELIVERED' || order.status === 'SHIPPED' || order.status === 'PAID')) {
                     actionButtonsHtml = `
-                        <button class="btn btn-success confirm-delivery-btn pulsing-green" data-id="${order.id}">
-                            <i class="fa-solid fa-circle-check"></i> Confirm Delivery & Release Funds
-                        </button>
+                        <div class="flex gap-2" style="width: 100%;">
+                            <button class="btn btn-success confirm-delivery-btn pulsing-green flex-1" data-id="${order.id}">
+                                <i class="fa-solid fa-circle-check"></i> Accept & Release Escrow
+                            </button>
+                            <button class="btn btn-danger open-reject-modal-btn" data-id="${order.id}" data-title="${order.produce_details.variety || order.produce_details.name}">
+                                <i class="fa-solid fa-ban"></i> Reject & Dispute
+                            </button>
+                        </div>
                     `;
                 } else if (order.transporter_details && order.transporter_details.payment_status === 'REQUESTED') {
                     actionButtonsHtml = `
@@ -1752,6 +1815,8 @@ async function loadOrders() {
                     ` : ''}
                 </div>
 
+                ${disputeCardHtml}
+
                 <!-- Timeline Stepper -->
                 <div class="stepper-timeline">
                     <div class="stepper-progress-line" style="width: ${progressPercent}%;"></div>
@@ -1805,6 +1870,20 @@ async function loadOrders() {
                     }
                 });
             }
+            if (card.querySelector('.open-reject-modal-btn')) {
+                card.querySelector('.open-reject-modal-btn').addEventListener('click', (e) => {
+                    const id = e.currentTarget.getAttribute('data-id');
+                    const title = e.currentTarget.getAttribute('data-title');
+                    openDisputeModal(id, title);
+                });
+            }
+            if (card.querySelector('.resolve-dispute-trigger-btn')) {
+                card.querySelector('.resolve-dispute-trigger-btn').addEventListener('click', (e) => {
+                    const disputeId = e.currentTarget.getAttribute('data-dispute-id');
+                    promptResolveDispute(disputeId);
+                });
+            }
+
             if (card.querySelector('.approve-driver-btn')) {
                 card.querySelector('.approve-driver-btn').addEventListener('click', async (e) => {
                     const jobId = e.currentTarget.getAttribute('data-job-id');
@@ -4790,4 +4869,108 @@ async function renderAnalyticsChart() {
         console.error("Error drawing pricing chart:", err);
     }
 }
+
+
+// -------------------------------------------------------------
+// BUYER REJECTION & DISPUTE MEDIATION HELPERS
+// -------------------------------------------------------------
+
+function openDisputeModal(orderId, orderTitle) {
+    const modal = document.getElementById('dispute-modal');
+    if (!modal) return;
+    document.getElementById('dispute-order-id').value = orderId;
+    document.getElementById('dispute-modal-order-title').textContent = `Order #${orderId} (${orderTitle || ''})`;
+    document.getElementById('dispute-form').reset();
+    modal.style.display = 'flex';
+}
+
+function closeDisputeModal() {
+    const modal = document.getElementById('dispute-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function submitDispute(e) {
+    e.preventDefault();
+    const orderId = document.getElementById('dispute-order-id').value;
+    const reason = document.getElementById('dispute-reason').value;
+    const description = document.getElementById('dispute-description').value;
+    const evidenceUrl = document.getElementById('dispute-evidence-url').value;
+
+    try {
+        const res = await fetch(`/api/orders/${orderId}/reject/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                reason: reason,
+                description: description,
+                evidence_url: evidenceUrl
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("Shipment rejected and dispute initiated! Platform escrow payment has been locked pending resolution.");
+            closeDisputeModal();
+            loadOrders();
+            loadProfileData();
+        } else {
+            alert("Error submitting dispute: " + (data.detail || JSON.stringify(data)));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to submit dispute.");
+    }
+}
+
+function promptResolveDispute(disputeId) {
+    openMediationModal(disputeId);
+}
+
+function openMediationModal(disputeId) {
+    const modal = document.getElementById('mediation-modal');
+    if (!modal) return;
+    document.getElementById('mediation-dispute-id').value = disputeId;
+    document.getElementById('mediation-dispute-title').textContent = `Dispute #${disputeId}`;
+    modal.style.display = 'flex';
+}
+
+function closeMediationModal() {
+    const modal = document.getElementById('mediation-modal');
+    if (modal) modal.style.display = 'none';
+}
+
+async function submitMediation(e) {
+    e.preventDefault();
+    const disputeId = document.getElementById('mediation-dispute-id').value;
+    const selectedRadio = document.querySelector('input[name="mediation_choice"]:checked');
+    const resolution = selectedRadio ? selectedRadio.value : 'REFUND_BUYER';
+    const notes = document.getElementById('mediation-notes').value;
+
+    try {
+        const res = await fetch(`/api/disputes/${disputeId}/resolve/`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                resolution: resolution,
+                notes: notes,
+                restock_inventory: (resolution === 'REFUND_BUYER')
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("Dispute resolved successfully! Wallet balances updated and notification alerts sent.");
+            closeMediationModal();
+            loadOrders();
+            loadProfileData();
+        } else {
+            alert("Failed to resolve dispute: " + (data.detail || JSON.stringify(data)));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Error resolving dispute.");
+    }
+}
+
+
 
