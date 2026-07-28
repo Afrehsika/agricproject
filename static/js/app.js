@@ -1203,9 +1203,24 @@ function clearMapMarkers() {
 }
 
 // -------------------------------------------------------------
+// DATA LOADING SPINNER HELPER
+// -------------------------------------------------------------
+function renderContainerSpinner(containerOrId, message = 'Loading data...') {
+    const container = typeof containerOrId === 'string' ? document.getElementById(containerOrId) : containerOrId;
+    if (!container) return;
+    container.innerHTML = `
+        <div style="text-align: center; padding: 45px 20px; width: 100%; grid-column: 1 / -1;" class="data-loading-spinner-box">
+            <i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #10b981; margin-bottom: 12px; display: inline-block;"></i>
+            <p style="font-size: 13px; font-weight: 500; color: var(--text-secondary); margin: 0;">${message}</p>
+        </div>
+    `;
+}
+
+// -------------------------------------------------------------
 // MARKETPLACE TAB LOGIC
 async function loadMarketplace() {
     clearMapMarkers();
+    renderContainerSpinner('standard-produce-grid', 'Loading fresh farm produce from Techiman market...');
     
     const queryVal = document.getElementById('marketplace-search').value;
     const activeCropTag = document.querySelector('.crop-tags .tag.active').getAttribute('data-crop');
@@ -1222,6 +1237,7 @@ async function loadMarketplace() {
     }
 
     try {
+
         const res = await fetch(url);
         if (!res.ok) return;
         const produceList = await res.json();
@@ -1524,13 +1540,17 @@ function showMoMoPaymentDialog(order) {
 // -------------------------------------------------------------
 // FARMER TAB LOGIC
 async function loadFarmerListings() {
+    const body = document.getElementById('farmer-produce-list-body');
+    if (body) {
+        body.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;"><i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #10b981; margin-bottom: 8px;"></i><p style="font-size: 12px; color: var(--text-secondary); margin: 4px 0 0 0;">Loading your farm produce listings...</p></td></tr>';
+    }
     try {
         const res = await fetch(`/api/produce/?farmer=${currentUser.id}`);
         if (!res.ok) return;
         const list = await res.json();
         
-        const body = document.getElementById('farmer-produce-list-body');
-        body.innerHTML = '';
+        if (body) body.innerHTML = '';
+
 
         if (list.length === 0) {
             body.innerHTML = '<tr><td colspan="6" class="text-center text-secondary">You have no active listings. Create one on the right!</td></tr>';
@@ -1621,6 +1641,7 @@ async function loadFarmerListings() {
 // ORDERS & ESCROW TAB LOGIC
 async function loadOrders() {
     clearMapMarkers();
+    renderContainerSpinner('orders-list-container', 'Loading your escrow orders & transactions...');
     
     try {
         const res = await fetch('/api/orders/create/');
@@ -1628,7 +1649,8 @@ async function loadOrders() {
         const orders = await res.json();
         
         const container = document.getElementById('orders-list-container');
-        container.innerHTML = '';
+        if (container) container.innerHTML = '';
+
 
         if (orders.length === 0) {
             container.innerHTML = '<div class="text-secondary text-center p-4">You have no active transactions. Go to the Marketplace to buy vegetables!</div>';
@@ -2018,6 +2040,8 @@ async function loadLogisticsJobs() {
             if (farmerView) farmerView.style.display = 'grid';
             if (transporterView) transporterView.style.display = 'none';
 
+            renderContainerSpinner('farmer-dispatched-jobs', 'Loading dispatched cargo shipments...');
+
             // Populate Farmer Dispatch dropdowns
             await loadFarmerDispatchDropdowns();
 
@@ -2048,8 +2072,12 @@ async function loadLogisticsJobs() {
             if (farmerView) farmerView.style.display = 'none';
             if (transporterView) transporterView.style.display = 'grid';
 
+            renderContainerSpinner('logistics-open-jobs', 'Loading available delivery requests...');
+            renderContainerSpinner('logistics-my-jobs', 'Loading claimed transport jobs...');
+
             // Fetch open jobs
             const searchInput = document.getElementById('logistics-board-search');
+
             let searchParam = '';
             if (searchInput && searchInput.value) {
                 searchParam = `?search=${encodeURIComponent(searchInput.value)}`;
@@ -4878,8 +4906,27 @@ async function renderAnalyticsChart() {
 
 
 // -------------------------------------------------------------
-// BUYER REJECTION & DISPUTE MEDIATION HELPERS
+// BUTTON SPINNER HELPERS
 // -------------------------------------------------------------
+
+function setButtonLoading(button, text = 'Processing...') {
+    if (!button) return;
+    button.dataset.originalHtml = button.innerHTML;
+    button.disabled = true;
+    button.style.opacity = '0.75';
+    button.style.cursor = 'not-allowed';
+    button.innerHTML = `<i class="fa-solid fa-spinner fa-spin me-2"></i> ${text}`;
+}
+
+function resetButton(button) {
+    if (!button) return;
+    button.disabled = false;
+    button.style.opacity = '1';
+    button.style.cursor = 'pointer';
+    if (button.dataset.originalHtml) {
+        button.innerHTML = button.dataset.originalHtml;
+    }
+}
 
 function openDisputeModal(orderId, orderTitle) {
     const modal = document.getElementById('dispute-modal');
@@ -4897,6 +4944,9 @@ function closeDisputeModal() {
 
 async function submitDispute(e) {
     e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    setButtonLoading(submitBtn, 'Submitting Dispute...');
+
     const orderId = document.getElementById('dispute-order-id').value;
     const reason = document.getElementById('dispute-reason').value;
     const description = document.getElementById('dispute-description').value;
@@ -4925,6 +4975,8 @@ async function submitDispute(e) {
     } catch (err) {
         console.error(err);
         alert("Failed to submit dispute.");
+    } finally {
+        resetButton(submitBtn);
     }
 }
 
@@ -4947,6 +4999,9 @@ function closeMediationModal() {
 
 async function submitMediation(e) {
     e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    setButtonLoading(submitBtn, 'Executing Mediation...');
+
     const disputeId = document.getElementById('mediation-dispute-id').value;
     const selectedRadio = document.querySelector('input[name="mediation_choice"]:checked');
     const resolution = selectedRadio ? selectedRadio.value : 'REFUND_BUYER';
@@ -4975,8 +5030,11 @@ async function submitMediation(e) {
     } catch (err) {
         console.error(err);
         alert("Error resolving dispute.");
+    } finally {
+        resetButton(submitBtn);
     }
 }
+
 
 
 

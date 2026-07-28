@@ -51,11 +51,12 @@ class OrderAdmin(admin.ModelAdmin):
             '<p style="margin: 0 0 10px 0; font-size: 12px; color: #881337;"><strong>Reason:</strong> {} | <strong>Raised by:</strong> {}<br><strong>Details:</strong> {}</p>'
             '<p style="margin: 0 0 12px 0; font-size: 12px; color: #475569;">Select an arbitration action to resolve this dispute and execute escrow wallet transfers immediately:</p>'
             '<div style="display: flex; gap: 10px; flex-wrap: wrap;">'
-            '<a class="button" style="background: #7c3aed; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/full-refund/">⚖️ Grant Full Refund (100%)</a>'
-            '<a class="button" style="background: #059669; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/release-farmer/">🌾 Release Escrow to Farmer</a>'
-            '<a class="button" style="background: #0284c7; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/partial-split/">✂️ Partial Split 50/50</a>'
+            '<a class="button" onclick="this.style.pointerEvents=\'none\'; this.style.opacity=\'0.6\'; this.innerHTML=\'⏳ Processing Refund...\';" style="background: #7c3aed; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/full-refund/">⚖️ Grant Full Refund (100%)</a>'
+            '<a class="button" onclick="this.style.pointerEvents=\'none\'; this.style.opacity=\'0.6\'; this.innerHTML=\'⏳ Processing Release...\';" style="background: #059669; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/release-farmer/">🌾 Release Escrow to Farmer</a>'
+            '<a class="button" onclick="this.style.pointerEvents=\'none\'; this.style.opacity=\'0.6\'; this.innerHTML=\'⏳ Processing Split...\';" style="background: #0284c7; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/partial-split/">✂️ Partial Split 50/50</a>'
             '</div>'
             '</div>',
+
             dispute.id, dispute.get_status_display(), dispute.get_reason_display(), dispute.raised_by.username, dispute.description,
             dispute.id, dispute.id, dispute.id
         )
@@ -113,11 +114,12 @@ class DisputeAdmin(admin.ModelAdmin):
             '<h4 style="margin: 0 0 8px 0; color: #4338ca; font-size: 15px;">⚖️ Administrative Dispute Mediation Engine</h4>'
             '<p style="margin: 0 0 14px 0; font-size: 12px; color: #475569;">Select an arbitration resolution below to execute escrow wallet transfers and update order state:</p>'
             '<div style="display: flex; gap: 10px; flex-wrap: wrap;">'
-            '<a class="button" style="background: #7c3aed; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/full-refund/">⚖️ Grant Full Refund (100%)</a>'
-            '<a class="button" style="background: #059669; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/release-farmer/">🌾 Release Escrow to Farmer</a>'
-            '<a class="button" style="background: #0284c7; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/partial-split/">✂️ Partial Split 50/50</a>'
+            '<a class="button" onclick="this.style.pointerEvents=\'none\'; this.style.opacity=\'0.6\'; this.innerHTML=\'⏳ Processing Refund...\';" style="background: #7c3aed; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/full-refund/">⚖️ Grant Full Refund (100%)</a>'
+            '<a class="button" onclick="this.style.pointerEvents=\'none\'; this.style.opacity=\'0.6\'; this.innerHTML=\'⏳ Processing Release...\';" style="background: #059669; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/release-farmer/">🌾 Release Escrow to Farmer</a>'
+            '<a class="button" onclick="this.style.pointerEvents=\'none\'; this.style.opacity=\'0.6\'; this.innerHTML=\'⏳ Processing Split...\';" style="background: #0284c7; color: #fff !important; border: none; padding: 10px 16px; border-radius: 6px; font-weight: bold; text-decoration: none; display: inline-block;" href="/admin/orders/dispute/{}/resolve-action/partial-split/">✂️ Partial Split 50/50</a>'
             '</div>'
             '</div>',
+
             obj.id, obj.id, obj.id
         )
     admin_mediation_panel.short_description = "Admin Mediation Actions"
