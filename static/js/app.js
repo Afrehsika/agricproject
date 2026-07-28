@@ -700,6 +700,8 @@ function setupEventListeners() {
         const harvestDate = document.getElementById('produce-harvest-date').value;
         const desc = document.getElementById('produce-desc').value;
         
+        const storageFacilityId = document.getElementById('produce-storage-facility') ? document.getElementById('produce-storage-facility').value : '';
+        
         const formData = new FormData();
         formData.append('name', crop);
         formData.append('variety', variety);
@@ -708,6 +710,9 @@ function setupEventListeners() {
         formData.append('price_per_unit', price);
         formData.append('harvest_date', harvestDate);
         formData.append('description', desc);
+        if (storageFacilityId) {
+            formData.append('storage_facility', storageFacilityId);
+        }
         
         const imageInput = document.getElementById('produce-image');
         if (imageInput && imageInput.files[0]) {
@@ -721,7 +726,7 @@ function setupEventListeners() {
             });
 
             if (res.ok) {
-                alert("Successfully listed your harvest! Estimated rotting date and freshness score have been calculated by the AI engine.");
+                alert("Successfully listed your harvest! AI freshness score and rot predictions have been calculated based on your verified storage facility.");
                 document.getElementById('create-produce-form').reset();
                 // Refresh listings
                 switchTab('farmer-listings');
@@ -733,6 +738,13 @@ function setupEventListeners() {
             console.error(err);
         }
     });
+
+    // Storage Facility Registration Form
+    const storageForm = document.getElementById('register-storage-form');
+    if (storageForm) {
+        storageForm.addEventListener('submit', (e) => submitStorageFacility(e));
+    }
+
 
     // Dispatch goods form submit
     const dispatchForm = document.getElementById('dispatch-goods-form');
@@ -1386,6 +1398,22 @@ function createProduceCard(p, isUrgent) {
     // Mock distance
     const mockDist = (Math.random() * 4 + 1.2).toFixed(1);
 
+    // Verified Storage Inspection Badge
+    let storageBadgeHtml = '';
+    if (p.storage_facility_details && p.storage_facility_details.status === 'APPROVED') {
+        const badgeColors = {
+            'GOLD_COLD_CHAIN': 'background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff;',
+            'SILVER_COOL_ROOM': 'background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff;',
+            'BRONZE_VENTILATED': 'background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff;'
+        };
+        const styleStr = badgeColors[p.storage_facility_details.badge] || 'background: #10b981; color: #ffffff;';
+        storageBadgeHtml = `
+            <div style="${styleStr} border-radius: 6px; padding: 4px 8px; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);" title="${p.storage_facility_details.name} - Inspected & Verified by Admin">
+                <i class="fa-solid fa-snowflake"></i> ${p.storage_facility_details.badge_display}
+            </div>
+        `;
+    }
+
     col.innerHTML = `
         <div class="produce-img-wrapper" style="position: relative;">
             <img src="${imageUrl}" alt="${p.name}">
@@ -1416,7 +1444,10 @@ function createProduceCard(p, isUrgent) {
                 <span><i class="fa-solid fa-calendar-day"></i> Shelf life: ~${shelfLife} days</span>
             </div>
 
+            ${storageBadgeHtml}
+
             ${recomBadge}
+
             
             <div class="freshness-container" style="margin-top: 6px;">
                 <div class="freshness-lbl-row">
@@ -1562,7 +1593,9 @@ function showMoMoPaymentDialog(order) {
 // -------------------------------------------------------------
 // FARMER TAB LOGIC
 async function loadFarmerListings() {
+    loadStorageFacilities();
     const body = document.getElementById('farmer-produce-list-body');
+
     if (body) {
         body.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 30px;"><i class="fa-solid fa-circle-notch fa-spin fa-2x" style="color: #10b981; margin-bottom: 8px;"></i><p style="font-size: 12px; color: var(--text-secondary); margin: 4px 0 0 0;">Loading your farm produce listings...</p></td></tr>';
     }
@@ -5056,6 +5089,131 @@ async function submitMediation(e) {
         resetButton(submitBtn);
     }
 }
+
+
+// -------------------------------------------------------------
+// COLD STORAGE & WAREHOUSE VERIFICATION LOGIC
+// -------------------------------------------------------------
+
+window.openStorageModal = function() {
+    const modal = document.getElementById('storage-modal');
+    if (!modal) return;
+    modal.style.setProperty('display', 'flex', 'important');
+    loadStorageFacilities();
+};
+
+window.closeStorageModal = function() {
+    const modal = document.getElementById('storage-modal');
+    if (modal) modal.style.setProperty('display', 'none', 'important');
+};
+
+
+async function loadStorageFacilities() {
+    if (!currentUser) return;
+    try {
+        const res = await fetch(`/api/storage/facilities/?farmer=${currentUser.id}`);
+        if (!res.ok) return;
+        const facilities = await res.json();
+
+        // Populate dropdown in create produce form
+        const select = document.getElementById('produce-storage-facility');
+        if (select) {
+            select.innerHTML = '<option value="">No Cold Storage (Standard Shelf Life)</option>';
+            facilities.forEach(f => {
+                const opt = document.createElement('option');
+                opt.value = f.id;
+                const statusLabel = f.status === 'APPROVED' ? (f.badge_display || 'Verified') : `(${f.status_display})`;
+                opt.textContent = `${f.name} - ${statusLabel}`;
+                select.appendChild(opt);
+            });
+        }
+
+        // Populate list in storage modal
+        const listContainer = document.getElementById('storage-facilities-list-container');
+        if (listContainer) {
+            listContainer.innerHTML = '';
+            if (facilities.length === 0) {
+                listContainer.innerHTML = '<div class="text-secondary font-xs text-center p-3">No storage facilities registered yet. Fill out the form above!</div>';
+            } else {
+                facilities.forEach(f => {
+                    const card = document.createElement('div');
+                    card.style.cssText = 'padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg-main);';
+                    
+                    let badgeClass = 'background: #f59e0b; color: #fff;';
+                    if (f.status === 'APPROVED') badgeClass = 'background: #10b981; color: #fff;';
+                    else if (f.status === 'REJECTED') badgeClass = 'background: #ef4444; color: #fff;';
+
+                    card.innerHTML = `
+                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
+                            <div>
+                                <strong style="font-size: 13px; color: var(--text-primary);">${f.name}</strong>
+                                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+                                    <span><i class="fa-solid fa-layer-group text-emerald"></i> ${f.capacity}</span> • 
+                                    <span><i class="fa-solid fa-temperature-arrow-down text-blue-accent"></i> ${f.temperature_humidity}</span>
+                                </div>
+                                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
+                                    <i class="fa-solid fa-location-dot"></i> ${f.location}
+                                </div>
+                                ${f.admin_notes ? `<div style="font-size: 11px; color: #047857; margin-top: 4px; font-style: italic;"><strong>Audit Note:</strong> ${f.admin_notes}</div>` : ''}
+                            </div>
+                            <div style="text-align: right; flex-shrink: 0;">
+                                <span style="${badgeClass} padding: 3px 8px; border-radius: 50px; font-size: 10px; font-weight: 700; display: inline-block;">
+                                    ${f.badge_display && f.badge_display !== 'No Badge' ? f.badge_display : f.status_display}
+                                </span>
+                            </div>
+                        </div>
+                    `;
+                    listContainer.appendChild(card);
+                });
+            }
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function submitStorageFacility(e) {
+    e.preventDefault();
+    const submitBtn = e.target.querySelector('button[type="submit"]');
+    setButtonLoading(submitBtn, 'Submitting Registration...');
+
+    const name = document.getElementById('storage-name').value;
+    const type = document.getElementById('storage-type').value;
+    const capacity = document.getElementById('storage-capacity').value;
+    const location = document.getElementById('storage-location').value;
+    const temp = document.getElementById('storage-temp').value;
+    const photoUrl = document.getElementById('storage-photo-url').value;
+
+    try {
+        const res = await fetch('/api/storage/facilities/', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                name: name,
+                facility_type: type,
+                capacity: capacity,
+                location: location,
+                temperature_humidity: temp,
+                photo_url: photoUrl
+            })
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+            alert("Storage facility registered successfully! Platform Quality Assurance Auditors will review your facility for inspection badges.");
+            document.getElementById('register-storage-form').reset();
+            loadStorageFacilities();
+        } else {
+            alert("Error registering facility: " + JSON.stringify(data));
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Failed to submit storage facility registration.");
+    } finally {
+        resetButton(submitBtn);
+    }
+}
+
 
 
 

@@ -1,20 +1,38 @@
 <!-- Farmer Listings Tab -->
 <section id="tab-farmer-listings" class="tab-pane">
-    <div class="grid-2-1">
-        <!-- Existing Listings -->
+    <!-- Premium Cold Storage Verification Banner -->
+    <div class="storage-banner-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; position: relative; z-index: 2;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 48px; height: 48px; border-radius: 14px; background: rgba(255,255,255,0.15); backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,0.25); color: #34d399; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: 0 4px 14px rgba(0,0,0,0.15);">
+                    <i class="fa-solid fa-warehouse"></i>
+                </div>
+                <div>
+                    <h4 style="margin: 0; font-size: 16px; font-weight: 800; color: #ffffff; letter-spacing: -0.2px;">Cold Chain & Verified Storage Facilities</h4>
+                    <p style="margin: 4px 0 0 0; font-size: 12px; color: #a7f3d0; line-height: 1.4;">Register solar cold rooms or warehouses to earn ❄️ <strong>Admin Inspection Badges</strong> & boost crop freshness guarantee up to 2.5x!</p>
+                </div>
+            </div>
+            <button class="btn" style="background: #ffffff; color: #047857; font-weight: 700; font-size: 12px; padding: 10px 20px; border-radius: 10px; border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.15s ease;" onclick="openStorageModal()">
+                <i class="fa-solid fa-shield-halved text-emerald me-1"></i> Register Storage Facility
+            </button>
+        </div>
+    </div>
+
+    <div class="grid-2-1" style="display: grid; grid-template-columns: 1fr 380px; gap: 24px;">
+        <!-- Existing Listings Table -->
         <div class="card">
             <div class="card-header">
-                <h3><i class="fa-solid fa-list-check"></i> My Active Listings</h3>
+                <h3><i class="fa-solid fa-list-check text-emerald"></i> My Active Harvest Listings</h3>
             </div>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table" id="farmer-listings-table">
                         <thead>
                             <tr>
-                                <th>Produce</th>
-                                <th>Qty</th>
-                                <th>Price/Unit</th>
-                                <th>Freshness</th>
+                                <th>Produce Item</th>
+                                <th>Qty Available</th>
+                                <th>Price / Unit</th>
+                                <th>Freshness Score</th>
                                 <th>Est. Rot Date</th>
                                 <th>Status</th>
                             </tr>
@@ -27,12 +45,10 @@
             </div>
         </div>
 
-
-        <!-- Forms Column -->
-        <div style="display: flex; flex-direction: column; gap: 24px;">
-            <!-- Add Listing Form -->
-            <div class="card glass">
-                <div class="card-header border-emerald">
+        <!-- Create New Listing Form Column -->
+        <div>
+            <div class="card">
+                <div class="card-header" style="border-bottom: 1px solid #f1f5f9;">
                     <h3><i class="fa-solid fa-plus-circle text-emerald"></i> Create New Listing</h3>
                 </div>
                 <div class="card-body">
@@ -47,10 +63,25 @@
                                 <option value="Leafy Greens">Leafy Greens</option>
                             </select>
                         </div>
+
                         <div class="form-group">
-                            <label for="produce-variety">Variety</label>
+                            <label for="produce-variety">Variety / Type</label>
                             <input type="text" id="produce-variety" class="form-control" placeholder="e.g. Power Rano, Legon 18" required>
                         </div>
+
+                        <div class="form-group">
+                            <label for="produce-storage-facility">
+                                <span>Verified Storage Facility</span>
+                                <button type="button" class="btn" style="padding: 2px 8px; font-size: 10px; font-weight: 700; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; cursor: pointer;" onclick="openStorageModal()">
+                                    <i class="fa-solid fa-plus"></i> New Facility
+                                </button>
+                            </label>
+                            <select id="produce-storage-facility" class="form-control">
+                                <option value="">No Cold Storage (Standard Shelf Life)</option>
+                            </select>
+                            <span style="font-size: 10px; color: var(--text-secondary); margin-top: 4px; display: block;">Assigning an admin-inspected cold room boosts freshness score & extends shelf life!</span>
+                        </div>
+
                         <div class="form-row">
                             <div class="form-group col">
                                 <label for="produce-qty">Quantity</label>
@@ -66,9 +97,10 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="form-row">
                             <div class="form-group col">
-                                <label for="produce-price">Price per Unit (GHS)</label>
+                                <label for="produce-price">Price / Unit (GHS)</label>
                                 <input type="number" id="produce-price" class="form-control" min="1" value="120" required>
                             </div>
                             <div class="form-group col">
@@ -78,40 +110,47 @@
                         </div>
                         
                         <!-- AI PRICE & EXPIRY ADVISOR WIDGET -->
-                        <div class="ai-advisor-widget mt-3 p-3">
-                            <div class="advisor-header text-emerald font-sm">
-                                <i class="fa-solid fa-robot"></i> <strong>AI Shelf-life & Pricing Advisor</strong>
+                        <div style="background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%); border: 1px solid #a7f3d0; border-radius: 12px; padding: 14px; margin-top: 14px;">
+                            <div style="display: flex; align-items: center; gap: 8px; color: #047857; font-size: 12px; font-weight: 700;">
+                                <i class="fa-solid fa-robot text-emerald"></i> AI Shelf-Life & Pricing Advisor
                             </div>
-                            <div class="advisor-body mt-2 font-xs">
-                                <div class="adv-stat">
+                            <div style="font-size: 11px; margin-top: 8px; display: flex; flex-direction: column; gap: 4px; color: #334155;">
+                                <div style="display: flex; justify-content: space-between;">
                                     <span>Est. Freshness:</span> 
-                                    <span id="adv-freshness" class="weight-600 text-emerald">100%</span>
+                                    <span id="adv-freshness" style="font-weight: 700; color: #059669;">100%</span>
                                 </div>
-                                <div class="adv-stat">
+                                <div style="display: flex; justify-content: space-between;">
                                     <span>Estimated Rotting Date:</span> 
-                                    <span id="adv-rot-date" class="weight-600">Selecting date...</span>
+                                    <span id="adv-rot-date" style="font-weight: 600;">Selecting date...</span>
                                 </div>
-                                <div class="adv-stat mt-2">
+                                <div style="display: flex; justify-content: space-between; margin-top: 4px; padding-top: 4px; border-top: 1px dashed #cbd5e1;">
                                     <span>AI Recommended Price:</span> 
-                                    <span id="adv-rec-price" class="weight-700 text-amber">GHS --</span>
+                                    <span id="adv-rec-price" style="font-weight: 800; color: #d97706;">GHS --</span>
                                 </div>
-                                <p id="adv-disclaimer" class="text-secondary mt-1 italic font-xxs">Based on local Techiman supply and decay rates.</p>
+                                <p id="adv-disclaimer" style="font-size: 10px; color: #64748b; font-style: italic; margin-top: 4px;">Based on local Techiman supply and decay rates.</p>
                             </div>
                         </div>
 
                         <div class="form-group mt-3">
                             <label for="produce-image">Harvest Picture</label>
-                            <div class="input-icon-wrapper" style="position: relative; display: flex; align-items: center;">
-                                <i class="fa-solid fa-camera" style="position: absolute; left: 12px; color: var(--text-secondary); pointer-events: none;"></i>
-                                <input type="file" id="produce-image" class="form-control" accept="image/*" style="padding-left: 36px; padding-top: 10px; padding-bottom: 10px; height: auto;">
-                            </div>
+                            <input type="file" id="produce-image" class="form-control" accept="image/*">
                         </div>
 
                         <div class="form-group mt-3">
-                            <label for="produce-desc">Produce Description</label>
-                            <textarea id="produce-desc" class="form-control" rows="2" placeholder="Describe quality, soil organic practice, availability..."></textarea>
+                            <label for="produce-desc">Crop Notes & Description</label>
+                            <textarea id="produce-desc" class="form-control" rows="2" placeholder="Describe harvest quality, organic soil practices, availability..."></textarea>
                         </div>
-                        <button type="submit" class="btn btn-primary btn-block mt-3">
+
+                        <button type="submit" class="btn btn-emerald-gradient btn-block mt-3" style="width: 100%; padding: 12px; font-size: 13px; font-weight: 700; border-radius: 10px; margin-top: 16px;">
+                            <i class="fa-solid fa-cloud-arrow-up me-1"></i> Publish Crop Listing
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
                             <i class="fa-solid fa-cloud-arrow-up"></i> Publish Crop Listing
                         </button>
                     </form>

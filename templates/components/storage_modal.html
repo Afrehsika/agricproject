@@ -1,0 +1,80 @@
+<!-- 🏭 Storage Facility & Quality Inspection Modal -->
+<div id="storage-modal" class="modal-overlay" style="display: none;">
+    <div class="modal-content" style="max-width: 680px; width: 92%;">
+        <div class="modal-header" style="background: linear-gradient(135deg, #064e3b 0%, #047857 100%); color: #fff; padding: 16px 20px; border-radius: var(--radius-md) var(--radius-md) 0 0;">
+            <h3 style="margin: 0; font-size: 16px; font-weight: 700;">
+                <i class="fa-solid fa-warehouse text-emerald me-2"></i> Register Storage Facility & Admin Inspection Badges
+            </h3>
+            <button class="close-modal-btn" onclick="closeStorageModal()" style="color: #fff; background: transparent; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+        </div>
+        
+        <div class="modal-body p-4" style="max-height: 75vh; overflow-y: auto;">
+            <!-- Informational Alert -->
+            <div class="p-3 mb-3" style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: var(--radius-sm); font-size: 12px; color: #166534;">
+                <i class="fa-solid fa-circle-check text-emerald me-1"></i>
+                <strong>Assured Freshness Guarantee:</strong> Facilities registered here undergo quality inspection by AgriConnect Platform Auditors. Verified facilities receive an inspection badge (❄️ Gold, 🌿 Silver, 📦 Bronze) displayed on all your marketplace crop listings!
+            </div>
+
+            <!-- Facility Registration Form -->
+            <form id="register-storage-form">
+                <div class="form-group mb-2">
+                    <label style="font-size: 12px; font-weight: 600;">Facility / Warehouse Name</label>
+                    <input type="text" id="storage-name" class="form-control" placeholder="e.g. Techiman Solar-Cool Room #1" required>
+                </div>
+
+                <div class="form-row" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <div class="form-group col" style="flex: 1; min-width: 200px;">
+                        <label style="font-size: 12px; font-weight: 600;">Storage Technology Type</label>
+                        <select id="storage-type" class="form-control" required>
+                            <option value="SOLAR_COLD_ROOM">☀️ Solar-Powered Cold Room (4°C - 12°C)</option>
+                            <option value="EVAPORATIVE_COOLER">🌿 Evaporative Cooling Chamber (14°C - 18°C)</option>
+                            <option value="REFRIGERATED_WAREHOUSE">❄️ Refrigerated Cold Chain Warehouse</option>
+                            <option value="VENTILATED_BARN">📦 Inspected Ventilated Dry Barn</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group col" style="flex: 1; min-width: 180px;">
+                        <label style="font-size: 12px; font-weight: 600;">Storage Capacity</label>
+                        <input type="text" id="storage-capacity" class="form-control" placeholder="e.g. 500 Crates / 10 Tonnes" required>
+                    </div>
+                </div>
+
+                <div class="form-row mt-2" style="display: flex; gap: 12px; flex-wrap: wrap;">
+                    <div class="form-group col" style="flex: 1; min-width: 200px;">
+                        <label style="font-size: 12px; font-weight: 600;">Location / District / GPS</label>
+                        <input type="text" id="storage-location" class="form-control" placeholder="e.g. Techiman Central Market / Tuobodom Junction" required>
+                    </div>
+
+                    <div class="form-group col" style="flex: 1; min-width: 180px;">
+                        <label style="font-size: 12px; font-weight: 600;">Operating Temp & RH</label>
+                        <input type="text" id="storage-temp" class="form-control" placeholder="e.g. 8°C - 12°C / 85% RH" value="8°C - 12°C / 85% RH">
+                    </div>
+                </div>
+
+                <div class="form-group mt-2">
+                    <label style="font-size: 12px; font-weight: 600;">Photo URL (Optional)</label>
+                    <input type="url" id="storage-photo-url" class="form-control" placeholder="https://images.unsplash.com/photo-...">
+                </div>
+
+                <button type="submit" class="btn btn-emerald-gradient btn-block mt-3" style="width: 100%; padding: 10px; font-size: 13px; font-weight: 700;">
+                    <i class="fa-solid fa-paper-plane me-1"></i> Register Facility for Admin Inspection
+                </button>
+            </form>
+
+            <hr style="margin: 20px 0; border: none; border-top: 1px solid var(--border-color);">
+
+            <!-- Registered Facilities List -->
+            <h4 style="margin: 0 0 12px 0; font-size: 14px; font-weight: 700; color: var(--text-primary);">
+                <i class="fa-solid fa-boxes-packing text-emerald me-1"></i> My Storage Facilities & Inspection Status
+            </h4>
+
+            <div id="storage-facilities-list-container">
+                <!-- Dynamically populated -->
+            </div>
+        </div>
+
+        <div class="modal-footer p-3" style="border-top: 1px solid var(--border-color); text-align: right; background: var(--bg-main); border-radius: 0 0 var(--radius-md) var(--radius-md);">
+            <button class="btn btn-secondary" onclick="closeStorageModal()" style="padding: 8px 18px; font-size: 12px;">Close</button>
+        </div>
+    </div>
+</div>
