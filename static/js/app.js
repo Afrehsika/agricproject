@@ -1821,7 +1821,13 @@ async function loadOrders() {
             // Payment Badge styling
             let paymentBadge = `<span class="badge badge-slate">Unpaid</span>`;
             if (order.payment_status === 'HELD_IN_ESCROW') {
-                paymentBadge = `<span class="badge badge-orange"><i class="fa-solid fa-clock-rotate-left"></i> Held in Escrow</span>`;
+                if (order.transporter_details && order.transporter_details.status === 'PENDING_APPROVAL') {
+                    paymentBadge = `<span class="badge badge-amber"><i class="fa-solid fa-user-clock"></i> Driver Claim Awaiting Approval</span>`;
+                } else if (order.transporter_details && (order.transporter_details.status === 'MATCHED' || order.transporter_details.status === 'PICKED_UP')) {
+                    paymentBadge = `<span class="badge badge-blue"><i class="fa-solid fa-truck"></i> Escrow Locked & Transporter Matched</span>`;
+                } else {
+                    paymentBadge = `<span class="badge badge-orange"><i class="fa-solid fa-clock-rotate-left"></i> Held in Escrow</span>`;
+                }
             } else if (order.payment_status === 'RELEASED') {
                 paymentBadge = `<span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Released to Farmer</span>`;
             } else if (order.payment_status === 'REFUNDED') {
@@ -1913,34 +1919,54 @@ async function loadOrders() {
                 } else if (order.transporter_details && order.transporter_details.status === 'PENDING_APPROVAL') {
                     actionButtonsHtml = `
                         <div class="flex gap-2" style="width: 100%;">
-                            <button class="btn btn-success approve-driver-btn flex-1" data-job-id="${order.transporter_details.job_id}" data-id="${order.id}">
-                                <i class="fa-solid fa-user-check"></i> Approve Driver (${order.transporter_details.username})
+                            <button class="btn btn-success approve-driver-btn flex-1" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
+                                <i class="fa-solid fa-user-check"></i> Approve Driver (${order.transporter_details.username || 'Transporter'})
                             </button>
-                            <button class="btn btn-danger reject-driver-btn" data-job-id="${order.transporter_details.job_id}" data-id="${order.id}" style="width: auto; padding: 8px 16px;">
+                            <button class="btn btn-danger reject-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}" style="width: auto; padding: 8px 16px;">
                                 <i class="fa-solid fa-user-xmark"></i> Reject Driver
                             </button>
                         </div>
                     `;
-                } else if (order.payment_status === 'HELD_IN_ESCROW' && (order.status === 'DELIVERED' || order.status === 'SHIPPED' || order.status === 'PAID')) {
+                } else if (order.transporter_details && order.transporter_details.payment_status === 'REQUESTED') {
+                    actionButtonsHtml = `
+                        <button class="btn btn-primary approve-logistics-payment-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
+                            <i class="fa-solid fa-wallet"></i> Pay Logistics Fee (GHS ${parseFloat(order.transporter_details.estimated_cost).toFixed(2)})
+                        </button>
+                    `;
+                } else if (order.payment_status === 'HELD_IN_ESCROW' && order.status === 'DELIVERED') {
                     actionButtonsHtml = `
                         <div class="flex gap-2" style="width: 100%;">
                             <button class="btn btn-success confirm-delivery-btn pulsing-green flex-1" data-id="${order.id}">
-                                <i class="fa-solid fa-circle-check"></i> Accept & Release Escrow
+                                <i class="fa-solid fa-circle-check"></i> Confirm Receipt & Release Escrow
                             </button>
                             <button class="btn btn-danger open-reject-modal-btn" data-id="${order.id}" data-title="${order.produce_details.variety || order.produce_details.name}">
                                 <i class="fa-solid fa-ban"></i> Reject & Dispute
                             </button>
                         </div>
                     `;
-                } else if (order.transporter_details && order.transporter_details.payment_status === 'REQUESTED') {
+                } else if (order.payment_status === 'HELD_IN_ESCROW' && (order.status === 'SHIPPED' || order.status === 'PAID')) {
+                    const driverMsg = (order.transporter_details && order.transporter_details.username)
+                        ? `Transporter ${order.transporter_details.username} is handling delivery.`
+                        : `Awaiting transporter pickup & delivery arrival.`;
                     actionButtonsHtml = `
-                        <button class="btn btn-primary approve-logistics-payment-btn" data-job-id="${order.transporter_details.id}" data-id="${order.id}">
-                            <i class="fa-solid fa-wallet"></i> Pay Logistics Fee (GHS ${parseFloat(order.transporter_details.estimated_cost).toFixed(2)})
-                        </button>
+                        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                            <div style="font-size: 11px; color: #1e40af; background: rgba(59, 130, 246, 0.08); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fa-solid fa-truck-fast text-blue me-1"></i> <strong>Delivery in Progress:</strong> ${driverMsg}</span>
+                                <span class="badge badge-blue">In Transit</span>
+                            </div>
+                            <div class="flex gap-2" style="width: 100%;">
+                                <button class="btn btn-secondary flex-1" style="cursor: default; opacity: 0.8;" disabled>
+                                    <i class="fa-solid fa-clock-rotate-left me-1"></i> Escrow Held Until Delivery
+                                </button>
+                                <button class="btn btn-danger open-reject-modal-btn" data-id="${order.id}" data-title="${order.produce_details.variety || order.produce_details.name}">
+                                    <i class="fa-solid fa-ban me-1"></i> Reject & Dispute
+                                </button>
+                            </div>
+                        </div>
                     `;
                 } else if (order.transporter_details && order.transporter_details.status === 'PENDING_MATCH') {
                     actionButtonsHtml = `
-                        <button class="btn btn-orange open-assign-driver-btn" data-job-id="${order.transporter_details.id}" data-id="${order.id}">
+                        <button class="btn btn-orange open-assign-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                             <i class="fa-solid fa-truck-ramp-box"></i> Hire/Assign Driver
                         </button>
                     `;
@@ -1948,7 +1974,7 @@ async function loadOrders() {
             } else if (currentUser.role === 'FARMER') {
                 if (order.transporter_details && order.transporter_details.status === 'PENDING_MATCH') {
                     actionButtonsHtml = `
-                        <button class="btn btn-orange open-assign-driver-btn" data-job-id="${order.transporter_details.id}" data-id="${order.id}">
+                        <button class="btn btn-orange open-assign-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                             <i class="fa-solid fa-truck-ramp-box"></i> Hire/Assign Driver
                         </button>
                     `;

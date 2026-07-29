@@ -45,13 +45,15 @@ class OrderSerializer(serializers.ModelSerializer):
                     'phone_number': job.transporter.phone_number,
                     'status': job.status,
                     'vehicle_type': job.vehicle_type,
-                    'estimated_cost': float(job.estimated_cost)
+                    'estimated_cost': float(job.estimated_cost),
+                    'payment_status': job.payment_status
                 }
             return {
                 'job_id': job.id,
                 'status': job.status,
                 'vehicle_type': job.vehicle_type,
-                'estimated_cost': float(job.estimated_cost)
+                'estimated_cost': float(job.estimated_cost),
+                'payment_status': job.payment_status
             }
         except TransportJob.DoesNotExist:
             return None
