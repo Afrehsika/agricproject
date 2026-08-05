@@ -7,6 +7,7 @@ urlpatterns = [
     path('api/logout/', views.UserLogoutView.as_view(), name='api-logout'),
     path('api/profile/', views.UserProfileView.as_view(), name='api-profile'),
     path('api/users/list/', views.UserListView.as_view(), name='api-users-list'),
+    path('api/users/discover/', views.DiscoverUsersView.as_view(), name='api-users-discover'),
     
     # Connections
     path('api/connections/', views.ConnectionListView.as_view(), name='api-connections'),

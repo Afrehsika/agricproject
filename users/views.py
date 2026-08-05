@@ -103,6 +103,29 @@ class UserListView(APIView):
         return Response(serializer.data)
 
 
+class DiscoverUsersView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        
+        # Get IDs of users already connected or pending
+        connected_ids = set()
+        connections = Connection.objects.filter(
+            models.Q(sender=user) | models.Q(receiver=user)
+        )
+        for conn in connections:
+            if conn.sender_id == user.id:
+                connected_ids.add(conn.receiver_id)
+            else:
+                connected_ids.add(conn.sender_id)
+                
+        # Discover users
+        discover_users = User.objects.exclude(id=user.id).exclude(id__in=connected_ids)
+        serializer = UserSerializer(discover_users, many=True)
+        return Response(serializer.data)
+
+
 class ConnectionListView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
