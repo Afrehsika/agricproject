@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Logistics & Dispatch - AgriConnect{% endblock %}
+{% block header_title %}Logistics & Dispatch{% endblock %}
+{% block header_subtitle %}Track drivers, book transport, and manage active shipments.{% endblock %}
+
+{% block content %}
+<!-- Logistics Page -->
+<div class="flex flex-col gap-6">
+    <!-- 🗺️ Geolocation Supply & IoT Transport Map -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden h-[400px]">
+        {% include 'components/map.html' %}
+    </div>
+
+    <!-- Farmer View (Hidden by default, shown via JS if role is FARMER) -->
+    <div id="farmer-logistics-view" class="grid grid-cols-1 lg:grid-cols-3 gap-6" style="display: none;">
+        <!-- Left: My Dispatches / Shipments tracking -->
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-route text-emerald-500"></i> My Dispatched Shipments
+                </h3>
+            </div>
+            <div class="p-5 flex-1">
+                <div id="farmer-dispatched-jobs" class="flex flex-col gap-4">
+                    <!-- Filled dynamically by AJAX -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Dispatch & Book Driver form -->
+        <div class="bg-gradient-to-br from-white to-orange-50 border border-orange-100 rounded-xl shadow-sm">
+            <div class="p-4 border-b border-orange-100 bg-white/50 rounded-t-xl backdrop-blur">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-truck-ramp-box text-orange-500"></i> Dispatch & Book Driver
+                </h3>
+            </div>
+            <div class="p-5">
+                <form id="dispatch-goods-form" class="flex flex-col gap-4">
+                    <div id="dispatch-error" class="hidden bg-red-50 text-red-600 border border-red-200 p-3 rounded-lg text-xs font-medium"></div>
+                    <div id="dispatch-success" class="hidden bg-emerald-50 text-emerald-600 border border-emerald-200 p-3 rounded-lg text-xs font-medium"></div>
+
+                    <div>
+                        <label for="dispatch-produce" class="block text-xs font-bold text-slate-700 mb-1">Select Produce to Ship</label>
+                        <select id="dispatch-produce" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-orange-500 focus:border-orange-500" required>
+                            <option value="">-- Choose Listing to Ship --</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label for="dispatch-qty" class="block text-xs font-bold text-slate-700 mb-1">Quantity</label>
+                        <input type="number" id="dispatch-qty" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-orange-500 focus:border-orange-500" min="1" placeholder="e.g. 5" required>
+                    </div>
+
+                    <div>
+                        <label for="dispatch-buyer" class="block text-xs font-bold text-slate-700 mb-1">Select Client / Buyer</label>
+                        <select id="dispatch-buyer" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-orange-500 focus:border-orange-500" required>
+                            <option value="">-- Choose Client / Buyer --</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="dispatch-driver" class="block text-xs font-bold text-slate-700 mb-1">Assign Driver / Transporter</label>
+                        <select id="dispatch-driver" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-orange-500 focus:border-orange-500">
+                            <option value="">No Driver Pre-Assigned (Post to Marketplace)</option>
+                        </select>
+                        <p class="text-[10px] text-slate-500 mt-1 italic">Drivers are plotted as Blue Pins on the map. Click a pin to quick-select them.</p>
+                    </div>
+
+                    <button type="submit" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 rounded-xl shadow-sm transition-colors mt-2">
+                        <i class="fa-solid fa-truck-moving mr-1"></i> Dispatch & Hire Driver
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transporter View (Hidden by default, shown via JS if role is TRANSPORTER) -->
+    <div id="transporter-logistics-view" class="grid grid-cols-1 lg:grid-cols-2 gap-6" style="display: none;">
+        <!-- Available Jobs -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl flex justify-between items-center flex-wrap gap-3">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-truck-moving text-amber-500"></i> Available Jobs
+                </h3>
+                <div class="relative w-full sm:w-64">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <i class="fa-solid fa-search text-slate-400 text-xs"></i>
+                    </div>
+                    <input type="text" id="logistics-board-search" class="block w-full pl-9 pr-3 py-1.5 border border-slate-300 rounded-full focus:ring-amber-500 focus:border-amber-500 text-xs bg-white" placeholder="Search loads (e.g. Tomato)...">
+                </div>
+            </div>
+            <div class="p-5 flex-1">
+                <div id="logistics-open-jobs" class="flex flex-col gap-4">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Claimed / Active Jobs -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-route text-primary-500"></i> My Claimed Operations
+                </h3>
+            </div>
+            <div class="p-5 flex-1">
+                <div id="logistics-my-jobs" class="flex flex-col gap-4">
+                    <!-- Filled dynamically -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Circle - AgriConnect{% endblock %}
+{% block header_title %}My Circle{% endblock %}
+{% block header_subtitle %}Connect with farmers, buyers, and transporters in your trust network.{% endblock %}
+
+{% block content %}
+<!-- Network / Trust Circle Page -->
+<div class="flex flex-col gap-6">
+    <!-- Active Circle Connections Section -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl flex justify-between items-center">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-people-group text-primary-500"></i> My Trust Circle
+            </h3>
+            <span id="active-connection-count" class="bg-primary-100 text-primary-700 text-xs font-bold px-2.5 py-1 rounded-full border border-primary-200">
+                0 Connected
+            </span>
+        </div>
+        <div class="p-5">
+            <p class="text-sm text-slate-500 mb-4">Transactions (purchasing harvests and wallet escrows) can only be completed between users in the same trust circle. Communicate and establish trust circles first.</p>
+            <div id="active-connections-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+                <!-- Dynamically populated connection cards -->
+                <div class="col-span-full text-center p-6 text-sm text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                    No connections in your circle yet. Discover people below to send an invite!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pending Invitations Section -->
+    <div id="pending-invitations-section" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden">
+        <!-- Incoming Invites -->
+        <div id="incoming-requests-card" class="bg-white rounded-xl border border-slate-200 shadow-sm hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h4 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-inbox text-orange-500"></i> Incoming Connection Requests
+                </h4>
+            </div>
+            <div id="incoming-requests-list" class="p-5 flex flex-col gap-3">
+                <!-- Dynamically populated incoming requests -->
+            </div>
+        </div>
+
+        <!-- Outgoing Invites -->
+        <div id="outgoing-requests-card" class="bg-white rounded-xl border border-slate-200 shadow-sm hidden">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h4 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-paper-plane text-blue-500"></i> Sent Connection Invites
+                </h4>
+            </div>
+            <div id="outgoing-requests-list" class="p-5 flex flex-col gap-3">
+                <!-- Dynamically populated outgoing requests -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Explore & Discover Section -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+        <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-earth-africa text-blue-500"></i> Discover AgriConnect Network
+            </h3>
+            <!-- Filter search bar -->
+            <div class="relative w-full sm:w-72">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                </div>
+                <input type="text" id="network-search" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white" placeholder="Search by name, role, or region...">
+            </div>
+        </div>
+        <div class="p-5">
+            <p class="text-sm text-slate-500 mb-4">Browse all members registered on the AgriConnect platform and send requests to join their circles of trust.</p>
+            <div id="discover-users-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+                <!-- Dynamically populated platform user cards -->
+                <div class="col-span-full text-center p-8 text-sm text-slate-400">
+                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-primary-500"></i><br>
+                    Loading network directory...
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

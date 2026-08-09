@@ -1,0 +1,164 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Crop Listings - AgriConnect{% endblock %}
+{% block header_title %}My Farm & Services{% endblock %}
+{% block header_subtitle %}Manage your active harvest listings and cold storage.{% endblock %}
+
+{% block content %}
+<!-- Farmer Listings Page -->
+<div class="flex flex-col gap-6">
+    <!-- Premium Cold Storage Verification Banner -->
+    <div class="bg-gradient-to-r from-emerald-800 to-emerald-600 rounded-xl p-5 text-white shadow-lg relative overflow-hidden">
+        <div class="absolute -right-10 -top-10 text-emerald-500/20 text-[120px] pointer-events-none">
+            <i class="fa-solid fa-snowflake"></i>
+        </div>
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 relative z-10">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 text-emerald-300 flex items-center justify-center text-2xl shadow-sm">
+                    <i class="fa-solid fa-warehouse"></i>
+                </div>
+                <div>
+                    <h4 class="text-lg font-extrabold tracking-tight">Cold Chain & Verified Storage Facilities</h4>
+                    <p class="text-sm text-emerald-100 mt-1">Register solar cold rooms or warehouses to earn ❄️ <strong>Admin Inspection Badges</strong> & boost crop freshness guarantee up to 2.5x!</p>
+                </div>
+            </div>
+            <button class="bg-white text-emerald-700 hover:bg-emerald-50 font-bold text-xs px-5 py-2.5 rounded-lg shadow-sm transition-colors whitespace-nowrap" onclick="openStorageModal()">
+                <i class="fa-solid fa-shield-halved mr-1"></i> Register Storage
+            </button>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Existing Listings Table -->
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-list-check text-primary-500"></i> My Active Harvest Listings
+                </h3>
+            </div>
+            <div class="p-0 overflow-x-auto flex-1">
+                <table class="w-full text-left text-sm" id="farmer-listings-table">
+                    <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                        <tr>
+                            <th class="px-4 py-3">Produce Item</th>
+                            <th class="px-4 py-3">Qty Available</th>
+                            <th class="px-4 py-3">Price / Unit</th>
+                            <th class="px-4 py-3">Freshness</th>
+                            <th class="px-4 py-3">Est. Rot Date</th>
+                            <th class="px-4 py-3">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="farmer-produce-list-body" class="divide-y divide-slate-100">
+                        <!-- Filled dynamically by AJAX -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Create New Listing Form Column -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-plus-circle text-primary-500"></i> Create New Listing
+                </h3>
+            </div>
+            <div class="p-5">
+                <form id="create-produce-form" class="flex flex-col gap-4">
+                    <div>
+                        <label for="produce-crop" class="block text-xs font-bold text-slate-700 mb-1">Vegetable Crop</label>
+                        <select id="produce-crop" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500" required>
+                            <option value="Tomatoes">Tomatoes</option>
+                            <option value="Habanero Peppers">Habanero Peppers</option>
+                            <option value="Garden Eggs">Garden Eggs</option>
+                            <option value="Okra">Okra</option>
+                            <option value="Leafy Greens">Leafy Greens</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label for="produce-variety" class="block text-xs font-bold text-slate-700 mb-1">Variety / Type</label>
+                        <input type="text" id="produce-variety" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500" placeholder="e.g. Power Rano, Legon 18" required>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <label for="produce-storage-facility" class="block text-xs font-bold text-slate-700">Verified Storage Facility</label>
+                            <button type="button" class="bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-100 px-2 py-0.5 rounded text-[10px] font-bold transition-colors" onclick="openStorageModal()">
+                                <i class="fa-solid fa-plus"></i> New
+                            </button>
+                        </div>
+                        <select id="produce-storage-facility" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500">
+                            <option value="">No Cold Storage (Standard)</option>
+                        </select>
+                        <p class="text-[10px] text-slate-500 mt-1">Assigning an admin-inspected cold room boosts freshness score & extends shelf life!</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="produce-qty" class="block text-xs font-bold text-slate-700 mb-1">Quantity</label>
+                            <input type="number" id="produce-qty" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500" min="1" value="10" required>
+                        </div>
+                        <div>
+                            <label for="produce-unit" class="block text-xs font-bold text-slate-700 mb-1">Unit Type</label>
+                            <select id="produce-unit" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500">
+                                <option value="Crates">Crates</option>
+                                <option value="Sacks">Sacks</option>
+                                <option value="Baskets">Baskets</option>
+                                <option value="Boxes">Boxes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label for="produce-price" class="block text-xs font-bold text-slate-700 mb-1">Price / Unit (GHS)</label>
+                            <input type="number" id="produce-price" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500" min="1" value="120" required>
+                        </div>
+                        <div>
+                            <label for="produce-harvest-date" class="block text-xs font-bold text-slate-700 mb-1">Harvest Date</label>
+                            <input type="date" id="produce-harvest-date" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500" required>
+                        </div>
+                    </div>
+                    
+                    <!-- AI PRICE & EXPIRY ADVISOR WIDGET -->
+                    <div class="bg-gradient-to-br from-emerald-50 to-emerald-100/50 border border-emerald-200 rounded-xl p-4 mt-2">
+                        <div class="flex items-center gap-2 text-emerald-700 text-xs font-bold mb-2">
+                            <i class="fa-solid fa-robot"></i> AI Shelf-Life & Pricing Advisor
+                        </div>
+                        <div class="text-[11px] text-slate-700 flex flex-col gap-1.5">
+                            <div class="flex justify-between items-center">
+                                <span>Est. Freshness:</span> 
+                                <span id="adv-freshness" class="font-bold text-emerald-600">100%</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <span>Estimated Rot Date:</span> 
+                                <span id="adv-rot-date" class="font-semibold">Selecting date...</span>
+                            </div>
+                            <div class="flex justify-between items-center mt-1 pt-2 border-t border-dashed border-emerald-300">
+                                <span>AI Recommended Price:</span> 
+                                <span id="adv-rec-price" class="font-extrabold text-amber-600 text-sm">GHS --</span>
+                            </div>
+                            <p id="adv-disclaimer" class="text-[9px] text-slate-500 italic mt-1">Based on local Techiman supply and decay rates.</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-2">
+                        <label for="produce-image" class="block text-xs font-bold text-slate-700 mb-1">Harvest Picture</label>
+                        <input type="file" id="produce-image" class="w-full border border-slate-300 rounded-lg px-3 py-1.5 text-sm file:mr-4 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary-50 file:text-primary-700 hover:file:bg-primary-100" accept="image/*">
+                    </div>
+
+                    <div>
+                        <label for="produce-desc" class="block text-xs font-bold text-slate-700 mb-1">Crop Notes & Description</label>
+                        <textarea id="produce-desc" class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:ring-primary-500 focus:border-primary-500" rows="2" placeholder="Describe harvest quality, organic practices..."></textarea>
+                    </div>
+
+                    <button type="submit" class="w-full bg-gradient-to-r from-primary-600 to-emerald-500 hover:from-primary-500 hover:to-emerald-400 text-white font-bold py-3 rounded-xl mt-2 shadow-sm transition-all transform hover:-translate-y-0.5">
+                        <i class="fa-solid fa-cloud-arrow-up mr-1"></i> Publish Crop Listing
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

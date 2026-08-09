@@ -1,59 +1,44 @@
-<!-- Header -->
-<header class="main-header" style="display: flex; flex-direction: column; gap: 16px;">
-    <!-- Top Meta Row -->
-    <div class="header-meta-row" style="display: flex; justify-content: space-between; align-items: center; width: 100%; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; gap: 12px;">
-        <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
-            <!-- Weather Widget -->
-            <div class="weather-widget" style="display: flex; align-items: center; gap: 8px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 50px; padding: 6px 14px; font-size: 11px; color: #1e293b; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                <i class="fa-solid fa-cloud-sun" style="color: #f59e0b;"></i>
-                <span>Techiman, Bono East: 29°C • Sunny</span>
-            </div>
-            <!-- Price Ticker -->
-            <div class="ticker-wrap" style="overflow: hidden; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 50px; padding: 6px 16px; font-size: 11px; color: #64748b; max-width: 280px; white-space: nowrap; position: relative; display: inline-block; vertical-align: middle; box-shadow: 0 2px 8px rgba(0,0,0,0.03);">
-                <div class="ticker-move" style="display: flex; gap: 24px; white-space: nowrap; animation: ticker 20s linear infinite; align-items: center;">
-                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Tomatoes: <span style="color: #059669; font-weight: 700;">GHS 120.00/crate</span></div>
-                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Peppers: <span style="color: #059669; font-weight: 700;">GHS 95.00/crate</span></div>
-                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Garden Eggs: <span style="color: #059669; font-weight: 700;">GHS 80.00/bag</span></div>
-                    <div class="ticker-item" style="display: inline-block; white-space: nowrap; flex-shrink: 0;">Yam: <span style="color: #059669; font-weight: 700;">GHS 150.00/tuber</span></div>
-                </div>
-            </div>
+<!-- Header Top Bar -->
+<header class="bg-white border-b border-slate-200 px-6 py-3 flex justify-between items-center flex-wrap gap-3 shrink-0">
+    <div class="flex items-center gap-3 flex-wrap">
+        <!-- Mobile Menu Toggle -->
+        <button id="mobile-menu-toggle" class="sm:hidden bg-white border border-slate-300 text-slate-700 px-3 py-2 rounded-lg flex items-center justify-center hover:bg-slate-50 transition-colors">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <!-- Weather Widget -->
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-full px-4 py-1.5 text-xs text-slate-700 font-semibold shadow-sm">
+            <i class="fa-solid fa-cloud-sun text-amber-400"></i>
+            <span>Techiman, Bono East: 29°C · Sunny</span>
         </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-            <!-- Date & Time -->
-            <div style="font-size: 12px; color: #64748b; font-weight: 600;">
-                <i class="fa-regular fa-calendar-days" style="color: #10b981;"></i> <span id="header-date">July 27, 2026</span>
+        <!-- Price Ticker -->
+        <div class="hidden md:block overflow-hidden bg-slate-50 border border-slate-200 rounded-full px-4 py-1.5 text-xs text-slate-500 max-w-[260px] shadow-sm relative">
+            <div class="flex gap-6 whitespace-nowrap animate-[ticker_20s_linear_infinite] items-center">
+                <div class="inline-block whitespace-nowrap shrink-0">Tomatoes: <span class="text-primary-600 font-bold">GHS 120/crate</span></div>
+                <div class="inline-block whitespace-nowrap shrink-0">Peppers: <span class="text-primary-600 font-bold">GHS 95/crate</span></div>
+                <div class="inline-block whitespace-nowrap shrink-0">Garden Eggs: <span class="text-primary-600 font-bold">GHS 80/bag</span></div>
+                <div class="inline-block whitespace-nowrap shrink-0">Okra: <span class="text-primary-600 font-bold">GHS 55/basket</span></div>
             </div>
         </div>
     </div>
 
-    <!-- Main Navigation/Title Row -->
-    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 16px;">
-        <div style="display: flex; align-items: center;">
-            <button id="mobile-menu-toggle" class="btn btn-secondary mobile-only" style="width: auto; padding: 8px 12px; margin-right: 12px; display: none; align-items: center; justify-content: center;">
-                <i class="fa-solid fa-bars"></i>
-            </button>
-            <div class="header-left">
-                <h1 id="tab-title" style="font-size: 26px; font-weight: 800; font-family: var(--font-display); letter-spacing: -0.5px; color: #0f172a;">Marketplace</h1>
-                <p id="tab-subtitle" class="text-secondary" style="font-size: 13px; color: #64748b;">Discover fresh vegetables directly from smallholders in Bono East</p>
-            </div>
+    <div class="flex items-center gap-3 flex-wrap">
+        <!-- Date -->
+        <div class="text-xs text-slate-500 font-semibold hidden sm:block">
+            <i class="fa-regular fa-calendar-days text-primary-500"></i> <span id="header-date">{% now "F j, Y" %}</span>
         </div>
-        
-        <div class="header-right" style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
-            <!-- Cart Button -->
-            <button id="header-cart-btn" class="btn btn-secondary" style="width: auto; padding: 8px 18px; font-size: 13px; display: none; position: relative; border-radius: 50px; background-color: #ffffff; border: 1px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.04); color: #0f172a;">
-                <i class="fa-solid fa-cart-shopping" style="color: #10b981;"></i> Cart (<span id="header-cart-badge">0</span>)
-            </button>
-            <!-- Alerts Bell Button -->
-            <button id="header-alerts-btn" class="btn btn-secondary" style="width: auto; padding: 8px 14px; font-size: 14px; position: relative; border-radius: 50px; background-color: #ffffff; border: 1px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.04); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #0f172a;">
-                <i class="fa-solid fa-bell" style="color: #10b981;"></i>
-                <span id="header-alerts-badge" style="display: none; position: absolute; top: 4px; right: 6px; width: 8px; height: 8px; background-color: var(--red-alert); border-radius: 50%;"></span>
-            </button>
-            <!-- Wallet Display -->
-            <div class="wallet-pill" style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1px solid #fde68a; color: #92400e; border-radius: 50px; padding: 8px 18px; display: flex; align-items: center; gap: 8px; font-weight: 700; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.12);">
-                <i class="fa-solid fa-wallet" style="color: #f59e0b !important;"></i>
-                <span>Wallet: GHS <span id="header-wallet-balance">0.00</span></span>
-            </div>
+        <!-- Cart Button -->
+        <button id="header-cart-btn" class="hidden relative bg-white border border-slate-300 rounded-full px-4 py-1.5 text-sm text-slate-700 font-medium shadow-sm hover:bg-slate-50 transition-colors">
+            <i class="fa-solid fa-cart-shopping text-primary-500 mr-1"></i> Cart (<span id="header-cart-badge">0</span>)
+        </button>
+        <!-- Alerts Bell -->
+        <button id="header-alerts-btn" class="relative bg-white border border-slate-300 rounded-full w-9 h-9 flex items-center justify-center text-slate-700 shadow-sm hover:bg-slate-50 transition-colors">
+            <i class="fa-solid fa-bell text-primary-500 text-sm"></i>
+            <span id="header-alerts-badge" class="hidden absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+        </button>
+        <!-- Wallet Display -->
+        <div class="bg-gradient-to-br from-amber-50 to-amber-100 border border-amber-200 text-amber-800 rounded-full px-4 py-1.5 flex items-center gap-2 font-bold shadow-sm text-sm">
+            <i class="fa-solid fa-wallet text-amber-500"></i>
+            <span>GHS <span id="header-wallet-balance">0.00</span></span>
         </div>
     </div>
 </header>
-

@@ -1,121 +1,107 @@
 <!-- Sidebar Navigation -->
-<aside class="sidebar" style="position: relative !important; overflow: visible !important; z-index: 10 !important; padding: 0 !important; background-color: #0b0f19 !important;">
-    <!-- Collapsible Toggle Button with bulletproof inline styles -->
-    <button id="sidebar-collapse-btn" onclick="document.getElementById('app-container').classList.toggle('sidebar-collapsed'); setTimeout(() => { if (window.map) window.map.invalidateSize(); }, 360);" title="Toggle Sidebar" style="background: var(--bg-card) !important; border: 1px solid var(--border-color) !important; color: var(--text-secondary) !important; border-radius: 50% !important; width: 28px !important; height: 28px !important; display: flex !important; align-items: center !important; justify-content: center !important; cursor: pointer !important; position: absolute !important; right: -14px !important; top: 22px !important; z-index: 1002 !important; box-shadow: 0 4px 10px rgba(0,0,0,0.3) !important; padding: 0 !important; outline: none !important;">
-        <i class="fa-solid fa-chevron-left" style="font-size: 10px;"></i>
-    </button>
-
-    <!-- Scrollable container for sidebar content to prevent toggle clipping and squeeze bugs -->
-    <div class="sidebar-scroll-container" style="display: flex; flex-direction: column; height: 100%; width: 100%; overflow-y: auto; overflow-x: hidden; padding: 24px; box-sizing: border-box;">
-        <div class="sidebar-header">
-            <div class="logo">
-                <i class="fa-solid fa-seedling text-emerald"></i>
-                <span>AgriConnect <span class="accent">Market</span></span>
+<aside class="w-64 bg-slate-900 text-white flex flex-col h-screen fixed sm:relative z-40 transition-transform duration-300">
+    <div class="flex items-center justify-between p-4 border-b border-slate-800">
+        <div class="flex items-center gap-2">
+            <i class="fa-solid fa-seedling text-primary-500 text-2xl"></i>
+            <div>
+                <h1 class="text-lg font-bold">AgriConnect <span class="text-accent">Market</span></h1>
+                <p class="text-xs text-slate-400">Techiman Vegetable Hub</p>
             </div>
-            <div class="tagline">Techiman Vegetable Hub</div>
+        </div>
+    </div>
+    
+    <!-- Active User Panel -->
+    <div class="p-4 border-b border-slate-800 bg-slate-800/30">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-full bg-primary-900 text-primary-500 flex items-center justify-center text-xl">
+                <i class="fa-solid fa-circle-user"></i>
+            </div>
+            <div class="flex-1 overflow-hidden">
+                <div class="flex items-center gap-1">
+                    <h4 id="logged-username" class="text-sm font-bold truncate">Loading...</h4>
+                    <span class="bg-primary-500/20 text-primary-500 border border-primary-500/30 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase whitespace-nowrap flex items-center gap-1">
+                        <i class="fa-solid fa-circle-check"></i> Verified
+                    </span>
+                </div>
+                <p id="logged-role" class="text-[11px] text-primary-400 font-medium">Role</p>
+                <p class="text-[9px] text-slate-400 mt-0.5"><i class="fa-solid fa-location-dot"></i> Techiman, Bono East</p>
+            </div>
         </div>
         
-        <!-- Active User Panel -->
-        <div class="user-panel-card">
-            <div style="display: flex; align-items: center; gap: 12px; width: 100%;">
-                <div class="user-avatar" style="font-size: 38px; color: var(--emerald-green); display: flex; align-items: center; justify-content: center;">
-                    <i class="fa-solid fa-circle-user"></i>
-                </div>
-                <div class="user-info" style="display: flex; flex-direction: column; overflow: hidden; flex-grow: 1;">
-                    <div style="display: flex; align-items: center; flex-wrap: wrap; gap: 4px; width: 100%;">
-                        <h4 id="logged-username" style="font-size: 13px; font-weight: 700; color: var(--text-primary); margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 110px;">Loading...</h4>
-                        <span class="verification-badge" style="display: inline-flex; align-items: center; gap: 2px; flex-shrink: 0; background: rgba(16, 185, 129, 0.15); color: var(--emerald-green); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 50px; padding: 1px 6px; font-size: 8px; font-weight: 700; text-transform: uppercase; white-space: nowrap;"><i class="fa-solid fa-circle-check"></i> Verified</span>
-                    </div>
-                    <span class="user-role-badge" id="logged-role" style="font-size: 11px; margin-top: 2px; color: var(--emerald-light); font-weight: 500;">Role</span>
-                    <span class="user-location" style="font-size: 9px; color: var(--text-secondary); margin-top: 2px;"><i class="fa-solid fa-location-dot"></i> Techiman, Bono East</span>
-                </div>
+        <div id="sidebar-stats-card" class="mt-3 bg-white/5 border border-white/10 rounded-lg p-2.5 flex flex-col gap-1.5 hidden">
+            <div class="flex justify-between items-center text-[11px]">
+                <span class="text-slate-400">Items Sold</span>
+                <strong class="text-white font-bold">0 Orders</strong>
             </div>
-            
-            <!-- Quick Stats Widget -->
-            <div id="sidebar-stats-card" style="background: rgba(255,255,255,0.01); border: 1px solid rgba(255,255,255,0.03); border-radius: 8px; padding: 10px; margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
-                <div class="sidebar-stat-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-                    <span id="sidebar-sales-label" style="color: var(--text-secondary);">Items Sold</span>
-                    <strong id="sidebar-sales-value" style="color: var(--text-primary); font-weight: 700;">0 Orders</strong>
-                </div>
-                <div class="sidebar-stat-row" style="display: flex; justify-content: space-between; align-items: center; font-size: 11px;">
-                    <span style="color: var(--text-secondary);">Active Listings</span>
-                    <strong style="color: var(--text-primary); font-weight: 700;">6 Crops</strong>
-                </div>
-            </div>
-
-            <div class="wallet-actions-container mt-2" style="display: flex; flex-direction: column; gap: 8px; border-top: 1px solid var(--border-color); padding-top: 8px;">
-                <button id="sidebar-fund-btn" class="btn btn-primary btn-sm" style="font-size: 11px; font-weight: 700; width: 100%;">
-                    <i class="fa-solid fa-plus-circle"></i> Fund Wallet
-                </button>
-                <button id="sidebar-withdraw-btn" class="btn btn-orange btn-sm" style="font-size: 11px; font-weight: 700; display: none; width: 100%;">
-                    <i class="fa-solid fa-money-bill-transfer"></i> Withdraw
-                </button>
+            <div class="flex justify-between items-center text-[11px]">
+                <span class="text-slate-400">Active Listings</span>
+                <strong class="text-white font-bold">6 Crops</strong>
             </div>
         </div>
 
-        <nav class="sidebar-menu">
-            <!-- Section: Marketplace -->
-            <div class="sidebar-section-header">Marketplace</div>
-            <ul>
-                <li class="menu-item active" data-tab="marketplace" id="nav-marketplace">
-                    <i class="fa-solid fa-shop"></i> <span>Marketplace</span>
-                </li>
-            </ul>
-
-            <!-- Section: My Farm -->
-            <div class="sidebar-section-header">My Farm & services</div>
-            <ul>
-                <li class="menu-item" data-tab="farmer-listings" id="nav-farmer-listings">
-                    <i class="fa-solid fa-wheat-awn"></i> <span>Crop Listings</span>
-                </li>
-                <li class="menu-item" data-tab="disease-scanner" id="nav-disease-scanner">
-                    <i class="fa-solid fa-microscope"></i> <span>Disease Scanner</span>
-                </li>
-            </ul>
-
-            <!-- Section: Orders & Transport -->
-            <div class="sidebar-section-header">Logistics & Orders</div>
-            <ul>
-                <li class="menu-item" data-tab="orders" id="nav-orders" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <i class="fa-solid fa-receipt"></i> <span>My Orders</span>
-                    </div>
-                    <span id="sidebar-cart-badge" class="badge badge-green" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
-                </li>
-                <li class="menu-item" data-tab="logistics" id="nav-logistics">
-                    <i class="fa-solid fa-truck-fast"></i> <span>Logistics & Dispatch</span>
-                </li>
-            </ul>
-
-            <!-- Section: Community & Insights -->
-            <div class="sidebar-section-header">Circle & Analytics</div>
-            <ul>
-                <li class="menu-item" data-tab="network" id="nav-network">
-                    <i class="fa-solid fa-circle-nodes"></i> <span>My Circle</span>
-                </li>
-                <li class="menu-item" data-tab="messages" id="nav-messages" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                    <div style="display: flex; align-items: center; gap: 12px;">
-                        <i class="fa-solid fa-envelope"></i> <span>Messages</span>
-                    </div>
-                    <span id="sidebar-message-badge" class="badge badge-orange" style="display: none; padding: 2px 6px; border-radius: 10px; font-size: 10px;">0</span>
-                </li>
-                <li class="menu-item" data-tab="analytics" id="nav-analytics">
-                    <i class="fa-solid fa-chart-pie"></i> <span>Analytics & Wallet</span>
-                </li>
-            </ul>
-        </nav>
-
-        <div class="sidebar-footer">
-            <button id="landing-page-btn" class="btn btn-secondary btn-sm btn-block mb-2" onclick="showLoginPortal()" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #ffffff;">
-                <i class="fa-solid fa-house"></i> View Landing Page
-            </button>
-            <button id="seed-demo-btn" class="btn btn-secondary btn-sm btn-block mb-2" style="background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #ffffff;">
-                <i class="fa-solid fa-database"></i> Reset Demo Data
-            </button>
-            <button id="logout-btn" class="btn btn-orange btn-sm btn-block">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
+        <div class="mt-3 flex flex-col gap-2 pt-2 border-t border-slate-700/50">
+            <button id="sidebar-fund-btn" class="w-full bg-primary-600 hover:bg-primary-500 text-white rounded py-1.5 text-xs font-bold transition-colors">
+                <i class="fa-solid fa-plus-circle"></i> Fund Wallet
             </button>
         </div>
     </div>
-</aside>
 
+    <!-- Navigation Menu -->
+    <nav class="flex-1 overflow-y-auto p-3 flex flex-col gap-1">
+        
+        <div class="text-[10px] uppercase font-bold text-slate-500 mt-2 mb-1 px-3">Marketplace</div>
+        <a id="nav-marketplace" href="{% url 'marketplace' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'marketplace' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <i class="fa-solid fa-shop w-4 text-center"></i>
+            <span>Marketplace</span>
+        </a>
+
+        <div class="text-[10px] uppercase font-bold text-slate-500 mt-4 mb-1 px-3">My Farm & Services</div>
+        <a id="nav-farmer-listings" href="{% url 'farmer-listings' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'farmer-listings' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <i class="fa-solid fa-wheat-awn w-4 text-center"></i>
+            <span>Crop Listings</span>
+        </a>
+        <a id="nav-disease-scanner" href="{% url 'disease-scanner' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'disease-scanner' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <i class="fa-solid fa-microscope w-4 text-center"></i>
+            <span>Disease Scanner</span>
+        </a>
+
+        <div class="text-[10px] uppercase font-bold text-slate-500 mt-4 mb-1 px-3">Logistics & Orders</div>
+        <a id="nav-orders" href="{% url 'orders' %}" class="flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'orders' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-receipt w-4 text-center"></i>
+                <span>My Orders</span>
+            </div>
+            <span id="sidebar-cart-badge" class="bg-primary-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+        </a>
+        <a id="nav-logistics" href="{% url 'logistics' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'logistics' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <i class="fa-solid fa-truck-fast w-4 text-center"></i>
+            <span>Logistics & Dispatch</span>
+        </a>
+
+        <div class="text-[10px] uppercase font-bold text-slate-500 mt-4 mb-1 px-3">Circle & Analytics</div>
+        <a id="nav-network" href="{% url 'network' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'network' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <i class="fa-solid fa-circle-nodes w-4 text-center"></i>
+            <span>My Circle</span>
+        </a>
+        <a id="nav-messages" href="{% url 'messages' %}" class="flex items-center justify-between px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'messages' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-envelope w-4 text-center"></i>
+                <span>Messages</span>
+            </div>
+            <span id="sidebar-message-badge" class="bg-accent text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+        </a>
+        <a id="nav-analytics" href="{% url 'analytics' %}" class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors {% if request.resolver_match.url_name == 'analytics' %}bg-primary-600/20 text-primary-400{% endif %}">
+            <i class="fa-solid fa-chart-pie w-4 text-center"></i>
+            <span>Analytics & Wallet</span>
+        </a>
+    </nav>
+    
+    <div class="p-4 border-t border-slate-800 flex flex-col gap-2">
+        <a href="{% url 'index' %}" class="w-full text-center bg-white/5 hover:bg-white/10 text-white rounded py-2 text-xs transition-colors">
+            <i class="fa-solid fa-house mr-1"></i> Landing Page
+        </a>
+        <button id="logout-btn" class="w-full bg-red-500/20 hover:bg-red-500/30 text-red-400 hover:text-red-300 rounded py-2 text-xs transition-colors">
+            <i class="fa-solid fa-arrow-right-from-bracket mr-1"></i> Sign Out
+        </button>
+    </div>
+</aside>

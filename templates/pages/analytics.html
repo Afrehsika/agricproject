@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Analytics - AgriConnect{% endblock %}
+{% block header_title %}Analytics & Wallet{% endblock %}
+{% block header_subtitle %}Track your revenue, transaction history, and operational insights.{% endblock %}
+
+{% block content %}
+<!-- Analytics Page -->
+<div class="flex flex-col gap-6">
+    <!-- Metrics Row Redesigned as User Metrics Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <!-- Revenue Card -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-emerald-500 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+                <div class="flex justify-between items-start w-full gap-2 mb-3">
+                    <span id="analytics-card1-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Total Revenue</span>
+                    <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center">
+                        <i class="fa-solid fa-wallet"></i>
+                    </div>
+                </div>
+                <h3 id="analytics-card1-val" class="text-2xl font-extrabold font-heading text-slate-800">GHS 0.00</h3>
+            </div>
+            <span id="analytics-card1-trend" class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1.5 mt-4 bg-emerald-50 w-fit px-2 py-0.5 rounded-full">
+                <i class="fa-solid fa-circle-check"></i> Wallet balance included
+            </span>
+        </div>
+        
+        <!-- Active Listings Card -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-orange-500 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+                <div class="flex justify-between items-start w-full gap-2 mb-3">
+                    <span id="analytics-card2-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Active Listings</span>
+                    <div class="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+                        <i class="fa-solid fa-wheat-awn"></i>
+                    </div>
+                </div>
+                <h3 id="analytics-card2-val" class="text-2xl font-extrabold font-heading text-slate-800">0 Crops</h3>
+            </div>
+            <span id="analytics-card2-trend" class="text-[10px] text-orange-600 font-semibold flex items-center gap-1.5 mt-4 bg-orange-50 w-fit px-2 py-0.5 rounded-full">
+                <i class="fa-solid fa-clock"></i> Awaiting buyers
+            </span>
+        </div>
+
+        <!-- Completed Sales Card -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-amber-500 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+                <div class="flex justify-between items-start w-full gap-2 mb-3">
+                    <span id="analytics-card3-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Completed Sales</span>
+                    <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center">
+                        <i class="fa-solid fa-circle-check"></i>
+                    </div>
+                </div>
+                <h3 id="analytics-card3-val" class="text-2xl font-extrabold font-heading text-slate-800">0 Orders</h3>
+            </div>
+            <span id="analytics-card3-trend" class="text-[10px] text-amber-600 font-semibold flex items-center gap-1.5 mt-4 bg-amber-50 w-fit px-2 py-0.5 rounded-full">
+                <i class="fa-solid fa-circle-check"></i> Fulfilled orders
+            </span>
+        </div>
+
+        <!-- Fulfillment Rate Card -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-blue-500 flex flex-col justify-between hover:shadow-md transition-shadow">
+            <div>
+                <div class="flex justify-between items-start w-full gap-2 mb-3">
+                    <span id="analytics-card4-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Fulfillment Rate</span>
+                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+                        <i class="fa-solid fa-percent"></i>
+                    </div>
+                </div>
+                <h3 id="analytics-card4-val" class="text-2xl font-extrabold font-heading text-slate-800">100%</h3>
+            </div>
+            <span id="analytics-card4-trend" class="text-[10px] text-blue-600 font-semibold flex items-center gap-1.5 mt-4 bg-blue-50 w-fit px-2 py-0.5 rounded-full">
+                <i class="fa-solid fa-circle-check"></i> Operational average
+            </span>
+        </div>
+    </div>
+
+    <!-- Graphs Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-2">
+        <!-- Chart Panel -->
+        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h3 id="analytics-chart-title" class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-chart-area text-primary-500"></i> My Transaction Volume & Value Trends
+                </h3>
+            </div>
+            <div class="p-5 flex-1 relative">
+                <div class="w-full h-full min-h-[250px] relative">
+                    <svg viewBox="0 0 500 200" class="w-full h-full drop-shadow-sm">
+                        <!-- Grid lines -->
+                        <line x1="40" y1="20" x2="480" y2="20" stroke="#e2e8f0" />
+                        <line x1="40" y1="70" x2="480" y2="70" stroke="#e2e8f0" />
+                        <line x1="40" y1="120" x2="480" y2="120" stroke="#e2e8f0" />
+                        <line x1="40" y1="170" x2="480" y2="170" stroke="#cbd5e1" stroke-width="2" />
+                        
+                        <!-- Labels -->
+                        <text x="30" y="25" fill="#64748b" font-size="10" font-weight="600" text-anchor="end">200</text>
+                        <text x="30" y="75" fill="#64748b" font-size="10" font-weight="600" text-anchor="end">150</text>
+                        <text x="30" y="125" fill="#64748b" font-size="10" font-weight="600" text-anchor="end">100</text>
+                        <text x="30" y="175" fill="#64748b" font-size="10" font-weight="600" text-anchor="end">50</text>
+                        
+                        <!-- Tomato Price curve (Techiman) - Rendered dynamically in app.js -->
+                        <path id="chart-tomato-path" d="M 50 130 C 100 130, 100 90, 150 90 C 200 90, 200 110, 250 110 C 300 110, 300 40, 450 40" fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round" />
+                        <path id="chart-tomato-fill" d="M 50 130 C 100 130, 100 90, 150 90 C 200 90, 200 110, 250 110 C 300 110, 300 40, 450 40 L 450 170 L 50 170 Z" fill="url(#green-grad)" opacity="0.3" />
+                        
+                        <!-- Pepper curve (Accra Benchmark) - Rendered dynamically in app.js -->
+                        <path id="chart-pepper-path" d="M 50 80 Q 150 70 250 60 T 450 30" fill="none" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round" />
+                        
+                        <!-- Defs for gradient -->
+                        <defs>
+                            <linearGradient id="green-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+                                <stop offset="0%" stop-color="#10b981" stop-opacity="0.8"/>
+                                <stop offset="100%" stop-color="#10b981" stop-opacity="0" />
+                            </linearGradient>
+                        </defs>
+                        
+                        <!-- Dynamic date labels -->
+                        <text id="chart-date-1" x="50" y="190" fill="#64748b" font-size="10" font-weight="600" text-anchor="middle">May 1</text>
+                        <text id="chart-date-2" x="150" y="190" fill="#64748b" font-size="10" font-weight="600" text-anchor="middle">May 10</text>
+                        <text id="chart-date-3" x="250" y="190" fill="#64748b" font-size="10" font-weight="600" text-anchor="middle">May 20</text>
+                        <text id="chart-date-4" x="350" y="190" fill="#64748b" font-size="10" font-weight="600" text-anchor="middle">May 30</text>
+                        <text id="chart-date-5" x="450" y="190" fill="#64748b" font-size="10" font-weight="600" text-anchor="middle">June 10</text>
+                        
+                        <!-- Interactive hover layers populated by app.js -->
+                        <g id="chart-markers"></g>
+                        <g id="chart-triggers"></g>
+                    </svg>
+                </div>
+                <!-- Dynamic Floating Tooltip for mouse hover data feedback -->
+                <div id="chart-tooltip" class="absolute hidden bg-slate-900/95 border border-slate-700 rounded-lg p-3 text-xs text-white pointer-events-none z-50 shadow-xl backdrop-blur-sm transition-opacity duration-150 opacity-0"></div>
+                
+                <div class="flex justify-center gap-6 mt-4 pt-4 border-t border-slate-100">
+                    <span id="analytics-legend-1" class="text-xs font-semibold text-slate-600 flex items-center gap-1.5"><i class="fa-solid fa-circle text-emerald-500 text-[10px]"></i> Gross Value (GHS)</span>
+                    <span id="analytics-legend-2" class="text-xs font-semibold text-slate-600 flex items-center gap-1.5"><i class="fa-solid fa-circle text-amber-500 text-[10px]"></i> Avg Order Value (GHS)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Target Operational Insights Info -->
+        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
+            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+                <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-info text-primary-500"></i> My Operational Insights
+                </h3>
+            </div>
+            <div class="p-5">
+                <ul class="flex flex-col gap-3">
+                    <li class="flex justify-between items-center py-2 border-b border-slate-100">
+                        <span class="text-sm font-semibold text-slate-600">Primary Vegetable crop</span>
+                        <strong id="insight-crop" class="text-sm text-slate-800 text-right">Loading...</strong>
+                    </li>
+                    <li class="flex justify-between items-center py-2 border-b border-slate-100">
+                        <span class="text-sm font-semibold text-slate-600">My Circle Connections</span>
+                        <strong id="insight-connections" class="text-sm text-slate-800 text-right">Loading...</strong>
+                    </li>
+                    <li class="flex justify-between items-center py-2 border-b border-slate-100">
+                        <span class="text-sm font-semibold text-slate-600">Wallet Escrow Balance</span>
+                        <strong id="insight-escrow" class="text-sm text-orange-600 text-right">Loading...</strong>
+                    </li>
+                    <li class="flex justify-between items-center py-2">
+                        <span class="text-sm font-semibold text-slate-600">Order Success Rate</span>
+                        <strong id="insight-success" class="text-sm text-emerald-600 text-right">100%</strong>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Digital Wallet Transaction History -->
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm mt-2">
+        <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-clock-rotate-left text-primary-500"></i> Digital Wallet Transaction History
+            </h3>
+        </div>
+        <div class="p-0 overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+                    <tr>
+                        <th class="px-5 py-3">Date & Time</th>
+                        <th class="px-5 py-3">Reference</th>
+                        <th class="px-5 py-3">Type</th>
+                        <th class="px-5 py-3">Description</th>
+                        <th class="px-5 py-3">Amount</th>
+                    </tr>
+                </thead>
+                <tbody id="wallet-transactions-body" class="divide-y divide-slate-100">
+                    <tr>
+                        <td colspan="5" class="px-5 py-6 text-center text-slate-400 italic">
+                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading transactions...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

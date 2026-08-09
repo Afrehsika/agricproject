@@ -1,5 +1,6 @@
 import datetime
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from rest_framework import permissions
 from rest_framework.views import APIView
@@ -219,6 +220,9 @@ class SeedDataView(APIView):
 
 
 def index_view(request):
+    from django.shortcuts import redirect
+    if request.user.is_authenticated:
+        return redirect('/marketplace/')
     return render(request, 'index.html')
 
 def simulator_view(request):
@@ -252,3 +256,42 @@ def simulator_view(request):
         'users': users
     }
     return render(request, 'ussd_simulator_app.html', context)
+
+
+# MPA Views — all require login; unauthenticated users go to landing page
+
+@login_required(login_url='/')
+def dashboard_view(request):
+    return redirect('marketplace')
+
+@login_required(login_url='/')
+def marketplace_view(request):
+    return render(request, 'pages/marketplace.html')
+
+@login_required(login_url='/')
+def farmer_listings_view(request):
+    return render(request, 'pages/farmer_listings.html')
+
+@login_required(login_url='/')
+def orders_view(request):
+    return render(request, 'pages/orders.html')
+
+@login_required(login_url='/')
+def logistics_view(request):
+    return render(request, 'pages/logistics.html')
+
+@login_required(login_url='/')
+def disease_scanner_view(request):
+    return render(request, 'pages/disease_scanner.html')
+
+@login_required(login_url='/')
+def network_view(request):
+    return render(request, 'pages/network.html')
+
+@login_required(login_url='/')
+def messages_view(request):
+    return render(request, 'pages/messages.html')
+
+@login_required(login_url='/')
+def analytics_view(request):
+    return render(request, 'pages/analytics.html')

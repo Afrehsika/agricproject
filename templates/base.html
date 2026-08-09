@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}AgriConnect Ghana{% endblock %}</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Leaflet CSS for Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    
+    <!-- Tailwind CSS (CDN) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            900: '#14532d',
+                        },
+                        accent: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+    
+    {% block extra_head %}{% endblock %}
+</head>
+
+<body class="bg-gray-50 text-gray-800 font-sans antialiased flex h-screen overflow-hidden">
+    
+    {% if user.is_authenticated %}
+        <!-- Sidebar Navigation -->
+        {% include 'components/sidebar.html' %}
+        
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col h-screen overflow-hidden">
+            <!-- Top Bar (weather, date, cart) -->
+            {% include 'components/header.html' %}
+            
+            <!-- Page Title Row -->
+            <div class="px-6 pt-4 pb-2 border-b border-slate-200 bg-white flex items-center justify-between flex-wrap gap-2">
+                <div>
+                    <h1 class="text-2xl font-extrabold font-heading tracking-tight text-slate-900">
+                        {% block header_title %}Dashboard{% endblock %}
+                    </h1>
+                    <p class="text-sm text-slate-500">
+                        {% block header_subtitle %}Welcome back to AgriConnect{% endblock %}
+                    </p>
+                </div>
+            </div>
+            
+            <main class="flex-1 overflow-x-hidden overflow-y-auto bg-gray-50 p-6">
+                <!-- Notifications Toast Container -->
+                <div id="alert-toasts-container" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2"></div>
+                
+                {% block content %}
+                <!-- Page specific content goes here -->
+                {% endblock %}
+            </main>
+        </div>
+        
+        <!-- Floating Chat/Agribot -->
+        {% include 'components/agribot.html' %}
+        
+        <!-- Global Modals -->
+        {% include 'components/momo_modal.html' %}
+        {% include 'components/cart_modal.html' %}
+        {% include 'components/topup_modal.html' %}
+        {% include 'components/withdraw_modal.html' %}
+        {% include 'components/alert_inbox_modal.html' %}
+        {% include 'components/assign_driver_modal.html' %}
+        {% include 'components/dispute_modal.html' %}
+        {% include 'components/mediation_modal.html' %}
+        {% include 'components/storage_modal.html' %}
+        {% include 'components/recommendation_modal.html' %}
+        
+    {% else %}
+        <!-- For Unauthenticated Users (Landing Page) -->
+        {% block public_content %}
+        {% endblock %}
+        {% include 'components/login_portal.html' %}
+    {% endif %}
+
+    <!-- Scripts -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    
+    <!-- Base App Javascript (Handles Modals & Global Ajax) -->
+    <script src="{% static 'js/app.js' %}?v=5.4"></script>
+    
+    {% block extra_scripts %}{% endblock %}
+</body>
+</html>

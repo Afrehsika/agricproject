@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - AgriConnect{% endblock %}
+{% block header_title %}Dashboard{% endblock %}
+{% block header_subtitle %}Welcome back to AgriConnect.{% endblock %}
+
+{% block content %}
+<script>
+    // Redirect to marketplace as the default dashboard view
+    window.location.href = "{% url 'marketplace' %}";
+</script>
+<div class="flex items-center justify-center h-64">
+    <div class="text-center">
+        <i class="fa-solid fa-spinner fa-spin text-4xl text-primary-500 mb-4"></i>
+        <p class="text-slate-500">Loading your dashboard...</p>
+    </div>
+</div>
+{% endblock %}

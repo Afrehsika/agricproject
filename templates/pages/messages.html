@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Messages - AgriConnect{% endblock %}
+{% block header_title %}Messages{% endblock %}
+{% block header_subtitle %}Secure communication with your trust circle.{% endblock %}
+
+{% block content %}
+<!-- Messages Page -->
+<div class="h-[calc(100vh-180px)] min-h-[500px] bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm flex flex-col md:flex-row">
+    
+    <!-- Left Panel: Recent Conversations -->
+    <div class="w-full md:w-80 border-r border-slate-200 bg-slate-50/50 flex flex-col flex-shrink-0 h-[40vh] md:h-full">
+        <div class="p-4 border-b border-slate-200 bg-white flex items-center justify-between">
+            <h4 class="font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-comments text-primary-500"></i> Chats
+            </h4>
+        </div>
+        
+        <!-- Chats List Scrollable -->
+        <div id="chats-list-container" class="flex-1 overflow-y-auto flex flex-col divide-y divide-slate-100 p-2">
+            <!-- Dynamically populated chat threads -->
+            <div class="text-slate-400 p-6 text-center text-sm flex flex-col items-center justify-center h-full">
+                <i class="fa-solid fa-comment-slash text-3xl mb-3 text-slate-300"></i>
+                <p>No active chats. Start messaging by clicking "Send Message" in My Circle!</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Right Panel: Active Chat Thread -->
+    <div id="active-chat-window" class="flex-1 flex flex-col h-[60vh] md:h-full relative bg-white">
+        
+        <!-- Chat Splash screen (if no conversation is loaded) -->
+        <div id="chat-splash" class="absolute inset-0 flex flex-col items-center justify-center p-8 text-center bg-slate-50 z-10">
+            <div class="text-6xl text-primary-200 mb-6 animate-bounce">
+                <i class="fa-solid fa-paper-plane text-primary-400 opacity-70"></i>
+            </div>
+            <h3 class="text-xl font-bold font-heading text-slate-800 mb-2">Digital Trust Escrow Messaging</h3>
+            <p class="text-sm text-slate-500 max-w-md mb-6">Connect with farmers, buyers, or logistics providers. Discuss harvest freshness, arrange shipping coordinates, and negotiate prices in a secure environment.</p>
+            <a href="{% url 'network' %}" class="bg-primary-600 hover:bg-primary-500 text-white font-bold px-6 py-2.5 rounded-full shadow-sm transition-colors text-sm">
+                <i class="fa-solid fa-users mr-1"></i> Explore Network to Connect
+            </a>
+        </div>
+        
+        <!-- Active Chat Pane (hidden by default until loaded) -->
+        <div id="active-chat-pane" class="hidden flex-col h-full z-20 bg-white">
+            
+            <!-- Chat Panel Header -->
+            <div class="p-3 sm:p-4 border-b border-slate-200 bg-white flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <!-- Chat Avatar -->
+                    <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg text-slate-500 border border-slate-200">
+                        <i class="fa-solid fa-user"></i>
+                    </div>
+                    <div>
+                        <h4 id="chat-header-username" class="font-bold text-slate-800 text-sm m-0">Kofi Mensah</h4>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                            <span id="chat-header-role" class="bg-slate-100 text-slate-600 text-[9px] font-bold px-1.5 py-0.5 rounded border border-slate-200">Farmer</span>
+                            <span id="chat-header-circle-status" class="bg-primary-50 text-primary-700 text-[9px] font-bold px-1.5 py-0.5 rounded border border-primary-200">In Circle</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Top Action Controls -->
+                <div id="chat-header-actions">
+                    <!-- Contextual Connect button if they are not in our circle -->
+                    <button id="chat-contextual-connect-btn" class="hidden bg-primary-500 hover:bg-primary-600 text-white text-xs font-bold px-3 py-1.5 rounded-lg shadow-sm transition-colors">
+                        <i class="fa-solid fa-plus-circle mr-1"></i> Add to Circle
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Messages Scroll Pane -->
+            <div id="chat-messages-body" class="flex-1 p-4 sm:p-6 overflow-y-auto flex flex-col gap-4 bg-slate-50/50">
+                <!-- Chat bubbles populate here -->
+            </div>
+            
+            <!-- Chat Notification Warning if not connected -->
+            <div id="chat-circle-warning" class="hidden p-2 sm:p-3 bg-orange-50 text-orange-700 text-[11px] sm:text-xs flex items-center gap-2 border-t border-orange-100">
+                <i class="fa-solid fa-circle-exclamation text-orange-500 shrink-0"></i>
+                <span><strong>Circle Warning:</strong> You are messaging outside your trust circle. Connection circle membership is required to purchase or check out.</span>
+            </div>
+            
+            <!-- Chat Input Footer -->
+            <div class="p-3 sm:p-4 border-t border-slate-200 bg-white flex gap-3 items-center">
+                <input type="text" id="chat-message-input" class="flex-1 bg-slate-50 border border-slate-300 rounded-full text-slate-700 px-4 py-2.5 outline-none text-sm focus:ring-primary-500 focus:border-primary-500" placeholder="Type a secure message..." />
+                <button id="chat-message-send-btn" class="bg-primary-600 hover:bg-primary-500 text-white h-11 w-11 flex items-center justify-center rounded-full shrink-0 shadow-sm transition-transform active:scale-95">
+                    <i class="fa-solid fa-paper-plane text-sm"></i>
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}My Orders - AgriConnect{% endblock %}
+{% block header_title %}My Orders{% endblock %}
+{% block header_subtitle %}Track your transactions, escrow statuses, and disputes.{% endblock %}
+
+{% block content %}
+<!-- Orders Page -->
+<div class="flex flex-col gap-6">
+    <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col h-full">
+        <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
+            <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                <i class="fa-solid fa-cart-shopping text-primary-500"></i> My Transactions & Escrow Orders
+            </h3>
+        </div>
+        <div class="p-5 flex-1">
+            <div id="orders-list-container" class="flex flex-col gap-4">
+                <!-- Order Cards dynamically populated by JS -->
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

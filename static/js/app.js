@@ -231,14 +231,20 @@ function showDashboard() {
     }
     
     try {
-        const savedTab = localStorage.getItem('agri_active_tab');
-        if (savedTab && ['marketplace', 'farmer-listings', 'orders', 'logistics', 'disease-scanner', 'network', 'messages', 'analytics'].includes(savedTab)) {
-            switchTab(savedTab);
-        } else if (currentUser && currentUser.role === 'TRANSPORTER') {
-            switchTab('logistics');
-        } else {
-            switchTab('marketplace');
-        }
+        const path = window.location.pathname;
+        let activeTab = 'marketplace';
+        
+        if (path.includes('/farmer-listings')) activeTab = 'farmer-listings';
+        else if (path.includes('/orders')) activeTab = 'orders';
+        else if (path.includes('/logistics')) activeTab = 'logistics';
+        else if (path.includes('/disease-scanner')) activeTab = 'disease-scanner';
+        else if (path.includes('/network')) activeTab = 'network';
+        else if (path.includes('/messages')) activeTab = 'messages';
+        else if (path.includes('/analytics')) activeTab = 'analytics';
+        else if (path.includes('/marketplace')) activeTab = 'marketplace';
+        else if (currentUser && currentUser.role === 'TRANSPORTER') activeTab = 'logistics';
+        
+        switchTab(activeTab);
     } catch (e) {
         console.error("Switch tab error: ", e);
     }
@@ -634,11 +640,11 @@ function setupEventListeners() {
             try {
                 localStorage.removeItem('agri_is_logged_in');
                 localStorage.removeItem('agri_active_tab');
-                await fetch('/api/auth/logout/', { method: 'POST' });
+                await fetch('/api/logout/', { method: 'POST' });
             } catch (e) {
                 console.error(e);
             }
-            window.location.href = '/admin/logout/';
+            window.location.href = '/';
         });
     }
 
@@ -652,7 +658,7 @@ function setupEventListeners() {
     });
 
     // Seed Demo Data button
-    document.getElementById('seed-demo-btn').addEventListener('click', async () => {
+    document.getElementById('seed-demo-btn')?.addEventListener('click', async () => {
         const originalText = document.getElementById('seed-demo-btn').innerHTML;
         document.getElementById('seed-demo-btn').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Seeding...';
         
@@ -671,7 +677,7 @@ function setupEventListeners() {
     });
 
     // Crop Search
-    document.getElementById('marketplace-search').addEventListener('input', () => {
+    document.getElementById('marketplace-search')?.addEventListener('input', () => {
         loadMarketplace();
     });
 
@@ -685,12 +691,12 @@ function setupEventListeners() {
     });
 
     // Urgency toggle sorting
-    document.getElementById('urgency-sort-toggle').addEventListener('change', () => {
+    document.getElementById('urgency-sort-toggle')?.addEventListener('change', () => {
         loadMarketplace();
     });
 
     // Create Crop Listing
-    document.getElementById('create-produce-form').addEventListener('submit', async (e) => {
+    document.getElementById('create-produce-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const crop = document.getElementById('produce-crop').value;
         const variety = document.getElementById('produce-variety').value;
@@ -1176,42 +1182,42 @@ function switchTab(tabName) {
     const subEl = document.getElementById('tab-subtitle');
     
     if (tabName === 'marketplace') {
-        titleEl.textContent = 'Marketplace';
-        subEl.textContent = 'Discover fresh vegetables directly from smallholders in Bono East';
+        if (titleEl) titleEl.textContent = 'Marketplace';
+        if (subEl) subEl.textContent = 'Discover fresh vegetables directly from smallholders in Bono East';
         loadMarketplace();
     } else if (tabName === 'farmer-listings') {
-        titleEl.textContent = 'My Crop Listings';
-        subEl.textContent = 'Upload your harvest yields and set dynamic pricing advisor metrics';
+        if (titleEl) titleEl.textContent = 'My Crop Listings';
+        if (subEl) subEl.textContent = 'Upload your harvest yields and set dynamic pricing advisor metrics';
         loadFarmerListings();
     } else if (tabName === 'orders') {
-        titleEl.textContent = 'My Orders';
-        subEl.textContent = 'Secure transactions and escrow payments release status';
+        if (titleEl) titleEl.textContent = 'My Orders';
+        if (subEl) subEl.textContent = 'Secure transactions and escrow payments release status';
         loadOrders();
     } else if (tabName === 'logistics') {
         if (currentUser.role === 'FARMER') {
-            titleEl.textContent = 'Logistics & Dispatch';
-            subEl.textContent = 'Book transporters, dispatch goods directly to clients, and track active deliveries';
+            if (titleEl) titleEl.textContent = 'Logistics & Dispatch';
+            if (subEl) subEl.textContent = 'Book transporters, dispatch goods directly to clients, and track active deliveries';
         } else {
-            titleEl.textContent = 'Logistics Jobs';
-            subEl.textContent = 'Coordinate matching delivery requests and update transport routing status';
+            if (titleEl) titleEl.textContent = 'Logistics Jobs';
+            if (subEl) subEl.textContent = 'Coordinate matching delivery requests and update transport routing status';
         }
         loadLogisticsJobs();
     } else if (tabName === 'disease-scanner') {
-        titleEl.textContent = 'AI Plant Pathology Lab';
-        subEl.textContent = 'Check crop diseases instantly using high confidence computer vision scans';
+        if (titleEl) titleEl.textContent = 'AI Plant Pathology Lab';
+        if (subEl) subEl.textContent = 'Check crop diseases instantly using high confidence computer vision scans';
     } else if (tabName === 'analytics') {
-        titleEl.textContent = 'Analytics & Wallet';
-        subEl.textContent = 'Real-time Techiman market index averages and digital wallet metrics';
+        if (titleEl) titleEl.textContent = 'Analytics & Wallet';
+        if (subEl) subEl.textContent = 'Real-time Techiman market index averages and digital wallet metrics';
         loadProfileData(); // updates wallet
         loadWalletTransactions();
         renderAnalyticsChart();
     } else if (tabName === 'network') {
-        titleEl.textContent = 'My Trust Circle & Network';
-        subEl.textContent = 'Connect with farmers, buyers, and transporters to build trust circles';
+        if (titleEl) titleEl.textContent = 'My Trust Circle & Network';
+        if (subEl) subEl.textContent = 'Connect with farmers, buyers, and transporters to build trust circles';
         loadNetwork();
     } else if (tabName === 'messages') {
-        titleEl.textContent = 'AgriConnect Messaging Center';
-        subEl.textContent = 'Discuss harvest quality, coordinate delivery logistics, and chat with connections';
+        if (titleEl) titleEl.textContent = 'AgriConnect Messaging Center';
+        if (subEl) subEl.textContent = 'Discuss harvest quality, coordinate delivery logistics, and chat with connections';
         loadChats();
     }
 }
@@ -1260,14 +1266,17 @@ function renderContainerSpinner(containerOrId, message = 'Loading data...') {
 // -------------------------------------------------------------
 // MARKETPLACE TAB LOGIC
 async function loadMarketplace() {
+    if (!document.getElementById('standard-produce-grid')) return;
     clearMapMarkers();
     renderContainerSpinner('standard-produce-grid', 'Loading fresh farm produce from Techiman market...');
     
-    const queryVal = document.getElementById('marketplace-search').value;
+    const searchEl = document.getElementById('marketplace-search');
+    const queryVal = searchEl ? searchEl.value : '';
     const activeBtn = document.querySelector('.crop-tags .tag.active');
     const activeCropTag = activeBtn ? activeBtn.getAttribute('data-crop') : null;
     const activeFilter = activeBtn ? activeBtn.getAttribute('data-filter') : null;
-    const sortUrgency = document.getElementById('urgency-sort-toggle').checked;
+    const sortUrgencyEl = document.getElementById('urgency-sort-toggle');
+    const sortUrgency = sortUrgencyEl ? sortUrgencyEl.checked : false;
     
     let url = '/api/produce/';
     const params = [];
@@ -3467,6 +3476,7 @@ async function loadCart() {
         const items = await res.json();
         
         const container = document.getElementById('cart-items-container');
+        if (!container) return;
         container.innerHTML = '';
         
         let produceTotal = 0;
@@ -4379,6 +4389,7 @@ async function loadChats() {
         const chats = await res.json();
 
         const container = document.getElementById('chats-list-container');
+        if (!container) return;
         container.innerHTML = '';
 
         if (chats.length === 0) {

@@ -1,0 +1,161 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Marketplace - AgriConnect{% endblock %}
+{% block header_title %}Marketplace{% endblock %}
+{% block header_subtitle %}Discover fresh vegetables directly from verified smallholder farmers in Bono East.{% endblock %}
+
+{% block content %}
+<!-- Marketplace Page -->
+<div class="flex flex-col gap-6">
+    <!-- Premium Hero Section -->
+    <div class="bg-gradient-to-br from-primary-900 to-primary-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
+        <!-- Background pattern -->
+        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+        
+        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+            <div>
+                <h2 class="text-3xl font-extrabold font-heading mb-2">Good Morning, <span id="hero-username" class="text-accent">Farmer</span> 👋</h2>
+                <p class="text-primary-100 max-w-md">Discover fresh vegetables directly from verified smallholder farmers in Bono East.</p>
+            </div>
+            
+            <!-- Hero Stat Cards -->
+            <div class="grid grid-cols-2 md:flex gap-4">
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
+                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider" id="hero-sales-label">Items Sold</span>
+                    <h3 class="text-xl font-bold" id="hero-sales-value">0 Orders</h3>
+                    <span class="text-[10px] text-green-300 flex items-center gap-1" id="hero-sales-trend"><i class="fa-solid fa-circle-check"></i> Live Sync</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
+                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider">Wallet</span>
+                    <h3 class="text-xl font-bold">GHS <span id="hero-wallet-balance-mock">0.00</span></h3>
+                    <span class="text-[10px] text-green-300 flex items-center gap-1"><i class="fa-solid fa-shield-halved"></i> 100% Secured</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
+                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider">Listings</span>
+                    <h3 class="text-xl font-bold" id="hero-available-count">0 Crops</h3>
+                    <span class="text-[10px] text-green-300 flex items-center gap-1"><i class="fa-solid fa-circle"></i> Live Hub</span>
+                </div>
+                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
+                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider">Nearby Buyers</span>
+                    <h3 class="text-xl font-bold" id="hero-nearby-count">0 Active</h3>
+                    <span class="text-[10px] text-primary-100 flex items-center gap-1"><i class="fa-solid fa-people-group"></i> Bono East</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters & Sort Bar -->
+    <div class="bg-white rounded-xl border border-slate-200 p-5 shadow-sm">
+        <div class="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4">
+            <!-- Search -->
+            <div class="relative flex-1 w-full">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+                </div>
+                <input type="text" id="marketplace-search" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-slate-50" placeholder="Search tomato variety, location...">
+            </div>
+            
+            <div class="flex items-center gap-2">
+                <!-- Action Buttons -->
+                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg p-2 transition-colors" title="Voice Search" onclick="alert('Voice search activated (simulation)')"><i class="fa-solid fa-microphone"></i></button>
+                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg p-2 transition-colors" title="Filter by Location" onclick="alert('Location filter menu toggled (simulation)')"><i class="fa-solid fa-location-crosshairs"></i></button>
+                <button class="bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg p-2 transition-colors" title="Advanced Filters" onclick="alert('Advanced filters menu toggled (simulation)')"><i class="fa-solid fa-sliders"></i></button>
+                
+                <!-- Urgency Sort Toggle -->
+                <div class="ml-2 flex items-center bg-orange-50 border border-orange-200 rounded-lg px-3 py-1.5 cursor-pointer hover:bg-orange-100 transition-colors">
+                    <input type="checkbox" id="urgency-sort-toggle" class="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded mr-2 cursor-pointer"> 
+                    <label for="urgency-sort-toggle" class="text-xs font-bold text-orange-800 cursor-pointer flex items-center gap-1.5">
+                        <i class="fa-solid fa-triangle-exclamation text-orange-500"></i> Sort by Urgency
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vegetable Categories -->
+        <div class="mt-5">
+            <h3 class="text-xs font-bold uppercase text-slate-400 tracking-wider mb-3">Vegetable Categories</h3>
+            <div class="flex overflow-x-auto pb-2 gap-3 hide-scrollbar">
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-colors whitespace-nowrap active-category" data-crop="">
+                    <span>🌾</span> <span class="font-medium text-sm text-slate-700">All</span>
+                </button>
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-colors whitespace-nowrap" data-crop="Tomatoes">
+                    <span>🍅</span> <span class="font-medium text-sm text-slate-700">Tomatoes</span>
+                </button>
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-colors whitespace-nowrap" data-crop="Habanero Peppers">
+                    <span>🌶</span> <span class="font-medium text-sm text-slate-700">Peppers</span>
+                </button>
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-colors whitespace-nowrap" data-crop="Garden Eggs">
+                    <span>🍆</span> <span class="font-medium text-sm text-slate-700">Garden Eggs</span>
+                </button>
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-colors whitespace-nowrap" data-crop="Okra">
+                    <span>🥒</span> <span class="font-medium text-sm text-slate-700">Okra</span>
+                </button>
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-white hover:bg-primary-50 hover:border-primary-200 transition-colors whitespace-nowrap" data-crop="Leafy Greens">
+                    <span>🥬</span> <span class="font-medium text-sm text-slate-700">Leafy Greens</span>
+                </button>
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-blue-200 bg-blue-50 hover:bg-blue-100 transition-colors whitespace-nowrap" data-filter="cold_storage">
+                    <span>❄️</span> <span class="font-medium text-sm text-blue-700">Cold Storage</span>
+                </button>
+                <button class="category-card flex items-center gap-2 px-4 py-2 rounded-full border border-red-200 bg-red-50 hover:bg-red-100 transition-colors whitespace-nowrap" data-filter="clearance">
+                    <span>⚠️</span> <span class="font-medium text-sm text-red-700">Clearance Deals</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🚨 SAVE THE CROP URGENT SECTION 🚨 -->
+    <div id="urgent-crops-container" class="bg-orange-50 border border-orange-200 rounded-xl p-6 hidden">
+        <h2 class="text-xl font-bold font-heading text-orange-700 mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-fire-flame-curved animate-pulse text-orange-500"></i> 
+            Save the Crop! - Near-Rot Flash Sales
+        </h2>
+        <p class="text-sm text-orange-600/80 mb-5">These fresh vegetables are nearing their predicted rot dates. Buy immediately at heavy discounts to save farmer income and prevent post-harvest spoilage waste!</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="urgent-produce-grid">
+            <!-- Filled dynamically by JS -->
+        </div>
+    </div>
+
+    <!-- STANDARD AVAILABLE PRODUCE -->
+    <div class="mt-2">
+        <h2 class="text-lg font-bold font-heading text-slate-800 mb-4">Available Vegetables</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="standard-produce-grid">
+            <!-- Filled dynamically by JS -->
+        </div>
+    </div>
+
+    <!-- AI INSIGHTS & MARKET INTELLIGENCE -->
+    <div class="bg-gradient-to-br from-blue-50 to-emerald-50 border border-blue-100 rounded-xl p-6 mt-4 shadow-sm">
+        <h2 class="text-xl font-bold font-heading text-blue-800 mb-1 flex items-center gap-2">
+            <i class="fa-solid fa-wand-magic-sparkles text-blue-500"></i> 
+            AI Insights & Market Intelligence
+        </h2>
+        <p class="text-sm text-blue-600/70 mb-5">Smart recommendations based on regional crop decay curves, local market demand, and nearby transit availability.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div class="bg-white/60 backdrop-blur-sm border border-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 mb-1">Price Trends</h4>
+                <p class="text-xs text-slate-500 leading-relaxed">Tomatoes are predicted to rise 15% next week due to high Kumasi demand. Buy now.</p>
+            </div>
+            <div class="bg-white/60 backdrop-blur-sm border border-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-snowflake"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 mb-1">Spoilage Warnings</h4>
+                <p class="text-xs text-slate-500 leading-relaxed">Increased humidity in Bono East may reduce pepper shelf-life by 48 hours. Ship urgently.</p>
+            </div>
+            <div class="bg-white/60 backdrop-blur-sm border border-white rounded-xl p-5 shadow-sm hover:shadow-md transition-shadow">
+                <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-lg mb-3">
+                    <i class="fa-solid fa-circle-nodes"></i>
+                </div>
+                <h4 class="font-bold text-slate-800 mb-1">Transit Opportunity</h4>
+                <p class="text-xs text-slate-500 leading-relaxed">2 transporters are returning empty from Kumasi to Techiman. Lower freight rates available.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
