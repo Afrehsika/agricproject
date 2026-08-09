@@ -17,17 +17,11 @@ if not user:
     sys.exit(1)
 
 client.force_login(user)
-print("Testing /api/connections/ ...")
+print("Testing /api/messages/chats/ ...")
 try:
-    res = client.get('/api/connections/')
-    print(res.status_code, res.content[:200])
+    res = client.get('/api/messages/chats/')
+    print(res.status_code, res.content[:500])
 except Exception as e:
-    print("Error in /api/connections/:", e)
+    print("Error in /api/messages/chats/:", e)
 
-print("Testing /api/users/discover/ ...")
-try:
-    res2 = client.get('/api/users/discover/')
-    print(res2.status_code, res2.content[:200])
-except Exception as e:
-    print("Error in /api/users/discover/:", e)
 
