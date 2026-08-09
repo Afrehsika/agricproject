@@ -1,48 +1,60 @@
 <!-- 💡 AI Dynamic Pricing Recommendation Modal -->
-<div id="pricing-recommendation-modal" class="modal-overlay" style="display: none;">
-    <div class="modal-content" style="max-width: 500px; width: 92%;">
-        <div class="modal-header" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #fff; padding: 16px 20px; border-radius: var(--radius-md) var(--radius-md) 0 0;">
-            <h3 style="margin: 0; font-size: 15px; font-weight: 700;">
-                <i class="fa-solid fa-wand-magic-sparkles text-emerald me-2"></i> AI Price Recommendation Advisor
+<div id="pricing-recommendation-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300" style="display: none;">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden w-[95%] max-w-lg transform transition-all duration-300 scale-100 flex flex-col">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-emerald-900 to-emerald-700 px-6 py-5 flex items-center justify-between shrink-0 relative overflow-hidden">
+            <div class="absolute -right-4 -top-4 text-emerald-500/20 text-6xl pointer-events-none transform rotate-12">
+                <i class="fa-solid fa-microchip"></i>
+            </div>
+            
+            <h3 class="text-white font-black text-lg flex items-center gap-3 m-0 relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center text-emerald-300 shadow-sm shrink-0">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                </div>
+                AI Price Advisor
             </h3>
-            <button class="close-modal-btn" onclick="closeRecommendationModal()" style="color: #fff; background: transparent; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+            <button class="text-emerald-200 hover:text-white transition-colors bg-white/5 hover:bg-white/10 rounded-lg w-8 h-8 flex items-center justify-center shrink-0 relative z-10" onclick="closeRecommendationModal()">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
         </div>
         
-        <div class="modal-body p-4">
-            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-                <h4 id="rec-modal-crop-name" style="margin: 0; font-size: 15px; font-weight: 800; color: #065f46;">Produce Listing</h4>
-                <div style="display: flex; gap: 14px; margin-top: 6px; font-size: 12px; color: #047857;">
-                    <span>Initial Price: <strong id="rec-modal-initial-price">GHS 0.00</strong></span> • 
-                    <span>AI Freshness: <strong id="rec-modal-freshness" style="color: #d97706;">100%</strong></span>
+        <!-- Body -->
+        <div class="p-6 bg-slate-50 flex flex-col gap-5">
+            <div class="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm">
+                <h4 id="rec-modal-crop-name" class="text-slate-800 font-bold text-base m-0">Produce Listing</h4>
+                <div class="flex items-center gap-4 mt-3 text-xs font-medium text-slate-600">
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-tag text-slate-400"></i> Initial Price: <strong id="rec-modal-initial-price" class="text-slate-800">GHS 0.00</strong></span>
+                    <span class="flex items-center gap-1.5"><i class="fa-solid fa-leaf text-emerald-500"></i> AI Freshness: <strong id="rec-modal-freshness" class="text-orange-500 bg-orange-50 px-1.5 py-0.5 rounded">100%</strong></span>
                 </div>
             </div>
 
-            <div style="background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%); border: 1.5px solid #fde68a; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-                <div style="font-size: 12px; font-weight: 800; color: #92400e; display: flex; align-items: center; gap: 8px;">
-                    <i class="fa-solid fa-lightbulb text-amber" style="font-size: 18px;"></i> Recommended Discount Price
+            <div class="bg-gradient-to-br from-amber-50 to-orange-50/50 border border-amber-200/60 rounded-2xl p-6 shadow-inner relative overflow-hidden">
+                <div class="absolute -right-6 -bottom-6 text-amber-500/10 text-7xl pointer-events-none transform -rotate-12">
+                    <i class="fa-solid fa-tag"></i>
                 </div>
-                <div style="font-size: 26px; font-weight: 900; color: #b45309; margin: 8px 0;" id="rec-modal-suggested-price">
+                
+                <div class="font-bold text-amber-800 text-xs uppercase tracking-wider flex items-center gap-2 relative z-10">
+                    <i class="fa-solid fa-lightbulb text-amber-500 text-base"></i> Recommended Discount Price
+                </div>
+                <div class="text-4xl font-black text-amber-600 my-3 relative z-10" id="rec-modal-suggested-price">
                     GHS 0.00
                 </div>
-                <p style="margin: 0; font-size: 11px; color: #78350f; line-height: 1.5;">
+                <p class="text-[11px] text-amber-800/80 m-0 font-medium leading-relaxed relative z-10">
                     Market demand is moderate and no cold storage is attached. Accepting this recommendation will apply a discount to boost sales velocity before predicted rot!
                 </p>
             </div>
 
             <input type="hidden" id="rec-modal-produce-id">
 
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <button class="btn btn-emerald-gradient" style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; border-radius: 10px;" onclick="submitDiscountDecision('accept')">
-                    <i class="fa-solid fa-check me-1"></i> Accept & Set Discount Price
+            <div class="flex flex-col sm:flex-row gap-3 mt-2">
+                <button class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" onclick="submitDiscountDecision('accept')">
+                    <i class="fa-solid fa-check-circle text-lg"></i> Accept & Set Discount
                 </button>
-                <button class="btn btn-secondary" style="flex: 1; padding: 12px; font-size: 12px; font-weight: 700; border-radius: 10px;" onclick="submitDiscountDecision('reject')">
-                    <i class="fa-solid fa-xmark me-1"></i> Keep Initial Price
+                <button class="flex-1 bg-white border-2 border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600 font-bold py-3.5 rounded-xl transition-all flex items-center justify-center gap-2" onclick="submitDiscountDecision('reject')">
+                    <i class="fa-solid fa-xmark text-slate-400"></i> Keep Initial Price
                 </button>
             </div>
-        </div>
-
-        <div class="modal-footer p-3" style="border-top: 1px solid var(--border-color); text-align: right; background: var(--bg-main);">
-            <button class="btn btn-secondary" onclick="closeRecommendationModal()" style="padding: 6px 16px; font-size: 12px;">Cancel</button>
         </div>
     </div>
 </div>

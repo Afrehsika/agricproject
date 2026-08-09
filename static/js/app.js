@@ -1686,12 +1686,13 @@ async function loadFarmerListings() {
         } else {
             list.forEach(p => {
                 const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50/50 transition-colors group";
                 
-                let statusBadge = `<span class="badge badge-green">Available</span>`;
+                let statusBadge = `<span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Available</span>`;
                 if (p.status === 'SOLD') {
-                    statusBadge = `<span class="badge badge-slate">Sold Out</span>`;
+                    statusBadge = `<span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Sold Out</span>`;
                 } else if (p.status === 'RESERVED') {
-                    statusBadge = `<span class="badge badge-blue">Reserved</span>`;
+                    statusBadge = `<span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider">Reserved</span>`;
                 }
 
                 const rotOptions = { month: 'short', day: 'numeric' };
@@ -1704,33 +1705,37 @@ async function loadFarmerListings() {
                 let recommendationWidget = '';
                 if (isPendingRec) {
                     recommendationWidget = `
-                        <div style="margin-top: 4px;">
-                            <button style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; border: none; border-radius: 6px; padding: 4px 8px; font-size: 10px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 6px rgba(245,158,11,0.25);" onclick="openRecommendationModal(${p.id}, '${p.variety || p.name}', ${p.price_per_unit}, ${p.freshness_score}, ${recPrice})">
-                                <i class="fa-solid fa-wand-magic-sparkles"></i> View AI Recommendation
+                        <div class="mt-2">
+                            <button class="bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white border-none rounded-lg px-3 py-1.5 text-[10px] font-bold cursor-pointer inline-flex items-center gap-1.5 shadow-md shadow-amber-500/20 transition-transform transform hover:-translate-y-0.5" onclick="openRecommendationModal(${p.id}, '${p.variety || p.name}', ${p.price_per_unit}, ${p.freshness_score}, ${recPrice})">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> View Price Rec
                             </button>
                         </div>
                     `;
                 } else if (p.discount_recommendation_status === 'ACCEPTED') {
-                    recommendationWidget = `<div style="font-size: 10px; color: #059669; margin-top: 2px;"><i class="fa-solid fa-circle-check"></i> Discount Accepted</div>`;
+                    recommendationWidget = `<div class="text-[10px] text-emerald-600 font-bold mt-1.5 flex items-center gap-1"><i class="fa-solid fa-circle-check"></i> Discount Accepted</div>`;
                 } else if (p.discount_recommendation_status === 'REJECTED') {
-                    recommendationWidget = `<div style="font-size: 10px; color: #64748b; margin-top: 2px;"><i class="fa-solid fa-shield"></i> Initial Price Maintained</div>`;
+                    recommendationWidget = `<div class="text-[10px] text-slate-500 font-bold mt-1.5 flex items-center gap-1"><i class="fa-solid fa-shield"></i> Kept Original Price</div>`;
                 }
 
 
                 tr.innerHTML = `
-                    <td>
-                        <strong>${p.variety || p.name}</strong><br>
-                        <span class="font-xxs text-secondary">${p.name}</span>
+                    <td class="px-5 py-4">
+                        <div class="font-bold text-slate-800">${p.variety || p.name}</div>
+                        <div class="text-xs text-slate-500">${p.name}</div>
                         ${recommendationWidget}
                     </td>
-                    <td>${p.quantity_available} ${p.unit}</td>
-                    <td>
-                        <strong>GHS ${p.price_per_unit}</strong>
-                        ${p.original_listing_price && p.original_listing_price != p.price_per_unit ? `<br><s style="font-size: 10px; color: #94a3b8;">GHS ${p.original_listing_price}</s>` : ''}
+                    <td class="px-5 py-4 text-slate-700 font-medium">${p.quantity_available} <span class="text-xs text-slate-400 ml-0.5">${p.unit}</span></td>
+                    <td class="px-5 py-4">
+                        <div class="font-bold text-emerald-600">GHS ${p.price_per_unit}</div>
+                        ${p.original_listing_price && p.original_listing_price != p.price_per_unit ? `<s class="text-[10px] text-slate-400 font-medium">GHS ${p.original_listing_price}</s>` : ''}
                     </td>
-                    <td><span class="badge ${p.freshness_score < 40 ? 'badge-orange' : 'badge-green'}">${p.freshness_score}%</span></td>
-                    <td>${rotDate}</td>
-                    <td>${statusBadge}</td>
+                    <td class="px-5 py-4">
+                        <span class="${p.freshness_score < 40 ? 'bg-orange-100 text-orange-700' : 'bg-emerald-100 text-emerald-700'} px-2 py-1 rounded text-xs font-bold">
+                            ${p.freshness_score}%
+                        </span>
+                    </td>
+                    <td class="px-5 py-4 text-slate-600 text-right">${rotDate}</td>
+                    <td class="px-5 py-4 text-right">${statusBadge}</td>
                 `;
                 body.appendChild(tr);
             });
@@ -5267,30 +5272,26 @@ async function loadStorageFacilities() {
             } else {
                 facilities.forEach(f => {
                     const card = document.createElement('div');
-                    card.style.cssText = 'padding: 12px; border: 1px solid var(--border-color); border-radius: var(--radius-sm); margin-bottom: 10px; background: var(--bg-main);';
+                    card.className = "bg-white border border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4 transition-all hover:shadow-md";
                     
-                    let badgeClass = 'background: #f59e0b; color: #fff;';
-                    if (f.status === 'APPROVED') badgeClass = 'background: #10b981; color: #fff;';
-                    else if (f.status === 'REJECTED') badgeClass = 'background: #ef4444; color: #fff;';
+                    let badgeClass = 'bg-amber-100 text-amber-700';
+                    if (f.status === 'APPROVED') badgeClass = 'bg-emerald-100 text-emerald-700';
+                    else if (f.status === 'REJECTED') badgeClass = 'bg-red-100 text-red-700';
 
                     card.innerHTML = `
-                        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 10px;">
-                            <div>
-                                <strong style="font-size: 13px; color: var(--text-primary);">${f.name}</strong>
-                                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
-                                    <span><i class="fa-solid fa-layer-group text-emerald"></i> ${f.capacity}</span> • 
-                                    <span><i class="fa-solid fa-temperature-arrow-down text-blue-accent"></i> ${f.temperature_humidity}</span>
-                                </div>
-                                <div style="font-size: 11px; color: var(--text-secondary); margin-top: 2px;">
-                                    <i class="fa-solid fa-location-dot"></i> ${f.location}
-                                </div>
-                                ${f.admin_notes ? `<div style="font-size: 11px; color: #047857; margin-top: 4px; font-style: italic;"><strong>Audit Note:</strong> ${f.admin_notes}</div>` : ''}
+                        <div class="flex flex-col gap-1.5">
+                            <strong class="text-sm text-slate-800 font-bold">${f.name}</strong>
+                            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-slate-500 font-medium">
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-layer-group text-emerald-500"></i> ${f.capacity}</span> 
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-temperature-arrow-down text-blue-500"></i> ${f.temperature_humidity}</span>
+                                <span class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-slate-400"></i> ${f.location}</span>
                             </div>
-                            <div style="text-align: right; flex-shrink: 0;">
-                                <span style="${badgeClass} padding: 3px 8px; border-radius: 50px; font-size: 10px; font-weight: 700; display: inline-block;">
-                                    ${f.badge_display && f.badge_display !== 'No Badge' ? f.badge_display : f.status_display}
-                                </span>
-                            </div>
+                            ${f.admin_notes ? `<div class="bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg text-[10px] mt-2 font-medium flex gap-2 items-start border border-emerald-100"><i class="fa-solid fa-comment-dots mt-0.5"></i> <span><strong>Audit Note:</strong> ${f.admin_notes}</span></div>` : ''}
+                        </div>
+                        <div class="shrink-0 flex items-center justify-end w-full md:w-auto">
+                            <span class="${badgeClass} px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider flex items-center gap-1.5 whitespace-nowrap shadow-sm border border-white/20">
+                                ${f.badge_display && f.badge_display !== 'No Badge' ? `<i class="fa-solid fa-award"></i> ` + f.badge_display : f.status_display}
+                            </span>
                         </div>
                     `;
                     listContainer.appendChild(card);
