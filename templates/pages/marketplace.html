@@ -9,37 +9,46 @@
 <!-- Marketplace Page -->
 <div class="flex flex-col gap-6">
     <!-- Premium Hero Section -->
-    <div class="bg-gradient-to-br from-primary-900 to-primary-700 rounded-2xl p-6 text-white shadow-lg relative overflow-hidden">
-        <!-- Background pattern -->
-        <div class="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+    <div class="rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden min-h-[300px] flex items-center group">
+        <!-- Background Image -->
+        <div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 group-hover:scale-105" style="background-image: url('{% static 'img/marketplace_hero_bg.png' %}');"></div>
+        <!-- Sleek Dark Gradient Overlay -->
+        <div class="absolute inset-0 bg-gradient-to-r from-slate-900 via-slate-900/90 to-slate-900/40"></div>
         
-        <div class="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
-            <div>
-                <h2 class="text-3xl font-extrabold font-heading mb-2">Good Morning, <span id="hero-username" class="text-accent">Farmer</span> 👋</h2>
-                <p class="text-primary-100 max-w-md">Discover fresh vegetables directly from verified smallholder farmers in Bono East.</p>
+        <div class="relative z-10 w-full flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
+            <div class="max-w-xl">
+                <div class="inline-block px-3 py-1 mb-4 rounded-full bg-emerald-500/20 border border-emerald-500/30 backdrop-blur-md text-xs font-bold text-emerald-300 uppercase tracking-widest flex items-center w-max gap-2">
+                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span> Market is Active
+                </div>
+                <h2 class="text-4xl md:text-5xl font-black font-heading mb-3 tracking-tight">Good Morning, <br/><span id="hero-username" class="bg-clip-text text-transparent bg-gradient-to-r from-emerald-400 to-teal-200 drop-shadow-sm">Farmer</span> 👋</h2>
+                <p class="text-slate-300 text-lg md:text-xl font-light leading-relaxed max-w-md">Discover fresh vegetables directly from verified smallholder farmers in Bono East.</p>
             </div>
             
-            <!-- Hero Stat Cards -->
-            <div class="grid grid-cols-2 md:flex gap-4">
-                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
-                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider" id="hero-sales-label">Items Sold</span>
-                    <h3 class="text-xl font-bold" id="hero-sales-value">0 Orders</h3>
-                    <span class="text-[10px] text-green-300 flex items-center gap-1" id="hero-sales-trend"><i class="fa-solid fa-circle-check"></i> Live Sync</span>
+            <!-- Hero Stat Cards (Glassmorphism) -->
+            <div class="grid grid-cols-2 gap-4 w-full lg:w-auto">
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col gap-2 w-full lg:w-40 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/50 hover:bg-white/10 hover:shadow-[0_8px_30px_rgb(16,185,129,0.15)] relative overflow-hidden group/card">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-emerald-500/20 rounded-full blur-xl group-hover/card:bg-emerald-500/30 transition-colors"></div>
+                    <span class="text-xs text-slate-300 uppercase font-bold tracking-widest" id="hero-sales-label">Items Sold</span>
+                    <h3 class="text-2xl font-black text-white" id="hero-sales-value">0 Orders</h3>
+                    <span class="text-xs text-emerald-400 flex items-center gap-1.5 font-medium mt-1" id="hero-sales-trend"><i class="fa-solid fa-circle-check"></i> Live Sync</span>
                 </div>
-                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
-                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider">Wallet</span>
-                    <h3 class="text-xl font-bold">GHS <span id="hero-wallet-balance-mock">0.00</span></h3>
-                    <span class="text-[10px] text-green-300 flex items-center gap-1"><i class="fa-solid fa-shield-halved"></i> 100% Secured</span>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col gap-2 w-full lg:w-40 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/50 hover:bg-white/10 hover:shadow-[0_8px_30px_rgb(16,185,129,0.15)] relative overflow-hidden group/card">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-teal-500/20 rounded-full blur-xl group-hover/card:bg-teal-500/30 transition-colors"></div>
+                    <span class="text-xs text-slate-300 uppercase font-bold tracking-widest">Wallet</span>
+                    <h3 class="text-2xl font-black text-white">GHS <span id="hero-wallet-balance-mock">0.00</span></h3>
+                    <span class="text-xs text-teal-400 flex items-center gap-1.5 font-medium mt-1"><i class="fa-solid fa-shield-halved"></i> 100% Secured</span>
                 </div>
-                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
-                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider">Listings</span>
-                    <h3 class="text-xl font-bold" id="hero-available-count">0 Crops</h3>
-                    <span class="text-[10px] text-green-300 flex items-center gap-1"><i class="fa-solid fa-circle"></i> Live Hub</span>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col gap-2 w-full lg:w-40 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/50 hover:bg-white/10 hover:shadow-[0_8px_30px_rgb(16,185,129,0.15)] relative overflow-hidden group/card">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-blue-500/20 rounded-full blur-xl group-hover/card:bg-blue-500/30 transition-colors"></div>
+                    <span class="text-xs text-slate-300 uppercase font-bold tracking-widest">Listings</span>
+                    <h3 class="text-2xl font-black text-white" id="hero-available-count">0 Crops</h3>
+                    <span class="text-xs text-blue-400 flex items-center gap-1.5 font-medium mt-1"><i class="fa-solid fa-satellite-dish animate-pulse"></i> Live Hub</span>
                 </div>
-                <div class="bg-white/10 backdrop-blur border border-white/20 rounded-xl p-4 flex flex-col gap-1 w-full md:w-32 transition-transform hover:-translate-y-1">
-                    <span class="text-xs text-primary-200 uppercase font-bold tracking-wider">Nearby Buyers</span>
-                    <h3 class="text-xl font-bold" id="hero-nearby-count">0 Active</h3>
-                    <span class="text-[10px] text-primary-100 flex items-center gap-1"><i class="fa-solid fa-people-group"></i> Bono East</span>
+                <div class="bg-white/5 backdrop-blur-xl border border-white/10 rounded-2xl p-5 flex flex-col gap-2 w-full lg:w-40 transition-all duration-300 hover:-translate-y-2 hover:border-emerald-500/50 hover:bg-white/10 hover:shadow-[0_8px_30px_rgb(16,185,129,0.15)] relative overflow-hidden group/card">
+                    <div class="absolute -right-4 -top-4 w-16 h-16 bg-amber-500/20 rounded-full blur-xl group-hover/card:bg-amber-500/30 transition-colors"></div>
+                    <span class="text-xs text-slate-300 uppercase font-bold tracking-widest">Nearby Buyers</span>
+                    <h3 class="text-2xl font-black text-white" id="hero-nearby-count">0 Active</h3>
+                    <span class="text-xs text-amber-400 flex items-center gap-1.5 font-medium mt-1"><i class="fa-solid fa-location-dot"></i> Bono East</span>
                 </div>
             </div>
         </div>

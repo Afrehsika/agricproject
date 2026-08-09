@@ -1391,9 +1391,9 @@ function addMapMarker(p, type) {
 // Helper to create HTML elements for crop cards
 function createProduceCard(p, isUrgent) {
     const col = document.createElement('div');
-    col.className = 'produce-card';
+    col.className = 'bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex flex-col hover:shadow-xl hover:-translate-y-1 transition-all duration-300';
     if (isUrgent) {
-        col.classList.add('urgent-highlight');
+        col.classList.add('ring-2', 'ring-orange-400', 'shadow-orange-100');
     }
 
     // Determine fallback crop image if URL is missing
@@ -1406,21 +1406,18 @@ function createProduceCard(p, isUrgent) {
     };
     const imageUrl = p.image_url || cropImages[p.name] || cropImages['Tomatoes'];
 
-    // Freshness indicator
-    let freshnessClass = 'high';
-    if (p.freshness_score < 30) {
-        freshnessClass = 'low';
-    } else if (p.freshness_score < 60) {
-        freshnessClass = 'med';
-    }
+    // Freshness indicator colors
+    let freshnessColor = 'emerald';
+    if (p.freshness_score < 30) freshnessColor = 'red';
+    else if (p.freshness_score < 60) freshnessColor = 'amber';
 
     let urgencyTagHtml = '';
     if (isUrgent) {
-        urgencyTagHtml = `<div class="urgency-badge"><i class="fa-solid fa-triangle-exclamation"></i> Spoilage Risk</div>`;
+        urgencyTagHtml = `<div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-md text-[10px] font-bold text-red-600 shadow-sm flex items-center gap-1"><i class="fa-solid fa-triangle-exclamation"></i> Spoilage Risk</div>`;
     }
 
-    // Price HTML: Initial price is NEVER reduced automatically. Strike-through ONLY shows if farmer explicitly accepted a discount.
-    let priceHtml = `<span class="price-val">GHS ${parseFloat(p.price_per_unit).toFixed(2)}</span>`;
+    // Price HTML
+    let priceHtml = `<span class="text-emerald-600 font-black text-xl">GHS ${parseFloat(p.price_per_unit).toFixed(2)}</span>`;
     const isAcceptedDiscount = p.discount_recommendation_status === 'ACCEPTED';
     const hasOriginalPrice = p.original_listing_price && parseFloat(p.original_listing_price) > parseFloat(p.price_per_unit);
 
@@ -1429,35 +1426,36 @@ function createProduceCard(p, isUrgent) {
         if (p.name === 'Gboma Greens' || p.variety === 'Gboma Greens') origVal = '40.00';
 
         priceHtml = `
-            <div class="price-box" style="display: flex; flex-direction: column; align-items: flex-start;">
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                    <s class="original-price-val" style="color: #94a3b8; font-size: 12px; font-weight: 600; text-decoration: line-through;">GHS ${origVal}</s>
-                    <span style="background: #ef4444; color: #fff; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; letter-spacing: 0.5px;">DISCOUNTED</span>
+            <div class="flex flex-col items-start leading-tight">
+                <div class="flex items-center gap-1.5 mb-0.5">
+                    <s class="text-slate-400 text-xs font-semibold">GHS ${origVal}</s>
+                    <span class="bg-red-500 text-white text-[9px] font-black px-1.5 py-0.5 rounded tracking-wider">DISCOUNT</span>
                 </div>
-                <span class="price-val" style="color: #059669; font-weight: 900; font-size: 18px;">GHS ${parseFloat(p.price_per_unit).toFixed(2)}</span>
+                <span class="text-emerald-600 font-black text-xl">GHS ${parseFloat(p.price_per_unit).toFixed(2)}</span>
             </div>
         `;
     }
 
-
     // AI shelf life prediction
     const shelfLife = Math.max(1, Math.round((new Date(p.predicted_rot_date) - new Date()) / (1000 * 60 * 60 * 24)));
+    
     // AI Recommendation
-    const recomBadge = p.freshness_score >= 70 ? '<div class="ai-recom-badge"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Recommends</div>' : '';
+    const recomBadge = p.freshness_score >= 70 ? `<div class="bg-indigo-50 border border-indigo-100 text-indigo-700 px-2 py-1 rounded flex items-center justify-center gap-1.5 mt-3 text-[10px] font-bold uppercase tracking-wider"><i class="fa-solid fa-wand-magic-sparkles"></i> AI Recommends</div>` : '';
+    
     // Mock distance
     const mockDist = (Math.random() * 4 + 1.2).toFixed(1);
 
     // Verified Storage Inspection Badge
     let storageBadgeHtml = '';
     if (p.storage_facility_details && p.storage_facility_details.status === 'APPROVED') {
-        const badgeColors = {
-            'GOLD_COLD_CHAIN': 'background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); color: #ffffff;',
-            'SILVER_COOL_ROOM': 'background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff;',
-            'BRONZE_VENTILATED': 'background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); color: #ffffff;'
+        const badgeStyles = {
+            'GOLD_COLD_CHAIN': 'bg-gradient-to-r from-violet-600 to-purple-600',
+            'SILVER_COOL_ROOM': 'bg-gradient-to-r from-emerald-600 to-teal-600',
+            'BRONZE_VENTILATED': 'bg-gradient-to-r from-sky-600 to-blue-600'
         };
-        const styleStr = badgeColors[p.storage_facility_details.badge] || 'background: #10b981; color: #ffffff;';
+        const bgStyle = badgeStyles[p.storage_facility_details.badge] || 'bg-emerald-600';
         storageBadgeHtml = `
-            <div style="${styleStr} border-radius: 6px; padding: 4px 8px; font-size: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; margin-top: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.15);" title="${p.storage_facility_details.name} - Inspected & Verified by Admin">
+            <div class="${bgStyle} text-white px-2 py-1 rounded shadow-sm text-[10px] font-bold flex items-center gap-1 mt-3" title="${p.storage_facility_details.name} - Inspected & Verified by Admin">
                 <i class="fa-solid fa-snowflake"></i> ${p.storage_facility_details.badge_display}
             </div>
         `;
@@ -1467,107 +1465,105 @@ function createProduceCard(p, isUrgent) {
     const recPrice = p.recommended_discount_price || p.calculated_recommendation_price;
     const isPendingRec = (p.discount_recommendation_status === 'PENDING_FARMER_DECISION' || (!p.discount_recommendation_status || p.discount_recommendation_status === 'NONE')) && recPrice && (recPrice < p.price_per_unit) && (p.freshness_score < 85);
 
-
-
-
-
     col.innerHTML = `
-        <div class="produce-img-wrapper" style="position: relative;">
-            <img src="${imageUrl}" alt="${p.name}">
-            <div class="verified-badge"><i class="fa-solid fa-circle-check"></i> Verified Farmer</div>
+        <div class="relative h-48 w-full overflow-hidden shrink-0">
+            <img src="${imageUrl}" alt="${p.name}" class="w-full h-full object-cover">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-900/80 via-transparent to-transparent"></div>
+            <div class="absolute bottom-3 left-3 bg-white/20 backdrop-blur-md px-2 py-1 rounded text-[10px] font-bold text-white flex items-center gap-1 border border-white/20">
+                <i class="fa-solid fa-circle-check text-emerald-400"></i> Verified Farmer
+            </div>
             ${urgencyTagHtml}
         </div>
-        <div class="produce-info">
-            <div class="crop-title-row">
+        
+        <div class="p-5 flex-1 flex flex-col">
+            <div class="flex justify-between items-start mb-2">
                 <div>
-                    <h3 class="crop-name">${p.variety || p.name}</h3>
-                    <span class="crop-variety">${p.name}</span>
+                    <h3 class="font-bold text-slate-800 text-lg leading-tight mb-0.5">${p.variety || p.name}</h3>
+                    <span class="text-xs text-slate-500 font-medium">${p.name}</span>
                 </div>
-                <div class="badge ${isUrgent ? 'badge-orange' : 'badge-green'}" style="border-radius: 50px;">${p.quantity_available} ${p.unit}</div>
+                <div class="${isUrgent ? 'bg-orange-100 text-orange-700 border-orange-200' : 'bg-emerald-50 text-emerald-700 border-emerald-200'} border px-2.5 py-1 rounded-full text-xs font-bold whitespace-nowrap">
+                    ${p.quantity_available} ${p.unit}
+                </div>
             </div>
             
-            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                <div class="farmer-pill">
-                    <i class="fa-solid fa-circle-user"></i>
-                    <span>${p.farmer_name}</span>
-                </div>
-                <div class="rating-badge">
-                    <i class="fa-solid fa-star"></i> <span>4.8</span>
-                </div>
-            </div>
-
-            <div style="display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: var(--text-secondary); margin-top: 4px;">
-                <span><i class="fa-solid fa-location-dot"></i> Techiman • ${mockDist} km</span>
-                <span><i class="fa-solid fa-calendar-day"></i> Shelf life: ~${shelfLife} days</span>
+            <div class="grid grid-cols-2 gap-y-2 gap-x-4 mb-4 text-[11px] text-slate-500 font-medium">
+                <div class="flex items-center gap-1.5"><i class="fa-solid fa-circle-user text-slate-400"></i> <span class="truncate">${p.farmer_name}</span></div>
+                <div class="flex items-center gap-1.5 justify-end"><i class="fa-solid fa-star text-amber-400"></i> 4.8 Rating</div>
+                <div class="flex items-center gap-1.5"><i class="fa-solid fa-location-dot text-slate-400"></i> ${mockDist} km away</div>
+                <div class="flex items-center gap-1.5 justify-end"><i class="fa-solid fa-calendar-day text-slate-400"></i> ~${shelfLife} days</div>
             </div>
 
             ${storageBadgeHtml}
-
             ${recomBadge}
 
-            <div class="freshness-container" style="margin-top: 6px;">
-                <div class="freshness-lbl-row">
-                    <span>AI Freshness:</span>
-                    <span class="text-${freshnessClass === 'low' ? 'orange' : (freshnessClass === 'med' ? 'amber' : 'emerald')}">${p.freshness_score}%</span>
+            <div class="mt-auto pt-4 border-t border-slate-100">
+                <div class="flex justify-between items-center mb-1.5 text-[11px] font-bold text-slate-600 uppercase tracking-wider">
+                    <span>AI Freshness</span>
+                    <span class="text-${freshnessColor}-600">${p.freshness_score}%</span>
                 </div>
-                <div class="freshness-fill ${freshnessClass}" style="width: ${p.freshness_score}%;"></div>
-            </div>
+                <div class="w-full bg-slate-100 rounded-full h-1.5 mb-4 overflow-hidden">
+                    <div class="bg-${freshnessColor}-500 h-1.5 rounded-full" style="width: ${p.freshness_score}%"></div>
+                </div>
 
-            <div class="price-row" style="margin-top: 10px;">
-                ${priceHtml}
-                <span class="unit-label">per ${p.unit.slice(0, -1)}</span>
+                <div class="flex items-end justify-between">
+                    <div class="flex flex-col">
+                        ${priceHtml}
+                        <span class="text-[10px] text-slate-400 font-medium uppercase tracking-wider">per ${p.unit.slice(0, -1)}</span>
+                    </div>
+                </div>
             </div>
-
         </div>
-        <div class="card-footer-actions">
+        
+        <div class="bg-slate-50 p-4 border-t border-slate-100">
             ${(() => {
                 const userRole = currentUser ? currentUser.role : '';
                 if (userRole === 'BUYER') {
+                    const btnClass = isUrgent 
+                        ? 'bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 text-white border-none shadow-md shadow-orange-500/20' 
+                        : 'bg-emerald-600 hover:bg-emerald-700 text-white border border-transparent';
+                        
                     return `
-                        <div style="display: flex; gap: 8px; width: 100%; align-items: center;">
-                            <input type="number" class="form-control quantity-input" value="1" min="1" max="${p.quantity_available}" style="width: 54px; text-align: center; padding: 6px; border-radius: var(--radius-sm); border-color: var(--border-color); background-color: var(--bg-main); color: var(--text-primary);">
-                            <button class="btn ${isUrgent ? 'btn-orange' : 'btn-primary'} add-to-cart-btn" data-id="${p.id}" style="flex-grow: 1; padding: 10px; font-size: 11px;">
-                                <i class="fa-solid fa-cart-plus"></i> Buy Now
+                        <div class="flex gap-2 w-full items-center">
+                            <input type="number" class="quantity-input w-14 text-center py-2 px-1 rounded-lg border border-slate-300 text-sm font-bold text-slate-700 bg-white focus:ring-emerald-500 focus:border-emerald-500" value="1" min="1" max="${p.quantity_available}">
+                            <button class="add-to-cart-btn flex-1 py-2 px-3 rounded-lg text-sm font-bold transition-all ${btnClass}" data-id="${p.id}">
+                                <i class="fa-solid fa-cart-plus mr-1"></i> Buy
                             </button>
-                            <button class="btn btn-secondary" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);" onclick="alert('Opening secure chat channel with ${p.farmer_name} (simulation)')" title="Chat Farmer">
-                                <i class="fa-solid fa-comments text-emerald"></i>
-                            </button>
-                            <button class="btn btn-secondary" style="width: 36px; height: 36px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);" onclick="alert('Produce saved to favorites & comparison matrix (simulation)')" title="Save / Compare">
-                                <i class="fa-solid fa-heart text-amber"></i>
+                            <button class="w-10 h-10 shrink-0 flex items-center justify-center rounded-lg bg-white border border-slate-200 text-emerald-600 hover:bg-emerald-50 transition-colors shadow-sm" onclick="alert('Opening secure chat channel with ${p.farmer_name}')" title="Chat">
+                                <i class="fa-solid fa-comments"></i>
                             </button>
                         </div>
                     `;
                 } else if (userRole === 'FARMER') {
                     if (isPendingRec) {
                         return `
-                            <button class="btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff; font-weight: 700; font-size: 11px; padding: 10px; border-radius: 8px; border: none; cursor: pointer; width: 100%; box-shadow: 0 4px 10px rgba(245,158,11,0.25);" onclick="openRecommendationModal(${p.id}, '${p.variety || p.name}', ${p.price_per_unit}, ${p.freshness_score}, ${recPrice})">
-                                <i class="fa-solid fa-wand-magic-sparkles me-1"></i> View AI Price Recommendation
+                            <button class="w-full py-2.5 rounded-lg bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white text-xs font-bold transition-all shadow-md shadow-amber-500/20" onclick="openRecommendationModal(${p.id}, '${p.variety || p.name}', ${p.price_per_unit}, ${p.freshness_score}, ${recPrice})">
+                                <i class="fa-solid fa-wand-magic-sparkles mr-1.5"></i> View Price Rec
                             </button>
                         `;
                     } else if (p.discount_recommendation_status === 'ACCEPTED') {
                         return `
-                            <button class="btn" style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 700; font-size: 11px; padding: 10px; border-radius: 8px; width: 100%; cursor: default;">
-                                <i class="fa-solid fa-circle-check text-emerald me-1"></i> Discount Accepted: GHS ${p.price_per_unit}
-                            </button>
+                            <div class="w-full py-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700 text-xs font-bold text-center">
+                                <i class="fa-solid fa-circle-check mr-1.5"></i> Discount: GHS ${p.price_per_unit}
+                            </div>
                         `;
                     } else if (p.discount_recommendation_status === 'REJECTED') {
                         return `
-                            <button class="btn" style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; font-weight: 700; font-size: 11px; padding: 10px; border-radius: 8px; width: 100%; cursor: default;">
-                                <i class="fa-solid fa-shield me-1"></i> Initial Price Maintained: GHS ${p.price_per_unit}
-                            </button>
+                            <div class="w-full py-2.5 rounded-lg bg-slate-100 border border-slate-200 text-slate-600 text-xs font-bold text-center">
+                                <i class="fa-solid fa-shield mr-1.5"></i> Kept: GHS ${p.price_per_unit}
+                            </div>
                         `;
                     } else {
                         return `
-                            <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%; border-radius: var(--radius-sm);">
-                                <i class="fa-solid fa-wheat-awn text-emerald"></i> Farmer View (Listing)
-                            </button>
+                            <div class="w-full py-2.5 rounded-lg bg-slate-100 text-slate-400 text-xs font-bold text-center">
+                                <i class="fa-solid fa-wheat-awn mr-1.5"></i> Your Listing
+                            </div>
                         `;
                     }
                 } else {
                     return `
-                        <button class="btn btn-secondary btn-block" disabled style="opacity: 0.65; cursor: not-allowed; width: 100%; border-radius: var(--radius-sm);">
-                            <i class="fa-solid fa-truck text-emerald"></i> Marketplace View
-                        </button>
+                        <div class="w-full py-2.5 rounded-lg bg-slate-100 text-slate-400 text-xs font-bold text-center">
+                            <i class="fa-solid fa-eye mr-1.5"></i> View Only
+                        </div>
                     `;
                 }
             })()}
