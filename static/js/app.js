@@ -527,17 +527,15 @@ function updateUIForUser() {
     document.getElementById('logged-role').textContent = currentUser.role.charAt(0) + currentUser.role.slice(1).toLowerCase();
     document.getElementById('header-wallet-balance').textContent = parseFloat(currentUser.wallet_balance).toFixed(2);
     
+    const insightEscrow = document.getElementById('insight-escrow');
+    if (insightEscrow) insightEscrow.textContent = `GHS ${parseFloat(currentUser.wallet_balance).toFixed(2)}`;
+    
+    const withdrawAvailable = document.getElementById('withdraw-available-balance');
+    if (withdrawAvailable) withdrawAvailable.textContent = `GHS ${parseFloat(currentUser.wallet_balance).toFixed(2)}`;
+    
     // Fund/Withdraw visibility
     const fundBtn = document.getElementById('sidebar-fund-btn');
     const withdrawBtn = document.getElementById('sidebar-withdraw-btn');
-    if (fundBtn) fundBtn.style.display = 'block';
-    if (withdrawBtn) {
-        if (currentUser.role === 'FARMER' || currentUser.role === 'TRANSPORTER' || currentUser.role === 'BUYER') {
-            withdrawBtn.style.display = 'block';
-        } else {
-            withdrawBtn.style.display = 'none';
-        }
-    }
 
     // Trigger cart badge loading
     updateCartBadge();
@@ -1010,11 +1008,17 @@ function setupEventListeners() {
 
     // Top-Up Modal Cancel & Confirm
     const topupCancelBtn = document.getElementById('topup-btn-cancel');
-    if (topupCancelBtn) {
-        topupCancelBtn.addEventListener('click', () => {
-            document.getElementById('topup-modal').style.display = 'none';
-        });
-    }
+    const topupCloseXBtn = document.getElementById('topup-btn-close-x');
+    const topupBackdrop = document.getElementById('topup-backdrop');
+    
+    const closeTopupModal = () => {
+        const modal = document.getElementById('topup-modal');
+        if (modal) modal.classList.add('hidden');
+    };
+
+    if (topupCancelBtn) topupCancelBtn.addEventListener('click', closeTopupModal);
+    if (topupCloseXBtn) topupCloseXBtn.addEventListener('click', closeTopupModal);
+    if (topupBackdrop) topupBackdrop.addEventListener('click', closeTopupModal);
 
     const topupConfirmBtn = document.getElementById('topup-btn-confirm');
     if (topupConfirmBtn) {
@@ -1023,11 +1027,17 @@ function setupEventListeners() {
 
     // Withdraw Modal Cancel & Submit
     const withdrawCancelBtn = document.getElementById('withdraw-btn-cancel');
-    if (withdrawCancelBtn) {
-        withdrawCancelBtn.addEventListener('click', () => {
-            document.getElementById('withdraw-modal').style.display = 'none';
-        });
-    }
+    const withdrawCloseXBtn = document.getElementById('withdraw-btn-close-x');
+    const withdrawBackdrop = document.getElementById('withdraw-backdrop');
+    
+    const closeWithdrawModal = () => {
+        const modal = document.getElementById('withdraw-modal');
+        if (modal) modal.classList.add('hidden');
+    };
+
+    if (withdrawCancelBtn) withdrawCancelBtn.addEventListener('click', closeWithdrawModal);
+    if (withdrawCloseXBtn) withdrawCloseXBtn.addEventListener('click', closeWithdrawModal);
+    if (withdrawBackdrop) withdrawBackdrop.addEventListener('click', closeWithdrawModal);
 
     const withdrawForm = document.getElementById('withdraw-form');
     if (withdrawForm) {
@@ -3686,7 +3696,7 @@ async function checkoutCart() {
 // --- Paystack Wallet Top-Up ---
 function openTopUpModal(suggestedAmount = 50) {
     document.getElementById('topup-amount').value = Math.ceil(suggestedAmount);
-    document.getElementById('topup-modal').style.display = 'flex';
+    document.getElementById('topup-modal').classList.remove('hidden');
 }
 
 async function initPaystackTopUp() {
@@ -3720,7 +3730,7 @@ async function initPaystackTopUp() {
         const data = await res.json();
         
         if (res.ok) {
-            document.getElementById('topup-modal').style.display = 'none';
+            document.getElementById('topup-modal').classList.add('hidden');
             
             const handler = PaystackPop.setup({
                 key: data.public_key,
@@ -3771,7 +3781,7 @@ async function verifyPayment(reference) {
 function openWithdrawModal() {
     document.getElementById('withdraw-amount').value = '';
     document.getElementById('withdraw-account-number').value = currentUser.phone_number || '';
-    document.getElementById('withdraw-modal').style.display = 'flex';
+    document.getElementById('withdraw-modal').classList.remove('hidden');
 }
 
 async function submitWithdrawal(e) {
@@ -3813,9 +3823,9 @@ async function submitWithdrawal(e) {
         const data = await res.json();
         
         if (res.ok) {
-            alert(`Withdrawal successful! ${data.message}`);
-            document.getElementById('withdraw-modal').style.display = 'none';
-            loadProfileData();
+            document.getElementById('withdraw-modal').classList.add('hidden');
+            alert("Withdrawal request submitted successfully.");
+            loadProfileData(); // refresh balance
             loadWalletTransactions();
         } else {
             errorDiv.textContent = "Withdrawal failed: " + (data.detail || JSON.stringify(data));
@@ -5044,7 +5054,7 @@ async function renderAnalyticsChart() {
         
         if (insightCrop) insightCrop.textContent = primaryCrop;
         if (insightConnections) insightConnections.textContent = `${myConnectionsCount} Connected`;
-        if (insightEscrow) insightEscrow.textContent = `GHS ${escrowBalance.toFixed(2)}`;
+        if (insightEscrow && currentUser) insightEscrow.textContent = `GHS ${parseFloat(currentUser.wallet_balance || 0).toFixed(2)}`;
         if (insightSuccess) {
             const successRate = orders.length > 0 
                 ? Math.round((orders.filter(o => o.status !== 'REFUNDED').length / orders.length) * 100)

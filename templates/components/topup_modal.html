@@ -1,39 +1,59 @@
-<div class="modal-backdrop" id="topup-modal" style="display: none;">
-    <div class="momo-dialog glass-panel fade-in-up">
-        <div class="momo-header" style="background: linear-gradient(135deg, var(--emerald-green), var(--emerald-light)); color: #0b0f19;">
-            <div class="momo-provider-logo" style="background-color: #0b0f19; color: var(--emerald-green);"><i class="fa-solid fa-credit-card"></i></div>
-            <h4 style="margin: 0; font-family: var(--font-display); font-weight: 800;">Fund Digital Wallet</h4>
-        </div>
-        <div class="momo-body p-4">
-            <div class="momo-info-box emerald">
-                <i class="fa-solid fa-shield-halved"></i>
-                <span>Instant wallet deposit via <strong>Paystack Secure Payment Gateway</strong> (supporting Card, MoMo, and Bank Transfer).</span>
-            </div>
-            
-            <div id="topup-error" class="alert alert-danger mb-3" style="display: none; font-size: 12px; color: var(--red-alert); background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 6px; text-align: left;"></div>
-            
-            <div class="form-group mt-3 text-left">
-                <label for="topup-amount" class="font-xs text-secondary mb-1 block">Top-Up Amount</label>
-                <div class="input-icon-wrapper">
-                    <i class="fa-solid fa-wallet"></i>
-                    <input type="number" id="topup-amount" class="form-control text-lg weight-800" min="1" value="50" style="color: var(--emerald-green); font-size: 20px;" required>
-                    <span class="input-suffix">GHS</span>
+<div id="topup-modal" class="fixed inset-0 z-[2000] hidden items-center justify-center">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" id="topup-backdrop"></div>
+    
+    <!-- Modal Dialog -->
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md transform transition-all relative overflow-hidden flex flex-col z-10 mx-4 fade-in-up">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 relative">
+            <button id="topup-btn-close-x" class="absolute top-4 right-4 text-emerald-100 hover:text-white w-8 h-8 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm border border-white/30 text-white shadow-inner">
+                    <i class="fa-solid fa-wallet text-2xl"></i>
+                </div>
+                <div>
+                    <h4 class="font-outfit font-bold text-2xl m-0 text-white">Fund Wallet</h4>
+                    <p class="text-emerald-50 text-sm opacity-90 m-0">Add funds to your digital escrow</p>
                 </div>
             </div>
-            
-            <div class="quick-amount-chips">
-                <button type="button" class="amount-chip" data-amount="20">+ 20</button>
-                <button type="button" class="amount-chip active" data-amount="50">+ 50</button>
-                <button type="button" class="amount-chip" data-amount="100">+ 100</button>
-                <button type="button" class="amount-chip" data-amount="200">+ 200</button>
-                <button type="button" class="amount-chip" data-amount="500">+ 500</button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6">
+            <div class="flex items-start gap-3 bg-indigo-50 text-indigo-700 p-3 rounded-xl mb-6 border border-indigo-100 text-sm">
+                <i class="fa-solid fa-shield-halved mt-0.5 text-indigo-500"></i>
+                <span>Instant wallet deposit via <strong>Paystack Secure Gateway</strong> (Card, MoMo, Bank Transfer).</span>
             </div>
             
-            <div class="momo-actions mt-4 flex gap-2">
-                <button id="topup-btn-cancel" class="btn btn-secondary flex-1">Cancel</button>
-                <button id="topup-btn-confirm" class="btn btn-primary flex-2">
-                    <span class="btn-text"><i class="fa-solid fa-shield-halved mr-2"></i> Pay with Paystack</span>
-                    <span class="spinner" style="display: none;"><i class="fa-solid fa-circle-notch fa-spin"></i> Initializing...</span>
+            <div id="topup-error" class="hidden bg-red-50 text-red-600 p-3 rounded-xl mb-4 text-sm font-medium border border-red-100 flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <span id="topup-error-text"></span>
+            </div>
+            
+            <label for="topup-amount" class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2 block">Top-Up Amount</label>
+            <div class="relative mb-6">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                    <span class="text-slate-400 font-bold">GHS</span>
+                </div>
+                <input type="number" id="topup-amount" class="w-full bg-slate-50 border border-slate-200 rounded-xl py-3 pl-12 pr-4 text-xl font-bold text-emerald-600 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all" min="1" value="50" required>
+            </div>
+            
+            <div class="flex flex-wrap gap-2 mb-6" id="quick-amounts-fund">
+                <button type="button" class="amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-white border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600" data-amount="20">+20</button>
+                <button type="button" class="amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-emerald-50 border-emerald-500 text-emerald-700" data-amount="50">+50</button>
+                <button type="button" class="amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-white border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600" data-amount="100">+100</button>
+                <button type="button" class="amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-white border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600" data-amount="200">+200</button>
+                <button type="button" class="amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-white border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600" data-amount="500">+500</button>
+            </div>
+            
+            <div class="flex gap-3">
+                <button id="topup-btn-cancel" class="flex-1 py-3.5 bg-white border border-slate-200 text-slate-600 rounded-xl font-bold hover:bg-slate-50 transition-colors">Cancel</button>
+                <button id="topup-btn-confirm" class="flex-[2] py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-bold shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                    <span class="btn-text"><i class="fa-solid fa-shield-halved mr-1"></i> Pay with Paystack</span>
+                    <span class="spinner hidden"><i class="fa-solid fa-circle-notch fa-spin"></i> Initializing...</span>
                 </button>
             </div>
         </div>
@@ -42,14 +62,16 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', () => {
-    const chips = document.querySelectorAll('#topup-modal .amount-chip');
+    const chips = document.querySelectorAll('#quick-amounts-fund .amount-chip');
     const input = document.getElementById('topup-amount');
     
     if (chips && input) {
         chips.forEach(chip => {
             chip.addEventListener('click', () => {
-                chips.forEach(c => c.classList.remove('active'));
-                chip.classList.add('active');
+                chips.forEach(c => {
+                    c.className = 'amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-white border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600';
+                });
+                chip.className = 'amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-emerald-50 border-emerald-500 text-emerald-700';
                 input.value = chip.dataset.amount;
                 input.dispatchEvent(new Event('input'));
             });
@@ -58,9 +80,9 @@ document.addEventListener('DOMContentLoaded', () => {
         input.addEventListener('input', () => {
             chips.forEach(c => {
                 if (c.dataset.amount === input.value) {
-                    c.classList.add('active');
+                    c.className = 'amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-emerald-50 border-emerald-500 text-emerald-700';
                 } else {
-                    c.classList.remove('active');
+                    c.className = 'amount-chip flex-1 py-2 rounded-lg border font-semibold transition-colors text-sm bg-white border-slate-200 text-slate-600 hover:border-emerald-500 hover:text-emerald-600';
                 }
             });
         });
