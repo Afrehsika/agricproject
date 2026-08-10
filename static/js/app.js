@@ -680,10 +680,12 @@ function setupEventListeners() {
     });
 
     // Crop tag filters
-    document.querySelectorAll('.crop-tags .tag').forEach(tag => {
+    document.querySelectorAll('.category-card').forEach(tag => {
         tag.addEventListener('click', () => {
-            document.querySelectorAll('.crop-tags .tag').forEach(t => t.classList.remove('active'));
-            tag.classList.add('active');
+            document.querySelectorAll('.category-card').forEach(t => {
+                t.classList.remove('active-category', 'ring-2', 'ring-emerald-500', 'bg-emerald-50');
+            });
+            tag.classList.add('active-category', 'ring-2', 'ring-emerald-500', 'bg-emerald-50');
             loadMarketplace();
         });
     });
@@ -1305,7 +1307,7 @@ async function loadMarketplace() {
     
     const searchEl = document.getElementById('marketplace-search');
     const queryVal = searchEl ? searchEl.value : '';
-    const activeBtn = document.querySelector('.crop-tags .tag.active');
+    const activeBtn = document.querySelector('.category-card.active-category');
     const activeCropTag = activeBtn ? activeBtn.getAttribute('data-crop') : null;
     const activeFilter = activeBtn ? activeBtn.getAttribute('data-filter') : null;
     const sortUrgencyEl = document.getElementById('urgency-sort-toggle');
