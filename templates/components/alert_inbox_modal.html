@@ -1,32 +1,59 @@
-<div class="modal-backdrop" id="alerts-modal" style="display: none; z-index: 2000;">
-    <div class="momo-dialog glass-panel fade-in-up" style="max-width: 550px;">
-        <div class="momo-header" style="background: linear-gradient(135deg, var(--emerald-green), var(--emerald-light)); color: #0b0f19;">
-            <div class="momo-provider-logo" style="background-color: #0b0f19; color: var(--emerald-green);"><i class="fa-solid fa-bell"></i></div>
-            <h4 style="margin: 0; font-family: var(--font-display); font-weight: 800; display: flex; align-items: center; justify-content: space-between; width: 100%;">
-                <span>Notifications Inbox</span>
-                <span class="font-xs font-normal" style="background: rgba(11, 15, 25, 0.1); padding: 2px 8px; border-radius: 12px; margin-right: 15px;" id="alerts-unread-count">0 Unread</span>
-            </h4>
-        </div>
-        <div class="momo-body p-4" style="max-height: 450px; overflow-y: auto;">
-            <div class="flex justify-between items-center mb-3">
-                <span class="font-xs text-secondary">Historical SMS & Email alerts logs</span>
-                <div class="flex gap-3" style="display: flex; gap: 12px; align-items: center;">
-                    <button id="alerts-mark-read-btn" class="btn-text font-xs" style="background: none; border: none; cursor: pointer; color: var(--emerald-green); font-weight: 600;"><i class="fa-solid fa-check-double mr-1"></i>Mark all read</button>
-                    <button id="alerts-clear-all-btn" class="btn-text font-xs" style="background: none; border: none; cursor: pointer; color: var(--red-alert); font-weight: 600;"><i class="fa-solid fa-trash-can mr-1"></i>Clear all</button>
+<div id="alerts-modal" class="fixed inset-0 z-[2000] hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" id="alerts-backdrop"></div>
+    
+    <!-- Drawer -->
+    <div class="absolute right-0 top-0 h-full w-full sm:w-[450px] bg-slate-50 shadow-2xl flex flex-col transform transition-transform translate-x-full" id="alerts-drawer">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-6 flex flex-col gap-2 shrink-0">
+            <div class="flex justify-between items-center text-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-xl flex items-center justify-center backdrop-blur-sm border border-white/30 text-white shadow-inner">
+                        <i class="fa-solid fa-bell text-lg"></i>
+                    </div>
+                    <h4 class="font-outfit font-bold text-xl m-0 text-white">Notifications</h4>
+                </div>
+                <button id="alerts-btn-close" class="text-emerald-100 hover:text-white w-8 h-8 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="flex justify-between items-center mt-4">
+                <span id="alerts-unread-count" class="text-xs font-bold bg-white/20 text-white px-3 py-1 rounded-full border border-white/20 shadow-sm flex items-center gap-1.5">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    0 Unread
+                </span>
+                
+                <div class="flex gap-2">
+                    <button id="alerts-mark-read-btn" class="text-xs font-bold text-emerald-50 hover:text-white hover:bg-white/10 px-2.5 py-1.5 rounded-lg transition-colors flex items-center shadow-sm border border-transparent hover:border-emerald-400/30">
+                        <i class="fa-solid fa-check-double mr-1.5"></i> Read All
+                    </button>
+                    <button id="alerts-clear-all-btn" class="text-xs font-bold text-red-100 hover:text-white hover:bg-red-500/30 px-2.5 py-1.5 rounded-lg transition-colors flex items-center shadow-sm border border-transparent hover:border-red-400/30">
+                        <i class="fa-solid fa-trash-can mr-1.5"></i> Clear
+                    </button>
                 </div>
             </div>
-            
-            <div id="alerts-empty-state" class="text-center py-5" style="display: none;">
-                <div style="font-size: 40px; color: var(--font-dark); opacity: 0.3;" class="mb-2"><i class="fa-regular fa-bell-slash"></i></div>
-                <span class="text-secondary font-sm">No notifications yet. Place an order or make a transaction to see alerts.</span>
+        </div>
+
+        <!-- Body -->
+        <div class="flex-1 overflow-y-auto p-4 hide-scrollbar">
+            <div class="flex justify-between items-center mb-4 px-2">
+                <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Recent Activity</span>
             </div>
             
-            <div class="alerts-list flex flex-col gap-3" id="alerts-list-container">
+            <!-- Empty State -->
+            <div id="alerts-empty-state" class="hidden flex-col items-center justify-center h-40 text-center px-6">
+                <div class="w-16 h-16 bg-white border border-slate-200 text-slate-300 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                    <i class="fa-regular fa-bell-slash text-2xl"></i>
+                </div>
+                <h5 class="text-slate-600 font-bold mb-1">All caught up!</h5>
+                <span class="text-xs text-slate-400">You don't have any new notifications.</span>
+            </div>
+            
+            <!-- Notifications List -->
+            <div id="alerts-list-container" class="flex flex-col gap-3">
                 <!-- Loaded dynamically via js -->
-            </div>
-            
-            <div class="momo-actions mt-4 flex gap-2">
-                <button id="alerts-btn-close" class="btn btn-secondary flex-1">Close</button>
             </div>
         </div>
     </div>

@@ -1,46 +1,80 @@
 <!-- 💬 FLOATING AGRIBOT CHAT WINDOW -->
-<div class="agribot-chat-container" id="agribot-container">
-    <div class="agribot-badge" id="agribot-toggle">
-        <i class="fa-solid fa-comment-dots"></i> <span>Ask AgriBot</span>
-        <span class="pulsing-dot"></span>
-    </div>
+<div id="agribot-container" class="fixed bottom-6 right-6 z-50 flex flex-col items-end">
     
-    <div class="agribot-chat-box" style="display: none;" id="agribot-chat-box">
-        <div class="agribot-chat-header">
-            <div class="bot-profile">
-                <div class="bot-avatar"><i class="fa-solid fa-robot"></i></div>
+    <!-- Chat Box -->
+    <div id="agribot-chat-box" style="display: none;" class="bg-white rounded-2xl shadow-2xl shadow-indigo-500/20 w-[340px] sm:w-[380px] mb-4 flex flex-col overflow-hidden border border-slate-200 origin-bottom-right transition-transform">
+        
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 p-4 flex justify-between items-center text-white">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/30 text-white">
+                    <i class="fa-solid fa-robot text-lg"></i>
+                </div>
                 <div>
-                    <h4>AgriBot Assistant</h4>
-                    <span class="status-online">Online</span>
+                    <h4 class="font-outfit font-bold text-sm m-0 leading-tight text-white">AgriBot Assistant</h4>
+                    <div class="flex items-center gap-1.5 mt-0.5">
+                        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                        <span class="text-[10px] font-medium text-indigo-100 uppercase tracking-wider">Online</span>
+                    </div>
                 </div>
             </div>
-            <button id="agribot-close-btn" class="close-chat-btn"><i class="fa-solid fa-times"></i></button>
+            <button id="agribot-close-btn" class="text-indigo-100 hover:text-white w-8 h-8 rounded-full hover:bg-white/10 transition-colors flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
         </div>
-        <div class="agribot-messages" id="agribot-messages-area">
-            <div class="bot-msg">
-                Hi! I'm **AgriBot**, your smart marketplace assistant. 🤖<br><br>
-                * **Farmers**: Type *"I harvested 25 crates of tomatoes"* to automatically list them.<br>
-                * **Buyers**: Type *"Show urgent crops"* or *"Recommend freshest tomatoes"* to browse smart matches.<br><br>
-                How can I help you today?
+        
+        <!-- Messages Area -->
+        <div id="agribot-messages-area" class="h-80 overflow-y-auto p-4 flex flex-col gap-4 bg-slate-50/50 text-sm">
+            <!-- Initial Bot Message -->
+            <div class="flex items-start gap-3 w-full">
+                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-200 text-xs">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="bg-white border border-slate-200 shadow-sm p-3.5 rounded-2xl rounded-tl-sm text-slate-700 leading-relaxed font-medium">
+                    <p class="mb-2">Hi! I'm <strong>AgriBot</strong>, your smart marketplace assistant. 🤖</p>
+                    <ul class="space-y-1 mb-2 ml-1 text-xs">
+                        <li>• <span class="font-bold text-emerald-600">Farmers:</span> Type <em>"I harvested 25 crates of tomatoes"</em> to automatically list them.</li>
+                        <li>• <span class="font-bold text-blue-600">Buyers:</span> Type <em>"Show urgent crops"</em> to browse smart matches.</li>
+                    </ul>
+                    <p>How can I help you today?</p>
+                </div>
             </div>
         </div>
         
         <!-- Suggested Prompts Row -->
-        <div class="bot-prompts-row">
-            <div class="bot-prompt-chip" onclick="document.getElementById('agribot-user-text').value = 'Show urgent crops'; document.getElementById('agribot-send-btn').click();">Show urgent crops</div>
-            <div class="bot-prompt-chip" onclick="document.getElementById('agribot-user-text').value = 'I harvested 25 crates of tomatoes';">Harvest tomatoes</div>
-            <div class="bot-prompt-chip" onclick="document.getElementById('agribot-user-text').value = 'Recommend freshest tomatoes'; document.getElementById('agribot-send-btn').click();">Freshest crops</div>
+        <div class="px-4 py-3 bg-white border-t border-slate-100 flex gap-2 overflow-x-auto whitespace-nowrap hide-scrollbar">
+            <button onclick="document.getElementById('agribot-user-text').value = 'Show urgent crops'; document.getElementById('agribot-send-btn').click();" class="text-[10px] font-bold text-indigo-600 bg-indigo-50 hover:bg-indigo-100 border border-indigo-100 px-3 py-1.5 rounded-full transition-colors shrink-0">Show urgent crops</button>
+            <button onclick="document.getElementById('agribot-user-text').value = 'I harvested 25 crates of tomatoes';" class="text-[10px] font-bold text-emerald-600 bg-emerald-50 hover:bg-emerald-100 border border-emerald-100 px-3 py-1.5 rounded-full transition-colors shrink-0">Harvest tomatoes</button>
+            <button onclick="document.getElementById('agribot-user-text').value = 'Recommend freshest tomatoes'; document.getElementById('agribot-send-btn').click();" class="text-[10px] font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-100 px-3 py-1.5 rounded-full transition-colors shrink-0">Freshest crops</button>
         </div>
 
-        <div class="agribot-input-row" style="display: flex; align-items: center; padding: 10px;">
-            <button class="btn btn-secondary" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); margin-right: 6px;" onclick="alert('Voice input activated (simulation)')" title="Voice Input">
-                <i class="fa-solid fa-microphone"></i>
+        <!-- Input Area -->
+        <div class="p-3 bg-white border-t border-slate-200 flex items-end gap-2">
+            <div class="flex gap-1 pb-1">
+                <button onclick="alert('Voice input activated (simulation)')" class="w-8 h-8 rounded-full text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center transition-colors" title="Voice Input">
+                    <i class="fa-solid fa-microphone text-sm"></i>
+                </button>
+                <button onclick="alert('Image upload activated (simulation)')" class="w-8 h-8 rounded-full text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 flex items-center justify-center transition-colors" title="Upload Image">
+                    <i class="fa-solid fa-camera text-sm"></i>
+                </button>
+            </div>
+            <div class="flex-1 relative">
+                <input type="text" id="agribot-user-text" placeholder="Type message..." class="w-full bg-slate-50 border border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 rounded-2xl px-4 py-2 text-sm font-medium text-slate-700 outline-none transition-all">
+            </div>
+            <button id="agribot-send-btn" class="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white flex items-center justify-center shrink-0 shadow-md shadow-indigo-500/30 transition-transform active:scale-95 transform mb-0.5">
+                <i class="fa-solid fa-paper-plane text-sm -translate-x-0.5 translate-y-0.5"></i>
             </button>
-            <button class="btn btn-secondary" style="width: 32px; height: 32px; padding: 0; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm); margin-right: 6px;" onclick="alert('Image upload activated (simulation)')" title="Upload Image">
-                <i class="fa-solid fa-camera"></i>
-            </button>
-            <input type="text" id="agribot-user-text" placeholder="Type message..." style="flex-grow: 1;">
-            <button id="agribot-send-btn" class="send-msg-btn" style="height: 32px; padding: 0 12px;"><i class="fa-solid fa-paper-plane"></i></button>
         </div>
     </div>
+    
+    <!-- Floating Badge / Toggle Button -->
+    <button id="agribot-toggle" class="group relative flex items-center gap-3 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold px-5 py-3.5 rounded-full shadow-xl shadow-indigo-500/40 transition-all transform hover:-translate-y-1 active:translate-y-0 cursor-pointer border-none outline-none">
+        <i class="fa-solid fa-robot text-xl group-hover:animate-bounce"></i>
+        <span class="font-outfit text-sm">Ask AgriBot</span>
+        <!-- Notification Dot -->
+        <span class="absolute -top-1 -right-1 flex h-4 w-4">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white"></span>
+        </span>
+    </button>
 </div>

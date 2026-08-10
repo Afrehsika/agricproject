@@ -987,11 +987,21 @@ function setupEventListeners() {
 
     // Cart Modal Close & Checkout
     const cartCloseBtn = document.getElementById('cart-close-btn');
-    if (cartCloseBtn) {
-        cartCloseBtn.addEventListener('click', () => {
-            document.getElementById('cart-modal').style.display = 'none';
-        });
-    }
+    const cartBackdrop = document.getElementById('cart-backdrop');
+    
+    const closeCartModal = () => {
+        const modal = document.getElementById('cart-modal');
+        const drawer = document.getElementById('cart-drawer');
+        if (modal && drawer) {
+            drawer.classList.add('translate-x-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    };
+
+    if (cartCloseBtn) cartCloseBtn.addEventListener('click', closeCartModal);
+    if (cartBackdrop) cartBackdrop.addEventListener('click', closeCartModal);
 
     const cartCheckoutBtn = document.getElementById('cart-checkout-btn');
     if (cartCheckoutBtn) {
@@ -1059,20 +1069,33 @@ function setupEventListeners() {
     if (alertsBtn) {
         alertsBtn.addEventListener('click', () => {
             const modal = document.getElementById('alerts-modal');
-            if (modal) {
-                modal.style.display = 'flex';
+            const drawer = document.getElementById('alerts-drawer');
+            if (modal && drawer) {
+                modal.classList.remove('hidden');
+                setTimeout(() => {
+                    drawer.classList.remove('translate-x-full');
+                }, 10);
                 pollNotifications();
             }
         });
     }
 
     const alertsCloseBtn = document.getElementById('alerts-btn-close');
-    if (alertsCloseBtn) {
-        alertsCloseBtn.addEventListener('click', () => {
-            const modal = document.getElementById('alerts-modal');
-            if (modal) modal.style.display = 'none';
-        });
-    }
+    const alertsBackdrop = document.getElementById('alerts-backdrop');
+    
+    const closeAlertsModal = () => {
+        const modal = document.getElementById('alerts-modal');
+        const drawer = document.getElementById('alerts-drawer');
+        if (modal && drawer) {
+            drawer.classList.add('translate-x-full');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+    };
+
+    if (alertsCloseBtn) alertsCloseBtn.addEventListener('click', closeAlertsModal);
+    if (alertsBackdrop) alertsBackdrop.addEventListener('click', closeAlertsModal);
 
     const alertsMarkReadBtn = document.getElementById('alerts-mark-read-btn');
     if (alertsMarkReadBtn) {
@@ -2578,8 +2601,15 @@ async function sendAgriBotMessage() {
     
     // Add User Bubble
     const userBubble = document.createElement('div');
-    userBubble.className = 'user-msg';
-    userBubble.textContent = text;
+    userBubble.className = 'flex items-start gap-3 w-full flex-row-reverse';
+    userBubble.innerHTML = `
+        <div class="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 text-white flex items-center justify-center shrink-0 border border-indigo-700 text-xs shadow-sm">
+            <i class="fa-solid fa-user"></i>
+        </div>
+        <div class="bg-indigo-600 border border-indigo-700 shadow-sm p-3.5 rounded-2xl rounded-tr-sm text-white leading-relaxed font-medium">
+            ${text}
+        </div>
+    `;
     messages.appendChild(userBubble);
     messages.scrollTop = messages.scrollHeight;
 
@@ -2596,7 +2626,7 @@ async function sendAgriBotMessage() {
             
             // Add Bot Bubble
             const botBubble = document.createElement('div');
-            botBubble.className = 'bot-msg';
+            botBubble.className = 'flex items-start gap-3 w-full';
             
             // Format simple markdown links or bold text
             let formattedReply = botData.reply
@@ -2604,7 +2634,14 @@ async function sendAgriBotMessage() {
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                 .replace(/\*(.*?)\*/g, '<em>$1</em>');
                 
-            botBubble.innerHTML = formattedReply;
+            botBubble.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-600 flex items-center justify-center shrink-0 border border-indigo-200 text-xs shadow-sm">
+                    <i class="fa-solid fa-robot"></i>
+                </div>
+                <div class="bg-white border border-slate-200 shadow-sm p-3.5 rounded-2xl rounded-tl-sm text-slate-700 leading-relaxed font-medium">
+                    ${formattedReply}
+                </div>
+            `;
             messages.appendChild(botBubble);
             messages.scrollTop = messages.scrollHeight;
 
@@ -3520,7 +3557,15 @@ async function loadCart() {
         let logisticsTotal = 0;
         
         if (items.length === 0) {
-            container.innerHTML = '<div class="text-secondary text-center p-4">Your cart is empty.</div>';
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center h-40 text-center px-6">
+                    <div class="w-16 h-16 bg-white border border-slate-200 text-slate-300 rounded-full flex items-center justify-center mb-4 shadow-sm">
+                        <i class="fa-solid fa-cart-arrow-down text-2xl"></i>
+                    </div>
+                    <h5 class="text-slate-600 font-bold mb-1">Your cart is empty!</h5>
+                    <span class="text-xs text-slate-400">Add some fresh produce from the marketplace.</span>
+                </div>
+            `;
         } else {
             items.forEach(item => {
                 const sub = item.subtotal;
@@ -3529,22 +3574,22 @@ async function loadCart() {
                 logisticsTotal += log;
                 
                 const card = document.createElement('div');
-                card.className = 'cart-item-card';
+                card.className = 'bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow relative group';
                 card.innerHTML = `
-                    <div class="cart-item-title-row">
+                    <div class="flex justify-between items-start mb-2 pr-6">
                         <div>
-                            <strong class="cart-item-name">${item.produce_details.variety || item.produce_details.name}</strong>
-                            <div class="cart-item-variety">${item.produce_details.name}</div>
+                            <strong class="font-outfit text-sm font-bold text-slate-800">${item.produce_details.variety || item.produce_details.name}</strong>
+                            <div class="text-xs text-slate-500">${item.produce_details.name}</div>
                         </div>
-                        <button class="cart-item-remove-btn" onclick="removeFromCart(${item.id})">
-                            <i class="fa-solid fa-trash"></i>
+                        <button class="absolute top-4 right-4 text-slate-400 hover:text-red-500 hover:bg-red-50 w-7 h-7 rounded-lg flex items-center justify-center transition-colors opacity-0 group-hover:opacity-100 outline-none" onclick="removeFromCart(${item.id})">
+                            <i class="fa-solid fa-trash-can"></i>
                         </button>
                     </div>
-                    <div class="cart-item-details">
-                        <span>Quantity: <strong>${item.quantity} ${item.produce_details.unit}</strong></span>
-                        <span class="cart-item-subtotal">GHS ${sub.toFixed(2)}</span>
+                    <div class="flex justify-between items-center text-sm mb-2">
+                        <span class="text-slate-600">Qty: <strong class="text-slate-800">${item.quantity} ${item.produce_details.unit}</strong></span>
+                        <strong class="text-slate-800">GHS ${sub.toFixed(2)}</strong>
                     </div>
-                    <div class="cart-item-logistics">
+                    <div class="flex items-center gap-2 text-[11px] font-bold tracking-wide text-amber-600 bg-amber-50 px-2 py-1 rounded-md w-fit border border-amber-100 uppercase mt-2">
                         <i class="fa-solid fa-truck"></i> Est. Logistics: GHS ${log.toFixed(2)}
                     </div>
                 `;
@@ -3558,7 +3603,14 @@ async function loadCart() {
         document.getElementById('cart-grand-total').textContent = `GHS ${grandTotal.toFixed(2)}`;
         
         // Show modal
-        document.getElementById('cart-modal').style.display = 'flex';
+        const modal = document.getElementById('cart-modal');
+        const drawer = document.getElementById('cart-drawer');
+        if (modal && drawer) {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                drawer.classList.remove('translate-x-full');
+            }, 10);
+        }
     } catch (e) {
         console.error("Error loading cart:", e);
     }
@@ -3579,7 +3631,14 @@ async function checkoutCart() {
         const data = await res.json();
         
         if (res.status === 201) {
-            document.getElementById('cart-modal').style.display = 'none';
+            const modal = document.getElementById('cart-modal');
+            const drawer = document.getElementById('cart-drawer');
+            if (modal && drawer) {
+                drawer.classList.add('translate-x-full');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
+            }
             alert("Checkout successful! Orders created and payments secured in platform escrow.");
             loadProfileData(); // updates header wallet balance
             updateCartBadge();
@@ -3587,13 +3646,27 @@ async function checkoutCart() {
         } else if (res.status === 402 && data.needs_topup) {
             // Insufficient wallet balance, ask to top up
             if (confirm(`Insufficient balance. Cart total requires GHS ${data.shortfall.toFixed(2)} more. Would you like to fund your wallet now?`)) {
-                document.getElementById('cart-modal').style.display = 'none';
+                const modal = document.getElementById('cart-modal');
+                const drawer = document.getElementById('cart-drawer');
+                if (modal && drawer) {
+                    drawer.classList.add('translate-x-full');
+                    setTimeout(() => {
+                        modal.classList.add('hidden');
+                    }, 300);
+                }
                 openTopUpModal(data.shortfall);
             }
         } else {
             if (data.not_connected) {
                 if (confirm(data.detail + "\nWould you like to open the My Circle tab to join their circle of trust?")) {
-                    document.getElementById('cart-modal').style.display = 'none';
+                    const modal = document.getElementById('cart-modal');
+                    const drawer = document.getElementById('cart-drawer');
+                    if (modal && drawer) {
+                        drawer.classList.add('translate-x-full');
+                        setTimeout(() => {
+                            modal.classList.add('hidden');
+                        }, 300);
+                    }
                     switchTab('network');
                 }
             } else {
@@ -4766,25 +4839,30 @@ function renderNotificationsInModal(notifications, unreadCount) {
         });
         
         const notifItem = document.createElement('div');
-        notifItem.className = `notification-item ${notif.is_read ? '' : 'unread'}`;
+        const unreadClass = notif.is_read ? 'bg-white opacity-80' : 'bg-white border-l-4 border-l-emerald-500 shadow-md ring-1 ring-emerald-500/20';
+        notifItem.className = `p-4 rounded-xl border border-slate-200 transition-all hover:shadow-lg flex gap-3 relative group overflow-hidden ${unreadClass}`;
         
         const iconClass = notif.notification_type === 'SMS' ? 'fa-solid fa-message' : 'fa-solid fa-envelope';
-        const typeClass = notif.notification_type.toLowerCase();
+        const typeBg = notif.notification_type === 'SMS' ? 'bg-indigo-50 text-indigo-500' : 'bg-orange-50 text-orange-500';
         
         notifItem.innerHTML = `
-            <div class="alert-toast-icon ${typeClass}">
-                <i class="${iconClass}"></i>
+            ${notif.is_read ? '' : '<div class="absolute top-3 right-3 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>'}
+            <div class="w-10 h-10 rounded-full ${typeBg} flex items-center justify-center shrink-0 border border-slate-100">
+                <i class="${iconClass} text-lg"></i>
             </div>
-            <div class="alert-toast-body" style="flex-grow: 1;">
-                <div class="flex justify-between items-start" style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <span class="alert-toast-title" style="font-size: 12px; margin-bottom: 2px;">${notif.title}</span>
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <span class="text-secondary" style="font-size: 10px;">${notifTime}</span>
-                        <button class="delete-notif-btn" data-id="${notif.id}" style="background: none; border: none; cursor: pointer; color: var(--text-secondary); opacity: 0.6; padding: 2px 4px; font-size: 11px; transition: all 0.2s;" title="Delete notification"><i class="fa-solid fa-trash"></i></button>
-                    </div>
+            <div class="flex-1 min-w-0">
+                <div class="flex justify-between items-start pr-4 mb-1">
+                    <h5 class="font-outfit font-bold text-sm text-slate-800 truncate pr-2">${notif.title}</h5>
+                    <span class="text-[10px] font-bold text-slate-400 whitespace-nowrap">${notifTime}</span>
                 </div>
-                <p class="alert-toast-text" style="margin: 0; font-size: 11px;">${notif.content}</p>
-                <span class="notification-badge-type ${typeClass}">${notif.notification_type} Alert</span>
+                <p class="text-xs text-slate-600 leading-relaxed mb-3">${notif.content}</p>
+                
+                <div class="flex justify-between items-center">
+                    <span class="text-[10px] font-bold uppercase tracking-wider ${notif.notification_type === 'SMS' ? 'text-indigo-600' : 'text-orange-600'} bg-slate-50 px-2 py-1 rounded-md border border-slate-100">${notif.notification_type} Alert</span>
+                    <button class="delete-notif-btn opacity-0 group-hover:opacity-100 text-slate-300 hover:text-red-500 hover:bg-red-50 p-1.5 rounded-lg transition-all focus:outline-none" data-id="${notif.id}" title="Delete notification">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
+                    </button>
+                </div>
             </div>
         `;
         

@@ -1,189 +1,49 @@
-<div class="cart-backdrop" id="cart-modal" style="display: none;">
-    <div class="cart-drawer">
-        <div class="cart-header">
-            <h3><i class="fa-solid fa-cart-shopping text-emerald"></i> Shopping Cart</h3>
-            <button id="cart-close-btn" class="close-btn"><i class="fa-solid fa-xmark"></i></button>
+<div id="cart-modal" class="fixed inset-0 z-[2000] hidden">
+    <!-- Backdrop -->
+    <div class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm transition-opacity" id="cart-backdrop"></div>
+    
+    <!-- Drawer -->
+    <div class="absolute right-0 top-0 h-full w-full sm:w-[450px] bg-slate-50 shadow-2xl flex flex-col transform transition-transform translate-x-full" id="cart-drawer">
+        
+        <!-- Header -->
+        <div class="bg-white border-b border-slate-200 p-6 flex justify-between items-center shrink-0">
+            <h3 class="font-outfit font-bold text-xl m-0 text-slate-800 flex items-center gap-3">
+                <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-xl flex items-center justify-center border border-emerald-200 shadow-sm">
+                    <i class="fa-solid fa-cart-shopping text-lg"></i>
+                </div>
+                Shopping Cart
+            </h3>
+            <button id="cart-close-btn" class="text-slate-400 hover:text-slate-700 hover:bg-slate-100 w-8 h-8 rounded-full transition-colors flex items-center justify-center">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
         </div>
-        <div class="cart-body" id="cart-items-container">
+
+        <!-- Body -->
+        <div class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 hide-scrollbar" id="cart-items-container">
             <!-- Dynamic Cart Items here -->
         </div>
-        <div class="cart-footer">
-            <div class="cart-summary-row">
+
+        <!-- Footer -->
+        <div class="bg-white border-t border-slate-200 p-6 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+            <div class="flex justify-between items-center text-sm text-slate-500 mb-2 font-medium">
                 <span>Produce Total:</span>
-                <span id="cart-produce-total">GHS 0.00</span>
+                <span id="cart-produce-total" class="text-slate-800">GHS 0.00</span>
             </div>
-            <div class="cart-summary-row">
+            <div class="flex justify-between items-center text-sm text-slate-500 mb-4 font-medium">
                 <span>Est. Logistics Total:</span>
-                <span id="cart-logistics-total">GHS 0.00</span>
+                <span id="cart-logistics-total" class="text-slate-800">GHS 0.00</span>
             </div>
-            <hr class="border-color my-2">
-            <div class="cart-summary-row grand-total-row">
-                <strong>Grand Total:</strong>
-                <strong class="text-emerald" id="cart-grand-total">GHS 0.00</strong>
+            
+            <div class="h-px bg-slate-200 w-full mb-4"></div>
+            
+            <div class="flex justify-between items-center mb-6">
+                <strong class="text-base text-slate-800 font-bold uppercase tracking-wide">Grand Total:</strong>
+                <strong class="text-2xl text-emerald-600 font-outfit font-extrabold" id="cart-grand-total">GHS 0.00</strong>
             </div>
-            <button id="cart-checkout-btn" class="btn btn-primary btn-block mt-3">
-                <i class="fa-solid fa-circle-check"></i> Secure Escrow Checkout
+            
+            <button id="cart-checkout-btn" class="w-full bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold py-3.5 px-4 rounded-xl shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2">
+                <i class="fa-solid fa-shield-halved"></i> Secure Escrow Checkout
             </button>
         </div>
     </div>
 </div>
-
-<style>
-.cart-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(4px);
-    z-index: 1500;
-    display: flex;
-    justify-content: flex-end;
-}
-
-.cart-drawer {
-    width: 100%;
-    max-width: 420px;
-    height: 100%;
-    background-color: var(--bg-card);
-    border-left: 1px solid var(--border-color);
-    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    animation: slide-in-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slide-in-right {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(0); }
-}
-
-.cart-header {
-    padding: 20px;
-    border-bottom: 1px solid var(--border-color);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.cart-header h3 {
-    font-size: 18px;
-    font-weight: 700;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: var(--text-secondary);
-    font-size: 20px;
-    cursor: pointer;
-    transition: var(--transition-smooth);
-}
-
-.close-btn:hover {
-    color: var(--text-primary);
-}
-
-.cart-body {
-    flex-grow: 1;
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.cart-item-card {
-    background-color: var(--bg-main);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-md);
-    padding: 14px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    position: relative;
-}
-
-.cart-item-title-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    padding-right: 20px;
-}
-
-.cart-item-name {
-    font-size: 14px;
-    font-weight: 700;
-}
-
-.cart-item-variety {
-    font-size: 11px;
-    color: var(--text-secondary);
-}
-
-.cart-item-remove-btn {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    background: none;
-    border: none;
-    color: var(--red-alert);
-    cursor: pointer;
-    font-size: 14px;
-    opacity: 0.8;
-    transition: var(--transition-smooth);
-}
-
-.cart-item-remove-btn:hover {
-    opacity: 1;
-    transform: scale(1.1);
-}
-
-.cart-item-details {
-    display: flex;
-    justify-content: space-between;
-    font-size: 12px;
-}
-
-.cart-item-subtotal {
-    color: var(--text-primary);
-    font-weight: 600;
-}
-
-.cart-item-logistics {
-    font-size: 11px;
-    color: var(--amber-gold);
-    display: flex;
-    align-items: center;
-    gap: 4px;
-}
-
-.cart-footer {
-    padding: 20px;
-    border-top: 1px solid var(--border-color);
-    background-color: rgba(15, 23, 42, 0.4);
-}
-
-.cart-summary-row {
-    display: flex;
-    justify-content: space-between;
-    font-size: 13px;
-    color: var(--text-secondary);
-    margin-bottom: 6px;
-}
-
-.grand-total-row {
-    font-size: 16px;
-    color: var(--text-primary);
-    margin-bottom: 0;
-}
-
-.border-color {
-    border: 0;
-    border-top: 1px solid var(--border-color);
-}
-</style>
