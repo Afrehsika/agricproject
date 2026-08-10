@@ -9,67 +9,71 @@
 <!-- Analytics Page -->
 <div class="flex flex-col gap-6">
     <!-- Metrics Row Redesigned as User Metrics Grid -->
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Revenue Card -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-emerald-500 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div>
-                <div class="flex justify-between items-start w-full gap-2 mb-3">
-                    <span id="analytics-card1-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Total Revenue</span>
-                    <div class="w-8 h-8 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center">
+        <div class="bg-white rounded-2xl border border-emerald-100 shadow-xl shadow-emerald-500/10 p-6 flex flex-col justify-between relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-bl-full -mr-4 -mt-4 z-0 transition-transform group-hover:scale-110"></div>
+            <div class="z-10">
+                <div class="flex justify-between items-start w-full gap-2 mb-4">
+                    <span id="analytics-card1-title" class="text-xs font-bold text-slate-500 tracking-wider uppercase">Total Revenue</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white shadow-inner flex items-center justify-center">
                         <i class="fa-solid fa-wallet"></i>
                     </div>
                 </div>
-                <h3 id="analytics-card1-val" class="text-2xl font-extrabold font-heading text-slate-800">GHS 0.00</h3>
+                <h3 id="analytics-card1-val" class="text-3xl font-extrabold font-outfit text-slate-800">GHS 0.00</h3>
             </div>
-            <span id="analytics-card1-trend" class="text-[10px] text-emerald-600 font-semibold flex items-center gap-1.5 mt-4 bg-emerald-50 w-fit px-2 py-0.5 rounded-full">
+            <span id="analytics-card1-trend" class="text-[10px] text-emerald-700 font-bold flex items-center gap-1.5 mt-5 bg-emerald-50 border border-emerald-100 w-fit px-2.5 py-1 rounded-md z-10">
                 <i class="fa-solid fa-circle-check"></i> Wallet balance included
             </span>
         </div>
         
         <!-- Active Listings Card -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-orange-500 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div>
-                <div class="flex justify-between items-start w-full gap-2 mb-3">
-                    <span id="analytics-card2-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Active Listings</span>
-                    <div class="w-8 h-8 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center">
+        <div class="bg-white rounded-2xl border border-orange-100 shadow-xl shadow-orange-500/10 p-6 flex flex-col justify-between relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-orange-50 to-amber-50 rounded-bl-full -mr-4 -mt-4 z-0 transition-transform group-hover:scale-110"></div>
+            <div class="z-10">
+                <div class="flex justify-between items-start w-full gap-2 mb-4">
+                    <span id="analytics-card2-title" class="text-xs font-bold text-slate-500 tracking-wider uppercase">Active Listings</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-orange-400 to-amber-500 text-white shadow-inner flex items-center justify-center">
                         <i class="fa-solid fa-wheat-awn"></i>
                     </div>
                 </div>
-                <h3 id="analytics-card2-val" class="text-2xl font-extrabold font-heading text-slate-800">0 Crops</h3>
+                <h3 id="analytics-card2-val" class="text-3xl font-extrabold font-outfit text-slate-800">0 Crops</h3>
             </div>
-            <span id="analytics-card2-trend" class="text-[10px] text-orange-600 font-semibold flex items-center gap-1.5 mt-4 bg-orange-50 w-fit px-2 py-0.5 rounded-full">
+            <span id="analytics-card2-trend" class="text-[10px] text-orange-700 font-bold flex items-center gap-1.5 mt-5 bg-orange-50 border border-orange-100 w-fit px-2.5 py-1 rounded-md z-10">
                 <i class="fa-solid fa-clock"></i> Awaiting buyers
             </span>
         </div>
 
         <!-- Completed Sales Card -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-amber-500 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div>
-                <div class="flex justify-between items-start w-full gap-2 mb-3">
-                    <span id="analytics-card3-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Completed Sales</span>
-                    <div class="w-8 h-8 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center">
+        <div class="bg-white rounded-2xl border border-amber-100 shadow-xl shadow-amber-500/10 p-6 flex flex-col justify-between relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-50 to-yellow-50 rounded-bl-full -mr-4 -mt-4 z-0 transition-transform group-hover:scale-110"></div>
+            <div class="z-10">
+                <div class="flex justify-between items-start w-full gap-2 mb-4">
+                    <span id="analytics-card3-title" class="text-xs font-bold text-slate-500 tracking-wider uppercase">Completed Sales</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-yellow-500 text-white shadow-inner flex items-center justify-center">
                         <i class="fa-solid fa-circle-check"></i>
                     </div>
                 </div>
-                <h3 id="analytics-card3-val" class="text-2xl font-extrabold font-heading text-slate-800">0 Orders</h3>
+                <h3 id="analytics-card3-val" class="text-3xl font-extrabold font-outfit text-slate-800">0 Orders</h3>
             </div>
-            <span id="analytics-card3-trend" class="text-[10px] text-amber-600 font-semibold flex items-center gap-1.5 mt-4 bg-amber-50 w-fit px-2 py-0.5 rounded-full">
+            <span id="analytics-card3-trend" class="text-[10px] text-amber-700 font-bold flex items-center gap-1.5 mt-5 bg-amber-50 border border-amber-100 w-fit px-2.5 py-1 rounded-md z-10">
                 <i class="fa-solid fa-circle-check"></i> Fulfilled orders
             </span>
         </div>
 
         <!-- Fulfillment Rate Card -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-5 border-l-4 border-l-blue-500 flex flex-col justify-between hover:shadow-md transition-shadow">
-            <div>
-                <div class="flex justify-between items-start w-full gap-2 mb-3">
-                    <span id="analytics-card4-title" class="text-[10px] font-bold text-slate-500 tracking-wider uppercase">Fulfillment Rate</span>
-                    <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center">
+        <div class="bg-white rounded-2xl border border-blue-100 shadow-xl shadow-blue-500/10 p-6 flex flex-col justify-between relative overflow-hidden group">
+            <div class="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-bl-full -mr-4 -mt-4 z-0 transition-transform group-hover:scale-110"></div>
+            <div class="z-10">
+                <div class="flex justify-between items-start w-full gap-2 mb-4">
+                    <span id="analytics-card4-title" class="text-xs font-bold text-slate-500 tracking-wider uppercase">Fulfillment Rate</span>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-400 to-indigo-500 text-white shadow-inner flex items-center justify-center">
                         <i class="fa-solid fa-percent"></i>
                     </div>
                 </div>
-                <h3 id="analytics-card4-val" class="text-2xl font-extrabold font-heading text-slate-800">100%</h3>
+                <h3 id="analytics-card4-val" class="text-3xl font-extrabold font-outfit text-slate-800">100%</h3>
             </div>
-            <span id="analytics-card4-trend" class="text-[10px] text-blue-600 font-semibold flex items-center gap-1.5 mt-4 bg-blue-50 w-fit px-2 py-0.5 rounded-full">
+            <span id="analytics-card4-trend" class="text-[10px] text-blue-700 font-bold flex items-center gap-1.5 mt-5 bg-blue-50 border border-blue-100 w-fit px-2.5 py-1 rounded-md z-10">
                 <i class="fa-solid fa-circle-check"></i> Operational average
             </span>
         </div>
@@ -78,13 +82,13 @@
     <!-- Graphs Row -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-2">
         <!-- Chart Panel -->
-        <div class="lg:col-span-2 bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
-            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
-                <h3 id="analytics-chart-title" class="font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-chart-area text-primary-500"></i> My Transaction Volume & Value Trends
+        <div class="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                <h3 id="analytics-chart-title" class="font-outfit font-bold text-slate-800 text-lg flex items-center gap-2 m-0">
+                    <i class="fa-solid fa-chart-area text-blue-500"></i> My Transaction Volume & Value Trends
                 </h3>
             </div>
-            <div class="p-5 flex-1 relative">
+            <div class="p-6 flex-1 relative bg-white">
                 <div class="w-full h-full min-h-[250px] relative">
                     <svg viewBox="0 0 500 200" class="w-full h-full drop-shadow-sm">
                         <!-- Grid lines -->
@@ -137,29 +141,29 @@
         </div>
 
         <!-- Target Operational Insights Info -->
-        <div class="bg-white rounded-xl border border-slate-200 shadow-sm flex flex-col">
-            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
-                <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-circle-info text-primary-500"></i> My Operational Insights
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden">
+            <div class="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+                <h3 class="font-outfit font-bold text-slate-800 text-lg flex items-center gap-2 m-0">
+                    <i class="fa-solid fa-lightbulb text-amber-500"></i> My Operational Insights
                 </h3>
             </div>
-            <div class="p-5">
-                <ul class="flex flex-col gap-3">
-                    <li class="flex justify-between items-center py-2 border-b border-slate-100">
-                        <span class="text-sm font-semibold text-slate-600">Primary Vegetable crop</span>
-                        <strong id="insight-crop" class="text-sm text-slate-800 text-right">Loading...</strong>
+            <div class="p-6 bg-white flex-1">
+                <ul class="flex flex-col gap-4">
+                    <li class="flex justify-between items-center pb-3 border-b border-slate-100">
+                        <span class="text-sm font-medium text-slate-500">Primary Vegetable crop</span>
+                        <strong id="insight-crop" class="text-sm font-bold text-slate-800 bg-slate-100 px-3 py-1.5 rounded-lg">Loading...</strong>
                     </li>
-                    <li class="flex justify-between items-center py-2 border-b border-slate-100">
-                        <span class="text-sm font-semibold text-slate-600">My Circle Connections</span>
-                        <strong id="insight-connections" class="text-sm text-slate-800 text-right">Loading...</strong>
+                    <li class="flex justify-between items-center pb-3 border-b border-slate-100">
+                        <span class="text-sm font-medium text-slate-500">My Circle Connections</span>
+                        <strong id="insight-connections" class="text-sm font-bold text-blue-600 bg-blue-50 px-3 py-1.5 rounded-lg">Loading...</strong>
                     </li>
-                    <li class="flex justify-between items-center py-2 border-b border-slate-100">
-                        <span class="text-sm font-semibold text-slate-600">Wallet Escrow Balance</span>
-                        <strong id="insight-escrow" class="text-sm text-orange-600 text-right">Loading...</strong>
+                    <li class="flex justify-between items-center pb-3 border-b border-slate-100">
+                        <span class="text-sm font-medium text-slate-500">Wallet Escrow Balance</span>
+                        <strong id="insight-escrow" class="text-sm font-bold text-orange-600 bg-orange-50 px-3 py-1.5 rounded-lg">Loading...</strong>
                     </li>
-                    <li class="flex justify-between items-center py-2">
-                        <span class="text-sm font-semibold text-slate-600">Order Success Rate</span>
-                        <strong id="insight-success" class="text-sm text-emerald-600 text-right">100%</strong>
+                    <li class="flex justify-between items-center">
+                        <span class="text-sm font-medium text-slate-500">Order Success Rate</span>
+                        <strong id="insight-success" class="text-sm font-bold text-emerald-600 bg-emerald-50 px-3 py-1.5 rounded-lg">100%</strong>
                     </li>
                 </ul>
             </div>
@@ -167,27 +171,30 @@
     </div>
 
     <!-- Digital Wallet Transaction History -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm mt-2">
-        <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
-            <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                <i class="fa-solid fa-clock-rotate-left text-primary-500"></i> Digital Wallet Transaction History
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden mt-4">
+        <div class="p-5 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white flex justify-between items-center">
+            <h3 class="font-outfit font-bold text-slate-800 text-lg flex items-center gap-2 m-0">
+                <i class="fa-solid fa-clock-rotate-left text-indigo-500"></i> Digital Wallet Transaction History
             </h3>
+            <button class="text-sm font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-4 py-2 rounded-xl transition-colors shadow-sm">
+                <i class="fa-solid fa-download mr-1"></i> Export
+            </button>
         </div>
-        <div class="p-0 overflow-x-auto">
-            <table class="w-full text-left text-sm">
-                <thead class="bg-slate-50 text-slate-500 font-semibold border-b border-slate-200">
+        <div class="p-0 overflow-x-auto bg-white">
+            <table class="w-full text-left text-sm whitespace-nowrap">
+                <thead class="bg-slate-50 text-slate-500 font-bold border-b border-slate-200 uppercase text-[10px] tracking-wider">
                     <tr>
-                        <th class="px-5 py-3">Date & Time</th>
-                        <th class="px-5 py-3">Reference</th>
-                        <th class="px-5 py-3">Type</th>
-                        <th class="px-5 py-3">Description</th>
-                        <th class="px-5 py-3">Amount</th>
+                        <th class="px-6 py-4">Date & Time</th>
+                        <th class="px-6 py-4">Reference</th>
+                        <th class="px-6 py-4">Type</th>
+                        <th class="px-6 py-4">Description</th>
+                        <th class="px-6 py-4 text-right">Amount</th>
                     </tr>
                 </thead>
-                <tbody id="wallet-transactions-body" class="divide-y divide-slate-100">
+                <tbody id="wallet-transactions-body" class="divide-y divide-slate-100 text-slate-700 font-medium">
                     <tr>
-                        <td colspan="5" class="px-5 py-6 text-center text-slate-400 italic">
-                            <i class="fa-solid fa-spinner fa-spin mr-2"></i> Loading transactions...
+                        <td colspan="5" class="px-6 py-8 text-center text-slate-400 italic">
+                            <i class="fa-solid fa-spinner fa-spin mr-2 text-indigo-500"></i> Loading transactions...
                         </td>
                     </tr>
                 </tbody>

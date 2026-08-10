@@ -9,20 +9,35 @@
 <!-- Network / Trust Circle Page -->
 <div class="flex flex-col gap-6">
     <!-- Active Circle Connections Section -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
-        <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl flex justify-between items-center">
-            <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                <i class="fa-solid fa-people-group text-primary-500"></i> My Trust Circle
-            </h3>
-            <span id="active-connection-count" class="bg-primary-100 text-primary-700 text-xs font-bold px-2.5 py-1 rounded-full border border-primary-200">
-                0 Connected
-            </span>
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden">
+        <div class="bg-gradient-to-r from-emerald-600 to-teal-600 p-5 flex justify-between items-center text-white relative">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+            <div class="flex items-center gap-3 relative z-10 w-full justify-between flex-wrap">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
+                        <i class="fa-solid fa-people-group text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-outfit font-bold text-xl m-0 leading-tight">My Trust Circle</h3>
+                        <p class="text-emerald-100 text-xs m-0 opacity-90">Your verified business connections</p>
+                    </div>
+                </div>
+                <span id="active-connection-count" class="bg-white/20 backdrop-blur text-white text-xs font-bold px-3 py-1.5 rounded-xl border border-white/30 shadow-inner flex items-center gap-2">
+                    0 Connected
+                </span>
+            </div>
         </div>
-        <div class="p-5">
-            <p class="text-sm text-slate-500 mb-4">Transactions (purchasing harvests and wallet escrows) can only be completed between users in the same trust circle. Communicate and establish trust circles first.</p>
-            <div id="active-connections-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+        <div class="p-6 bg-slate-50/50">
+            <div class="flex items-start gap-2.5 bg-emerald-50 text-emerald-800 text-xs p-3.5 rounded-xl border border-emerald-100 mb-5">
+                <i class="fa-solid fa-circle-info text-emerald-500 mt-0.5"></i>
+                <p class="m-0 leading-relaxed font-medium">Transactions (purchasing harvests and wallet escrows) can only be completed between users in the same trust circle. Communicate and establish trust circles first.</p>
+            </div>
+            <div id="active-connections-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 <!-- Dynamically populated connection cards -->
-                <div class="col-span-full text-center p-6 text-sm text-slate-400 bg-slate-50 rounded-lg border border-dashed border-slate-200">
+                <div class="col-span-full text-center p-8 text-sm text-slate-500 bg-white rounded-xl border border-dashed border-slate-300 shadow-sm">
+                    <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
+                        <i class="fa-solid fa-user-plus"></i>
+                    </div>
                     No connections in your circle yet. Discover people below to send an invite!
                 </div>
             </div>
@@ -32,51 +47,68 @@
     <!-- Pending Invitations Section -->
     <div id="pending-invitations-section" class="grid grid-cols-1 lg:grid-cols-2 gap-6 hidden">
         <!-- Incoming Invites -->
-        <div id="incoming-requests-card" class="bg-white rounded-xl border border-slate-200 shadow-sm hidden">
-            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
-                <h4 class="font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-inbox text-orange-500"></i> Incoming Connection Requests
-                </h4>
+        <div id="incoming-requests-card" class="bg-white border border-orange-200 rounded-2xl shadow-xl shadow-orange-500/5 hidden flex-col overflow-hidden">
+            <div class="bg-gradient-to-r from-orange-500 to-amber-500 p-4 flex justify-between items-center text-white relative">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+                <div class="flex items-center gap-3 relative z-10">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
+                        <i class="fa-solid fa-inbox"></i>
+                    </div>
+                    <h4 class="font-outfit font-bold text-lg m-0 leading-tight">Incoming Requests</h4>
+                </div>
             </div>
-            <div id="incoming-requests-list" class="p-5 flex flex-col gap-3">
+            <div id="incoming-requests-list" class="p-5 flex flex-col gap-4 bg-orange-50/30 flex-1">
                 <!-- Dynamically populated incoming requests -->
             </div>
         </div>
 
         <!-- Outgoing Invites -->
-        <div id="outgoing-requests-card" class="bg-white rounded-xl border border-slate-200 shadow-sm hidden">
-            <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl">
-                <h4 class="font-bold text-slate-800 flex items-center gap-2">
-                    <i class="fa-solid fa-paper-plane text-blue-500"></i> Sent Connection Invites
-                </h4>
+        <div id="outgoing-requests-card" class="bg-white border border-blue-200 rounded-2xl shadow-xl shadow-blue-500/5 hidden flex-col overflow-hidden">
+            <div class="bg-gradient-to-r from-blue-500 to-indigo-500 p-4 flex justify-between items-center text-white relative">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+                <div class="flex items-center gap-3 relative z-10">
+                    <div class="w-8 h-8 rounded-lg bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                    <h4 class="font-outfit font-bold text-lg m-0 leading-tight">Sent Invites</h4>
+                </div>
             </div>
-            <div id="outgoing-requests-list" class="p-5 flex flex-col gap-3">
+            <div id="outgoing-requests-list" class="p-5 flex flex-col gap-4 bg-blue-50/30 flex-1">
                 <!-- Dynamically populated outgoing requests -->
             </div>
         </div>
     </div>
 
     <!-- Explore & Discover Section -->
-    <div class="bg-white rounded-xl border border-slate-200 shadow-sm">
-        <div class="p-4 border-b border-slate-100 bg-slate-50/50 rounded-t-xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-            <h3 class="font-bold text-slate-800 flex items-center gap-2">
-                <i class="fa-solid fa-earth-africa text-blue-500"></i> Discover AgriConnect Network
-            </h3>
-            <!-- Filter search bar -->
-            <div class="relative w-full sm:w-72">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <i class="fa-solid fa-magnifying-glass text-slate-400"></i>
+    <div class="bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 flex flex-col overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 p-5 flex justify-between items-center text-white relative">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+            <div class="flex items-center gap-3 relative z-10 w-full justify-between flex-wrap">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
+                        <i class="fa-solid fa-earth-africa text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-outfit font-bold text-xl m-0 leading-tight">Discover Network</h3>
+                        <p class="text-blue-100 text-xs m-0 opacity-90">Find new partners</p>
+                    </div>
                 </div>
-                <input type="text" id="network-search" class="block w-full pl-10 pr-3 py-2 border border-slate-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white" placeholder="Search by name, role, or region...">
+                <!-- Filter search bar -->
+                <div class="relative w-full sm:w-72 mt-3 sm:mt-0">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-white/60">
+                        <i class="fa-solid fa-magnifying-glass text-sm"></i>
+                    </div>
+                    <input type="text" id="network-search" class="w-full pl-10 pr-4 py-2.5 bg-black/10 hover:bg-black/20 border border-white/20 rounded-xl text-white placeholder-white/70 focus:ring-4 focus:ring-white/20 focus:border-white/50 transition-all outline-none text-sm font-medium" placeholder="Search by name, role, or region...">
+                </div>
             </div>
         </div>
-        <div class="p-5">
-            <p class="text-sm text-slate-500 mb-4">Browse all members registered on the AgriConnect platform and send requests to join their circles of trust.</p>
-            <div id="discover-users-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mt-4">
+        <div class="p-6 bg-slate-50/50">
+            <p class="text-sm text-slate-500 mb-5 font-medium">Browse all members registered on the AgriConnect platform and send requests to join their circles of trust.</p>
+            <div id="discover-users-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                 <!-- Dynamically populated platform user cards -->
-                <div class="col-span-full text-center p-8 text-sm text-slate-400">
-                    <i class="fa-solid fa-spinner fa-spin text-2xl mb-2 text-primary-500"></i><br>
-                    Loading network directory...
+                <div class="col-span-full text-center p-10 bg-white rounded-xl shadow-sm border border-slate-100">
+                    <i class="fa-solid fa-spinner fa-spin text-3xl mb-3 text-blue-500"></i><br>
+                    <span class="text-slate-500 font-medium text-sm">Loading network directory...</span>
                 </div>
             </div>
         </div>

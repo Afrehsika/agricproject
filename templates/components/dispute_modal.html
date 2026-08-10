@@ -1,46 +1,74 @@
 <!-- ⚠️ BUYER REJECTION & DISPUTE MODAL -->
-<div class="modal-backdrop" id="dispute-modal" style="display: none;">
-    <div class="momo-dialog" style="border-color: #ef4444; max-width: 520px; width: 90%;">
-        <div class="momo-header" style="background-color: #dc2626; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 16px;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div class="momo-provider-logo" style="background-color: #fff; color: #dc2626; font-size: 16px;">
-                    <i class="fa-solid fa-triangle-exclamation"></i>
+<div class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm transition-opacity duration-300" id="dispute-modal" style="display: none;">
+    <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden transform transition-all duration-300 scale-100 border border-slate-100">
+        <!-- Header -->
+        <div class="bg-gradient-to-r from-red-600 to-rose-500 p-5 flex justify-between items-center text-white relative overflow-hidden">
+            <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+            <div class="flex items-center gap-3 relative z-10">
+                <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner">
+                    <i class="fa-solid fa-triangle-exclamation text-lg"></i>
                 </div>
-                <h4 style="font-family: var(--font-display); font-weight: 700; margin: 0;">Reject Cargo & Open Dispute</h4>
+                <div>
+                    <h4 class="font-outfit font-bold text-xl m-0 leading-tight">Reject Cargo & Open Dispute</h4>
+                    <p class="text-red-100 text-xs m-0 opacity-90">File an arbitration claim for a shipment issue</p>
+                </div>
             </div>
-            <button id="dispute-close-btn" style="background: none; border: none; color: #fff; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            <button id="dispute-close-btn" class="relative z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/10 hover:bg-black/20 text-white transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
         </div>
-        <div class="momo-body p-4 text-left">
-            <p class="font-xs text-secondary mb-3">
-                Rejecting shipment for <strong id="dispute-modal-order-title" class="text-primary">Order #</strong> will hold escrow payment locked until our arbitration team resolves your claim.
-            </p>
-            <form id="dispute-form">
+        
+        <!-- Body -->
+        <div class="p-6">
+            <div class="bg-red-50 border border-red-100 text-red-800 text-xs p-3.5 rounded-xl mb-5 flex items-start gap-2.5">
+                <i class="fa-solid fa-circle-info text-red-500 mt-0.5"></i>
+                <p class="m-0 leading-relaxed font-medium">
+                    Rejecting shipment for <strong id="dispute-modal-order-title" class="font-bold text-red-700 bg-red-100/50 px-1 rounded">Order #</strong> will hold the escrow payment locked until our arbitration team investigates and resolves your claim.
+                </p>
+            </div>
+            
+            <form id="dispute-form" class="flex flex-col gap-4">
                 <input type="hidden" id="dispute-order-id">
                 
-                <div class="form-group mb-3">
-                    <label class="font-xs font-semibold mb-1" style="display: block;">Primary Reason for Rejection</label>
-                    <select id="dispute-reason" class="form-control" style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-primary);" required>
-                        <option value="SPOILED_ROTTEN">🍅 Spoiled / Rotten / Overripe Produce</option>
-                        <option value="WRONG_VARIETY_QUALITY">⚖️ Wrong Variety or Substandard Quality</option>
-                        <option value="QUANTITY_SHORTAGE">📦 Quantity Shortage / Missing Items</option>
-                        <option value="DAMAGED_IN_TRANSIT">🚚 Cargo Damaged in Transit</option>
-                        <option value="OTHER">❓ Other Quality Dispute</option>
-                    </select>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Primary Reason for Rejection</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-clipboard-list text-sm"></i>
+                        </div>
+                        <select id="dispute-reason" class="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl text-slate-700 font-semibold focus:ring-4 focus:ring-red-500/10 focus:border-red-400 transition-all outline-none appearance-none cursor-pointer" required>
+                            <option value="SPOILED_ROTTEN">Spoiled / Rotten / Overripe Produce</option>
+                            <option value="WRONG_VARIETY_QUALITY">Wrong Variety or Substandard Quality</option>
+                            <option value="QUANTITY_SHORTAGE">Quantity Shortage / Missing Items</option>
+                            <option value="DAMAGED_IN_TRANSIT">Cargo Damaged in Transit</option>
+                            <option value="OTHER">Other Quality Dispute</option>
+                        </select>
+                        <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label class="font-xs font-semibold mb-1" style="display: block;">Detailed Explanation / Inspection Notes</label>
-                    <textarea id="dispute-description" class="form-control" rows="3" placeholder="Describe the condition upon arrival, defects observed, or discrepancies..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-primary);" required></textarea>
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Detailed Explanation / Inspection Notes</label>
+                    <textarea id="dispute-description" rows="3" placeholder="Describe the condition upon arrival, defects observed, or discrepancies in detail..." class="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl text-slate-700 text-sm focus:ring-4 focus:ring-red-500/10 focus:border-red-400 transition-all outline-none placeholder-slate-400 resize-none" required></textarea>
                 </div>
 
-                <div class="form-group mb-3">
-                    <label class="font-xs font-semibold mb-1" style="display: block;">Photo Evidence URL (Optional)</label>
-                    <input type="url" id="dispute-evidence-url" class="form-control" placeholder="https://..." style="width: 100%; padding: 8px 12px; border-radius: var(--radius-sm); border: 1px solid var(--border-color); background: var(--bg-main); color: var(--text-primary);">
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1.5 ml-1">Photo Evidence URL <span class="text-slate-400 font-normal lowercase">(Optional)</span></label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                            <i class="fa-solid fa-link text-sm"></i>
+                        </div>
+                        <input type="url" id="dispute-evidence-url" placeholder="https://..." class="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/80 border border-slate-200 rounded-xl text-slate-700 text-sm focus:ring-4 focus:ring-red-500/10 focus:border-red-400 transition-all outline-none placeholder-slate-400">
+                    </div>
                 </div>
 
-                <div class="momo-actions mt-4" style="display: flex; gap: 12px;">
-                    <button type="button" id="dispute-cancel-btn" class="btn btn-secondary" style="flex: 1;">Cancel</button>
-                    <button type="submit" class="btn btn-danger" style="flex: 2; background-color: #dc2626; color: #fff;">
+                <div class="flex items-center gap-3 mt-4 pt-4 border-t border-slate-100">
+                    <button type="button" id="dispute-cancel-btn" class="flex-1 py-3 px-4 rounded-xl border border-slate-200 text-slate-600 font-bold hover:bg-slate-50 hover:text-slate-800 transition-colors">
+                        Cancel
+                    </button>
+                    <button type="submit" class="flex-[2] py-3 px-6 rounded-xl bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-500 hover:to-rose-400 text-white font-bold shadow-lg shadow-red-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2">
                         <i class="fa-solid fa-paper-plane"></i> Submit Rejection & Dispute
                     </button>
                 </div>

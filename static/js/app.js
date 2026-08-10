@@ -1821,7 +1821,7 @@ async function loadOrders() {
 
         orders.forEach(order => {
             const card = document.createElement('div');
-            card.className = 'order-card';
+            card.className = 'bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col mb-6 overflow-hidden';
             
             // Format Date
             const orderDate = new Date(order.created_at).toLocaleDateString('en-US', {
@@ -1829,23 +1829,23 @@ async function loadOrders() {
             });
 
             // Payment Badge styling
-            let paymentBadge = `<span class="badge badge-slate">Unpaid</span>`;
+            let paymentBadge = `<span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-clock"></i> Unpaid</span>`;
             if (order.payment_status === 'HELD_IN_ESCROW') {
                 if (order.transporter_details && order.transporter_details.status === 'PENDING_APPROVAL') {
-                    paymentBadge = `<span class="badge badge-amber"><i class="fa-solid fa-user-clock"></i> Driver Claim Awaiting Approval</span>`;
+                    paymentBadge = `<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-user-clock"></i> Driver Claim Awaiting Approval</span>`;
                 } else if (order.transporter_details && (order.transporter_details.status === 'MATCHED' || order.transporter_details.status === 'PICKED_UP')) {
-                    paymentBadge = `<span class="badge badge-blue"><i class="fa-solid fa-truck"></i> Escrow Locked & Transporter Matched</span>`;
+                    paymentBadge = `<span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-truck"></i> Escrow Locked & Transporter Matched</span>`;
                 } else {
-                    paymentBadge = `<span class="badge badge-orange"><i class="fa-solid fa-clock-rotate-left"></i> Held in Escrow</span>`;
+                    paymentBadge = `<span class="bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-clock-rotate-left"></i> Held in Escrow</span>`;
                 }
             } else if (order.payment_status === 'RELEASED') {
-                paymentBadge = `<span class="badge badge-green"><i class="fa-solid fa-circle-check"></i> Released to Farmer</span>`;
+                paymentBadge = `<span class="bg-emerald-100 text-emerald-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> Released to Farmer</span>`;
             } else if (order.payment_status === 'REFUNDED') {
-                paymentBadge = `<span class="badge badge-purple"><i class="fa-solid fa-rotate-left"></i> Refunded to Buyer</span>`;
+                paymentBadge = `<span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-rotate-left"></i> Refunded to Buyer</span>`;
             } else if (order.payment_status === 'DISPUTED') {
-                paymentBadge = `<span class="badge badge-red"><i class="fa-solid fa-triangle-exclamation"></i> Disputed (Escrow Locked)</span>`;
+                paymentBadge = `<span class="bg-red-100 text-red-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-triangle-exclamation"></i> Disputed (Escrow Locked)</span>`;
             } else if (order.payment_status === 'PARTIALLY_REFUNDED') {
-                paymentBadge = `<span class="badge badge-amber"><i class="fa-solid fa-scale-balanced"></i> Partially Refunded</span>`;
+                paymentBadge = `<span class="bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-scale-balanced"></i> Partially Refunded</span>`;
             }
 
             // Stepper timeline configuration
@@ -1862,12 +1862,19 @@ async function loadOrders() {
             // Build stepper nodes HTML
             let stepperNodesHtml = '';
             stages.forEach((stage, idx) => {
-                let statusClass = '';
-                if (idx < currentStageIndex) statusClass = 'completed';
-                else if (idx === currentStageIndex) statusClass = 'active';
+                let statusClass = 'text-slate-300';
+                let iconBg = 'bg-slate-100 text-slate-300';
                 
-                let icon = '<i class="fa-solid fa-circle"></i>';
-                if (idx < currentStageIndex) icon = '<i class="fa-solid fa-check"></i>';
+                if (idx < currentStageIndex) {
+                    statusClass = 'text-emerald-600';
+                    iconBg = 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30';
+                } else if (idx === currentStageIndex) {
+                    statusClass = 'text-blue-600 font-bold';
+                    iconBg = 'bg-blue-500 text-white shadow-md shadow-blue-500/30 ring-4 ring-blue-50';
+                }
+                
+                let icon = '<i class="fa-solid fa-circle text-[10px]"></i>';
+                if (idx < currentStageIndex) icon = '<i class="fa-solid fa-check text-[12px]"></i>';
                 
                 let label = stage;
                 if (stage === 'PENDING') label = 'Ordered';
@@ -1876,9 +1883,11 @@ async function loadOrders() {
                 else if (stage === 'DELIVERED') label = 'Delivered';
 
                 stepperNodesHtml += `
-                    <div class="step-node ${statusClass}">
-                        ${icon}
-                        <span class="step-label">${label}</span>
+                    <div class="flex flex-col items-center gap-2 relative z-10 w-24">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center transition-all duration-300 ${iconBg}">
+                            ${icon}
+                        </div>
+                        <span class="text-[10px] uppercase tracking-wider text-center transition-colors ${statusClass}">${label}</span>
                     </div>
                 `;
             });
@@ -1888,27 +1897,38 @@ async function loadOrders() {
             if (order.latest_dispute) {
                 const d = order.latest_dispute;
                 disputeCardHtml = `
-                    <div class="dispute-box mt-3 p-3" style="background: rgba(239, 68, 68, 0.08); border-left: 4px solid #ef4444; border-radius: var(--radius-sm);">
-                        <div style="display: flex; justify-content: space-between; align-items: center;">
-                            <strong style="color: #ef4444; font-size: 13px;"><i class="fa-solid fa-triangle-exclamation"></i> Dispute #${d.id} (${d.status_display})</strong>
-                            <span class="font-xxs text-secondary">Raised by ${d.raised_by_name}</span>
+                    <div class="bg-red-50/50 border border-red-100 rounded-xl p-4 mt-4 shadow-sm mx-4 mb-2">
+                        <div class="flex justify-between items-center mb-2 pb-2 border-b border-red-100">
+                            <strong class="text-red-600 text-[13px] flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> Dispute #${d.id} (${d.status_display})</strong>
+                            <span class="text-[10px] text-red-400 font-bold uppercase tracking-wider bg-red-100 px-2 py-0.5 rounded">Raised by ${d.raised_by_name}</span>
                         </div>
-                        <p class="font-xs mt-1 mb-1" style="color: var(--text-primary);"><strong>Reason:</strong> ${d.reason_display}</p>
-                        <p class="font-xs text-secondary mb-1"><strong>Details:</strong> ${d.description}</p>
-                        ${d.resolution_notes ? `<p class="font-xs text-emerald mt-1"><strong>Resolution Note:</strong> ${d.resolution_notes}</p>` : ''}
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <span class="block text-[10px] uppercase tracking-wider text-red-400 font-bold mb-1">Reason</span>
+                                <p class="text-xs text-red-900 m-0 font-medium">${d.reason_display}</p>
+                            </div>
+                            <div>
+                                <span class="block text-[10px] uppercase tracking-wider text-red-400 font-bold mb-1">Details</span>
+                                <p class="text-xs text-red-800/80 m-0 leading-relaxed">${d.description}</p>
+                            </div>
+                        </div>
+                        ${d.resolution_notes ? `
+                            <div class="mt-3 pt-3 border-t border-red-100/50">
+                                <span class="block text-[10px] uppercase tracking-wider text-emerald-600 font-bold mb-1"><i class="fa-solid fa-gavel"></i> Resolution Note</span>
+                                <p class="text-xs text-emerald-700 m-0 font-medium bg-emerald-50 px-3 py-2 rounded-lg">${d.resolution_notes}</p>
+                            </div>
+                        ` : ''}
                         ${(currentUser.is_staff || currentUser.is_superuser) && (d.status === 'OPEN' || d.status === 'UNDER_REVIEW') ? `
-                            <button class="btn btn-secondary btn-sm mt-2 resolve-dispute-trigger-btn" data-dispute-id="${d.id}" data-order-id="${order.id}">
+                            <button class="btn btn-secondary btn-sm mt-3 resolve-dispute-trigger-btn w-full md:w-auto" data-dispute-id="${d.id}" data-order-id="${order.id}">
                                 <i class="fa-solid fa-gavel"></i> Resolve / Mediate Dispute (Admin)
                             </button>
                         ` : ((d.status === 'OPEN' || d.status === 'UNDER_REVIEW') ? `
-                            <div class="mt-2 text-amber font-xs font-semibold">
+                            <div class="mt-3 text-amber-600 text-xs font-bold flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-lg border border-amber-100 inline-flex">
                                 <i class="fa-solid fa-clock-rotate-left"></i> Awaiting Platform Admin Mediation & Resolution
                             </div>
                         ` : '')}
                     </div>
                 `;
-
-
             }
 
             // Actions for the buyer and farmer
@@ -1922,34 +1942,34 @@ async function loadOrders() {
                         label = "Pay Produce + Logistics";
                     }
                     actionButtonsHtml = `
-                        <button class="btn btn-primary pay-order-btn" data-id="${order.id}">
+                        <button class="bg-gradient-to-r from-primary-600 to-primary-500 hover:from-primary-500 hover:to-primary-400 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-primary-500/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 w-full md:w-auto justify-center pay-order-btn" data-id="${order.id}">
                             <i class="fa-solid fa-wallet"></i> ${label} (GHS ${totalToPay.toFixed(2)})
                         </button>
                     `;
                 } else if (order.transporter_details && order.transporter_details.status === 'PENDING_APPROVAL') {
                     actionButtonsHtml = `
-                        <div class="flex gap-2" style="width: 100%;">
-                            <button class="btn btn-success approve-driver-btn flex-1" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
+                        <div class="flex flex-col sm:flex-row gap-3 w-full">
+                            <button class="flex-1 bg-gradient-to-r from-emerald-600 to-teal-500 hover:from-emerald-500 hover:to-teal-400 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-emerald-500/25 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 approve-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                                 <i class="fa-solid fa-user-check"></i> Approve Driver (${order.transporter_details.username || 'Transporter'})
                             </button>
-                            <button class="btn btn-danger reject-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}" style="width: auto; padding: 8px 16px;">
+                            <button class="sm:flex-none bg-white border border-red-200 hover:border-red-300 hover:bg-red-50 text-red-600 font-bold py-2.5 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 reject-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                                 <i class="fa-solid fa-user-xmark"></i> Reject Driver
                             </button>
                         </div>
                     `;
                 } else if (order.transporter_details && order.transporter_details.payment_status === 'REQUESTED') {
                     actionButtonsHtml = `
-                        <button class="btn btn-primary approve-logistics-payment-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
+                        <button class="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 w-full md:w-auto justify-center approve-logistics-payment-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                             <i class="fa-solid fa-wallet"></i> Pay Logistics Fee (GHS ${parseFloat(order.transporter_details.estimated_cost).toFixed(2)})
                         </button>
                     `;
                 } else if (order.payment_status === 'HELD_IN_ESCROW' && order.status === 'DELIVERED') {
                     actionButtonsHtml = `
-                        <div class="flex gap-2" style="width: 100%;">
-                            <button class="btn btn-success confirm-delivery-btn pulsing-green flex-1" data-id="${order.id}">
-                                <i class="fa-solid fa-circle-check"></i> Confirm Receipt & Release Escrow
+                        <div class="flex flex-col sm:flex-row gap-3 w-full">
+                            <button class="flex-1 bg-gradient-to-r from-emerald-500 to-emerald-400 hover:from-emerald-400 hover:to-emerald-300 text-white font-bold py-3 px-6 rounded-xl shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 confirm-delivery-btn animate-pulse" data-id="${order.id}">
+                                <i class="fa-solid fa-circle-check text-lg"></i> Confirm Receipt & Release Escrow
                             </button>
-                            <button class="btn btn-danger open-reject-modal-btn" data-id="${order.id}" data-title="${order.produce_details.variety || order.produce_details.name}">
+                            <button class="sm:flex-none bg-white border border-red-200 hover:border-red-300 hover:bg-red-50 text-red-600 font-bold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 open-reject-modal-btn" data-id="${order.id}" data-title="${order.produce_details.variety || order.produce_details.name}">
                                 <i class="fa-solid fa-ban"></i> Reject & Dispute
                             </button>
                         </div>
@@ -1959,24 +1979,24 @@ async function loadOrders() {
                         ? `Transporter ${order.transporter_details.username} is handling delivery.`
                         : `Awaiting transporter pickup & delivery arrival.`;
                     actionButtonsHtml = `
-                        <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
-                            <div style="font-size: 11px; color: #1e40af; background: rgba(59, 130, 246, 0.08); padding: 10px 14px; border-radius: 8px; border: 1px solid rgba(59, 130, 246, 0.2); display: flex; align-items: center; justify-content: space-between;">
-                                <span><i class="fa-solid fa-truck-fast text-blue me-1"></i> <strong>Delivery in Progress:</strong> ${driverMsg}</span>
-                                <span class="badge badge-blue">In Transit</span>
+                        <div class="flex flex-col gap-3 w-full">
+                            <div class="bg-blue-50/50 border border-blue-100 rounded-xl p-3 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                                <span class="text-blue-800 text-xs font-medium flex items-center gap-2"><i class="fa-solid fa-truck-fast text-blue-500 text-base"></i> <strong>Delivery in Progress:</strong> ${driverMsg}</span>
+                                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">In Transit</span>
                             </div>
-                            <div class="flex gap-2" style="width: 100%;">
-                                <button class="btn btn-secondary flex-1" style="cursor: default; opacity: 0.8;" disabled>
-                                    <i class="fa-solid fa-clock-rotate-left me-1"></i> Escrow Held Until Delivery
+                            <div class="flex flex-col sm:flex-row gap-3 w-full">
+                                <button class="flex-1 bg-slate-100 text-slate-500 font-bold py-2.5 px-6 rounded-xl cursor-not-allowed flex items-center justify-center gap-2" disabled>
+                                    <i class="fa-solid fa-clock-rotate-left"></i> Escrow Held Until Delivery
                                 </button>
-                                <button class="btn btn-danger open-reject-modal-btn" data-id="${order.id}" data-title="${order.produce_details.variety || order.produce_details.name}">
-                                    <i class="fa-solid fa-ban me-1"></i> Reject & Dispute
+                                <button class="sm:flex-none bg-white border border-red-200 hover:border-red-300 hover:bg-red-50 text-red-600 font-bold py-2.5 px-6 rounded-xl transition-colors flex items-center justify-center gap-2 open-reject-modal-btn" data-id="${order.id}" data-title="${order.produce_details.variety || order.produce_details.name}">
+                                    <i class="fa-solid fa-ban"></i> Reject & Dispute
                                 </button>
                             </div>
                         </div>
                     `;
                 } else if (order.transporter_details && order.transporter_details.status === 'PENDING_MATCH') {
                     actionButtonsHtml = `
-                        <button class="btn btn-orange open-assign-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
+                        <button class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-orange-500/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 w-full md:w-auto justify-center open-assign-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                             <i class="fa-solid fa-truck-ramp-box"></i> Hire/Assign Driver
                         </button>
                     `;
@@ -1984,7 +2004,7 @@ async function loadOrders() {
             } else if (currentUser.role === 'FARMER') {
                 if (order.transporter_details && order.transporter_details.status === 'PENDING_MATCH') {
                     actionButtonsHtml = `
-                        <button class="btn btn-orange open-assign-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
+                        <button class="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-orange-500/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 w-full md:w-auto justify-center open-assign-driver-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                             <i class="fa-solid fa-truck-ramp-box"></i> Hire/Assign Driver
                         </button>
                     `;
@@ -1992,54 +2012,59 @@ async function loadOrders() {
             }
 
             card.innerHTML = `
-                <div class="order-header-row">
-                    <div>
-                        <strong class="font-outfit text-emerald">Order #${order.id}</strong>
-                        <span class="text-secondary font-xs ml-2">Placed on ${orderDate}</span>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-50/50 p-4 sm:px-5 border-b border-slate-100">
+                    <div class="flex flex-col gap-1">
+                        <strong class="font-bold text-base text-emerald-700 flex items-center gap-2"><i class="fa-solid fa-receipt text-emerald-400"></i> Order #${order.id}</strong>
+                        <span class="text-slate-500 text-xs font-medium"><i class="fa-regular fa-calendar me-1"></i> Placed on ${orderDate}</span>
                     </div>
-                    <div>
+                    <div class="shrink-0 flex justify-end w-full sm:w-auto">
                         ${paymentBadge}
                     </div>
                 </div>
                 
-                <div class="order-details-summary">
-                    <div class="ord-block">
-                        <label>Vegetable Crop</label>
-                        <span>${order.produce_details.variety || order.produce_details.name}</span>
+                <div class="p-4 sm:px-5">
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 bg-slate-50 border border-slate-100 p-4 rounded-xl">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Vegetable Crop</label>
+                            <span class="text-slate-800 text-sm font-semibold">${order.produce_details.variety || order.produce_details.name}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Quantity Ordered</label>
+                            <span class="text-slate-800 text-sm font-semibold">${order.quantity} ${order.produce_details.unit}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Total Price (Escrow)</label>
+                            <span class="text-emerald-600 text-sm font-black">GHS ${order.total_price}</span>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Farmer</label>
+                            <span class="text-slate-800 text-sm font-semibold whitespace-nowrap overflow-hidden text-ellipsis">${order.produce_details.farmer_name} <br><span class="text-slate-500 font-medium">${order.produce_details.farmer_phone}</span></span>
+                        </div>
+                        ${order.transporter_details ? `
+                        <div class="flex flex-col gap-1 mt-2 md:mt-0">
+                            <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Logistics Fee</label>
+                            <span class="text-amber-600 text-sm font-black">GHS ${parseFloat(order.transporter_details.estimated_cost).toFixed(2)}</span>
+                        </div>
+                        <div class="flex flex-col gap-1 mt-2 md:mt-0 col-span-2 md:col-span-3">
+                            <label class="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Logistics Mode</label>
+                            <span class="text-slate-800 text-sm font-medium flex items-center gap-2"><i class="fa-solid fa-truck text-slate-400"></i> ${order.transporter_details.vehicle_type} <span class="bg-slate-200 text-slate-700 px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wider">${order.transporter_details.status}</span></span>
+                        </div>
+                        ` : ''}
                     </div>
-                    <div class="ord-block">
-                        <label>Quantity Ordered</label>
-                        <span>${order.quantity} ${order.produce_details.unit}</span>
-                    </div>
-                    <div class="ord-block">
-                        <label>Total Price (Escrow)</label>
-                        <span class="text-emerald">GHS ${order.total_price}</span>
-                    </div>
-                    <div class="ord-block">
-                        <label>Farmer</label>
-                        <span>${order.produce_details.farmer_name} (${order.produce_details.farmer_phone})</span>
-                    </div>
-                    ${order.transporter_details ? `
-                    <div class="ord-block">
-                        <label>Logistics Fee</label>
-                        <span class="text-amber">GHS ${parseFloat(order.transporter_details.estimated_cost).toFixed(2)}</span>
-                    </div>
-                    <div class="ord-block">
-                        <label>Logistics Mode</label>
-                        <span>${order.transporter_details.vehicle_type} (${order.transporter_details.status})</span>
-                    </div>
-                    ` : ''}
                 </div>
 
                 ${disputeCardHtml}
 
                 <!-- Timeline Stepper -->
-                <div class="stepper-timeline">
-                    <div class="stepper-progress-line" style="width: ${progressPercent}%;"></div>
-                    ${stepperNodesHtml}
+                <div class="px-4 sm:px-8 py-6 relative hidden sm:block">
+                    <div class="absolute top-10 left-[60px] right-[60px] h-1 bg-slate-100 rounded-full z-0 hidden sm:block"></div>
+                    <div class="absolute top-10 left-[60px] h-1 bg-emerald-500 rounded-full z-0 transition-all duration-500 hidden sm:block" style="width: calc(${progressPercent}% * (100% - 120px) / 100);"></div>
+                    <div class="flex justify-between relative z-10 hidden sm:flex">
+                        ${stepperNodesHtml}
+                    </div>
                 </div>
                 
-                ${actionButtonsHtml ? `<div class="order-actions">${actionButtonsHtml}</div>` : ''}
+                ${actionButtonsHtml ? `<div class="bg-slate-50/50 p-4 sm:px-5 border-t border-slate-100 flex justify-end">${actionButtonsHtml}</div>` : ''}
             `;
 
             // Bind Actions
@@ -2324,68 +2349,79 @@ function addLogisticsMarkers(job) {
 
 function createJobCard(job, isClaimed) {
     const card = document.createElement('div');
-    card.className = 'job-card';
+    card.className = 'bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden mb-4';
     
     let btnHtml = '';
     if (!isClaimed) {
         btnHtml = `
-            <button class="btn btn-primary claim-job-btn" data-id="${job.id}">
+            <button class="claim-job-btn w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" data-id="${job.id}">
                 <i class="fa-solid fa-circle-check"></i> Claim Delivery Contract (GHS ${job.estimated_cost})
             </button>
         `;
     } else {
         if (job.status === 'MATCHED') {
             btnHtml = `
-                <button class="btn btn-orange pick-job-btn" data-id="${job.id}">
+                <button class="pick-job-btn w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold shadow-lg shadow-orange-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" data-id="${job.id}">
                     <i class="fa-solid fa-truck-pickup"></i> Confirm Cargo Pickup
                 </button>
             `;
             if (job.paid_by === 'BUYER' && job.payment_status === 'UNPAID') {
                 btnHtml += `
-                    <button class="btn btn-primary mt-2 w-full req-payment-btn" data-id="${job.id}" style="padding: 10px;">
+                    <button class="req-payment-btn w-full py-3.5 mt-3 rounded-xl bg-gradient-to-r from-blue-500 to-indigo-500 hover:from-blue-600 hover:to-indigo-600 text-white font-bold shadow-lg shadow-blue-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" data-id="${job.id}">
                         <i class="fa-solid fa-hand-holding-dollar"></i> Request Payment from Client
                     </button>
                 `;
             } else if (job.paid_by === 'BUYER' && job.payment_status === 'REQUESTED') {
                 btnHtml += `
-                    <span class="badge badge-amber mt-2 block text-center w-full py-2">Payment Requested</span>
+                    <div class="mt-3 bg-amber-50 text-amber-600 font-bold text-center py-2.5 rounded-xl border border-amber-200 uppercase tracking-wider text-[11px]"><i class="fa-solid fa-clock mr-1"></i> Payment Requested</div>
                 `;
             }
         } else if (job.status === 'PICKED_UP') {
             btnHtml = `
-                <button class="btn btn-success deliver-job-btn" data-id="${job.id}">
+                <button class="deliver-job-btn w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" data-id="${job.id}">
                     <i class="fa-solid fa-house-chimney-user"></i> Confirm Delivery to Buyer
                 </button>
             `;
         } else {
-            btnHtml = `<span class="badge badge-green text-center block w-full py-2">Delivery Complete</span>`;
+            btnHtml = `<div class="mt-2 bg-emerald-50 text-emerald-600 font-bold text-center py-2.5 rounded-xl border border-emerald-200 uppercase tracking-wider text-[11px]"><i class="fa-solid fa-check-double mr-1"></i> Delivery Complete</div>`;
         }
     }
 
     card.innerHTML = `
-        <div class="job-header">
-            <div class="job-route">
-                <span>${job.order_details.produce_details.farmer_district || 'Unknown District'}, ${job.order_details.produce_details.farmer_region || 'Unknown Region'}</span>
-                <i class="fa-solid fa-arrow-right"></i>
-                <span>${job.order_details.buyer_name} (${job.order_details.delivery_type === 'SELF_PICKUP' ? 'Local' : 'Long-haul'})</span>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600 shadow-inner shrink-0">
+                    <i class="fa-solid fa-route"></i>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                    <div class="flex items-center gap-2 text-slate-800 text-sm font-bold">
+                        <span>${job.order_details.produce_details.farmer_district || 'Unknown'}, ${job.order_details.produce_details.farmer_region || 'Unknown Region'}</span>
+                        <i class="fa-solid fa-arrow-right text-slate-400 text-xs"></i>
+                        <span>${job.order_details.buyer_name} <span class="text-xs text-slate-500 font-medium ml-1">(${job.order_details.delivery_type === 'SELF_PICKUP' ? 'Local' : 'Long-haul'})</span></span>
+                    </div>
+                </div>
             </div>
-            <span class="badge badge-amber">GHS ${job.estimated_cost}</span>
-        </div>
-        <div class="job-body">
-            <div class="job-detail-row">
-                <span>Vegetable Cargo:</span>
-                <strong class="text-primary">${job.order_details.quantity} ${job.order_details.produce_details.unit} of ${job.order_details.produce_details.variety || job.order_details.produce_details.name}</strong>
-            </div>
-            <div class="job-detail-row">
-                <span>Recommended Vehicle:</span>
-                <span>${job.vehicle_type}</span>
-            </div>
-            <div class="job-detail-row">
-                <span>Pickup Farmer:</span>
-                <span>${job.order_details.produce_details.farmer_name} (${job.order_details.produce_details.farmer_phone})</span>
+            <div class="flex items-center gap-2">
+                <span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100 uppercase tracking-wider">Fee: GHS ${job.estimated_cost}</span>
             </div>
         </div>
-        ${btnHtml}
+        <div class="p-4 bg-white grid grid-cols-2 gap-4">
+            <div class="flex flex-col gap-1 col-span-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Vegetable Cargo</span>
+                <span class="text-sm font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-leaf text-emerald-500"></i> ${job.order_details.quantity} ${job.order_details.produce_details.unit} of ${job.order_details.produce_details.variety || job.order_details.produce_details.name}</span>
+            </div>
+            <div class="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Recommended Vehicle</span>
+                <span class="text-sm font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-truck text-slate-400"></i> ${job.vehicle_type}</span>
+            </div>
+            <div class="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Pickup Farmer</span>
+                <span class="text-sm font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-user-check text-slate-400"></i> ${job.order_details.produce_details.farmer_name} <span class="text-xs text-slate-500">(${job.order_details.produce_details.farmer_phone})</span></span>
+            </div>
+            <div class="col-span-2 mt-2 pt-2 border-t border-slate-100">
+                ${btnHtml}
+            </div>
+        </div>
     `;
 
     // Action handlers
@@ -3750,22 +3786,23 @@ async function loadWalletTransactions() {
             
             let typeBadge = '';
             if (txn.transaction_type === 'TOPUP') {
-                typeBadge = '<span class="badge badge-green">Deposit</span>';
+                typeBadge = '<span class="bg-emerald-100 text-emerald-700 text-[10px] font-bold px-2.5 py-1 rounded-md border border-emerald-200 uppercase tracking-wider">Deposit</span>';
             } else if (txn.transaction_type === 'PAYMENT') {
-                typeBadge = '<span class="badge badge-orange">Payment</span>';
+                typeBadge = '<span class="bg-orange-100 text-orange-700 text-[10px] font-bold px-2.5 py-1 rounded-md border border-orange-200 uppercase tracking-wider">Payment</span>';
             } else if (txn.transaction_type === 'PAYOUT') {
-                typeBadge = '<span class="badge badge-blue">Payout</span>';
+                typeBadge = '<span class="bg-blue-100 text-blue-700 text-[10px] font-bold px-2.5 py-1 rounded-md border border-blue-200 uppercase tracking-wider">Payout</span>';
             }
             
-            const amountClass = txn.transaction_type === 'TOPUP' ? 'text-emerald' : 'text-orange';
+            const amountClass = txn.transaction_type === 'TOPUP' ? 'text-emerald-600' : 'text-slate-800';
             const prefix = txn.transaction_type === 'TOPUP' ? '+' : '-';
             
+            tr.className = 'hover:bg-slate-50 transition-colors';
             tr.innerHTML = `
-                <td>${dateStr}</td>
-                <td><span class="font-xxs text-secondary">${txn.reference}</span></td>
-                <td>${typeBadge}</td>
-                <td>${txn.description}</td>
-                <td><strong class="${amountClass}">${prefix} GHS ${txn.amount}</strong></td>
+                <td class="px-6 py-4 font-medium text-slate-600">${dateStr}</td>
+                <td class="px-6 py-4"><span class="font-mono text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200">${txn.reference}</span></td>
+                <td class="px-6 py-4">${typeBadge}</td>
+                <td class="px-6 py-4 text-slate-700">${txn.description}</td>
+                <td class="px-6 py-4 text-right"><strong class="${amountClass} font-outfit text-base">${prefix} GHS ${txn.amount}</strong></td>
             `;
             body.appendChild(tr);
         });
@@ -3887,77 +3924,80 @@ async function loadFarmerDispatchDropdowns() {
 
 function createFarmerJobCard(job) {
     const card = document.createElement('div');
-    card.className = 'job-card';
+    card.className = 'bg-white border border-slate-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow flex flex-col overflow-hidden mb-4';
     
     // Status Badge styling
     let statusBadge = '';
     if (job.status === 'PENDING_MATCH') {
-        statusBadge = `<span class="badge badge-slate">Pending Driver Match</span>`;
+        statusBadge = `<span class="bg-slate-100 text-slate-600 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm inline-flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-clock"></i> Pending Driver Match</span>`;
     } else if (job.status === 'MATCHED') {
-        statusBadge = `<span class="badge badge-blue">Driver Assigned</span>`;
+        statusBadge = `<span class="bg-blue-100 text-blue-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm inline-flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-truck"></i> Driver Assigned</span>`;
     } else if (job.status === 'PICKED_UP') {
-        statusBadge = `<span class="badge badge-orange">Picked Up / In Transit</span>`;
+        statusBadge = `<span class="bg-amber-100 text-amber-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm inline-flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-route"></i> Picked Up / In Transit</span>`;
     } else if (job.status === 'DELIVERED') {
-        statusBadge = `<span class="badge badge-green">Delivered</span>`;
+        statusBadge = `<span class="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider shadow-sm inline-flex items-center gap-1.5 whitespace-nowrap"><i class="fa-solid fa-circle-check"></i> Delivered</span>`;
     }
 
     // Payment Status Badge styling
     let paymentBadge = '';
     if (job.order_details.payment_status === 'UNPAID') {
-        paymentBadge = `<span class="badge badge-red">Invoice Unpaid by Client</span>`;
+        paymentBadge = `<span class="bg-red-50 text-red-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-red-200">Invoice Unpaid</span>`;
     } else if (job.order_details.payment_status === 'HELD_IN_ESCROW') {
-        paymentBadge = `<span class="badge badge-orange">Payment in Escrow</span>`;
+        paymentBadge = `<span class="bg-orange-50 text-orange-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-orange-200">Payment in Escrow</span>`;
     } else if (job.order_details.payment_status === 'RELEASED') {
-        paymentBadge = `<span class="badge badge-green">Payment Released</span>`;
+        paymentBadge = `<span class="bg-emerald-50 text-emerald-600 px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border border-emerald-200">Payment Released</span>`;
     }
 
     // Driver details
     let driverInfo = '';
     if (job.transporter_name) {
         driverInfo = `
-            <div class="job-detail-row">
-                <span>Driver:</span>
-                <strong>${job.transporter_name} (${job.transporter_phone || 'No phone'})</strong>
+            <div class="flex flex-col gap-1 col-span-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Driver / Transporter</span>
+                <span class="text-sm font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-id-card text-slate-400"></i> ${job.transporter_name} <span class="text-xs text-slate-500 font-medium">(${job.transporter_phone || 'No phone'})</span></span>
             </div>
-            <div class="job-detail-row">
-                <span>Vehicle Mode:</span>
-                <span>${job.vehicle_type}</span>
+            <div class="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Vehicle Mode</span>
+                <span class="text-sm font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-truck text-slate-400"></i> ${job.vehicle_type}</span>
             </div>
         `;
     } else {
         driverInfo = `
-            <div class="job-detail-row">
-                <span>Driver:</span>
-                <span class="text-orange">No driver matched yet</span>
+            <div class="flex flex-col gap-1 col-span-2">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Driver / Transporter</span>
+                <span class="text-sm font-bold text-orange-500 flex items-center gap-2"><i class="fa-solid fa-triangle-exclamation"></i> No driver matched yet</span>
             </div>
-            <div class="job-detail-row">
-                <span>Vehicle Mode:</span>
-                <span>${job.vehicle_type}</span>
+            <div class="flex flex-col gap-1 col-span-2 sm:col-span-1">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Vehicle Mode</span>
+                <span class="text-sm font-semibold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-truck text-slate-400"></i> ${job.vehicle_type}</span>
             </div>
         `;
     }
 
     card.innerHTML = `
-        <div class="job-header">
-            <div class="job-route">
-                <span>Shipment #${job.id}</span>
-                <i class="fa-solid fa-arrow-right"></i>
-                <span>Client: ${job.order_details.buyer_name}</span>
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 p-4 bg-slate-50/50 border-b border-slate-100">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-inner shrink-0">
+                    <i class="fa-solid fa-box-open"></i>
+                </div>
+                <div class="flex flex-col gap-0.5">
+                    <div class="flex items-center gap-2">
+                        <strong class="font-outfit font-bold text-slate-800 text-sm">Shipment #${job.id}</strong>
+                        <i class="fa-solid fa-arrow-right text-slate-400 text-xs"></i>
+                        <span class="text-slate-600 text-sm font-medium flex items-center gap-1.5"><i class="fa-solid fa-building text-slate-400 text-xs"></i> ${job.order_details.buyer_name}</span>
+                    </div>
+                    <span class="text-emerald-600 text-xs font-bold bg-emerald-50 px-2 py-0.5 rounded w-fit border border-emerald-100">Total: GHS ${job.estimated_cost}</span>
+                </div>
             </div>
-            <span class="badge badge-amber">GHS ${job.estimated_cost}</span>
+            <div class="flex flex-col sm:items-end gap-2 w-full sm:w-auto mt-2 sm:mt-0">
+                ${statusBadge}
+                ${paymentBadge}
+            </div>
         </div>
-        <div class="job-body">
-            <div class="job-detail-row">
-                <span>Vegetable Cargo:</span>
-                <strong class="text-primary">${job.order_details.quantity} ${job.order_details.produce_details.unit} of ${job.order_details.produce_details.variety || job.order_details.produce_details.name}</strong>
-            </div>
-            <div class="job-detail-row">
-                <span>Delivery Status:</span>
-                <span>${statusBadge}</span>
-            </div>
-            <div class="job-detail-row">
-                <span>Client Payment:</span>
-                <span>${paymentBadge}</span>
+        <div class="p-4 bg-white grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <div class="flex flex-col gap-1 col-span-2 sm:col-span-3">
+                <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Vegetable Cargo</span>
+                <span class="text-sm font-bold text-slate-800 flex items-center gap-2"><i class="fa-solid fa-leaf text-emerald-500"></i> ${job.order_details.quantity} ${job.order_details.produce_details.unit} of ${job.order_details.produce_details.variety || job.order_details.produce_details.name}</span>
             </div>
             ${driverInfo}
         </div>
@@ -4130,26 +4170,31 @@ async function loadNetwork() {
                 data.connections.forEach(conn => {
                     const u = conn.user;
                     const card = document.createElement('div');
-                    card.className = 'connection-user-card';
+                    card.className = 'bg-white rounded-2xl border border-slate-200 p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden';
                     card.innerHTML = `
-                        <div class="connection-user-header">
-                            <div>
-                                <strong style="font-size: 15px; color: var(--text-primary);">${u.username}</strong>
-                                <span class="badge ${u.role === 'FARMER' ? 'badge-green' : (u.role === 'BUYER' ? 'badge-blue' : 'badge-orange')}" style="padding: 1px 6px; font-size: 9px; margin-left: 6px;">
+                        <div class="absolute top-0 right-0 p-3">
+                            <span class="flex items-center gap-1 text-[10px] text-emerald-600 font-bold uppercase tracking-wider bg-emerald-50 px-2 py-1 rounded-md border border-emerald-100"><i class="fa-solid fa-circle text-[8px]"></i> Active</span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-14 h-14 rounded-full bg-gradient-to-br ${u.role === 'FARMER' ? 'from-emerald-400 to-teal-500' : (u.role === 'BUYER' ? 'from-blue-400 to-indigo-500' : 'from-orange-400 to-amber-500')} text-white flex items-center justify-center font-bold text-2xl uppercase shadow-inner shrink-0">
+                                ${u.username.charAt(0)}
+                            </div>
+                            <div class="flex flex-col pr-12">
+                                <strong class="text-base text-slate-800 leading-tight">${u.username}</strong>
+                                <span class="badge ${u.role === 'FARMER' ? 'bg-emerald-100 text-emerald-700' : (u.role === 'BUYER' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700')} text-[10px] px-2 py-0.5 rounded-full border ${u.role === 'FARMER' ? 'border-emerald-200' : (u.role === 'BUYER' ? 'border-blue-200' : 'border-orange-200')} font-semibold w-fit mt-1">
                                     ${u.role.charAt(0) + u.role.slice(1).toLowerCase()}
                                 </span>
                             </div>
-                            <span class="text-secondary font-xxs"><i class="fa-solid fa-circle text-emerald" style="font-size: 6px;"></i> Active Circle</span>
                         </div>
-                        <div class="connection-user-body">
-                            <span class="text-secondary font-xs"><i class="fa-solid fa-location-dot"></i> ${u.district}, ${u.region}</span>
-                            ${u.phone_number ? `<br><span class="text-secondary font-xs"><i class="fa-solid fa-phone"></i> ${u.phone_number}</span>` : ''}
+                        <div class="flex flex-col gap-1 mt-1 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                            <span class="text-xs text-slate-600 font-medium flex items-center gap-2"><i class="fa-solid fa-location-dot text-slate-400 w-4 text-center"></i> ${u.district}, ${u.region}</span>
+                            ${u.phone_number ? `<span class="text-xs text-slate-600 font-medium flex items-center gap-2"><i class="fa-solid fa-phone text-slate-400 w-4 text-center"></i> ${u.phone_number}</span>` : ''}
                         </div>
-                        <div style="display: flex; gap: 8px; margin-top: auto;">
-                            <button class="btn btn-primary btn-sm flex-grow" onclick="openChat(${u.id}, '${u.username}', '${u.role}', true)">
+                        <div class="flex gap-2 mt-auto pt-2">
+                            <button class="flex-grow bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition-all flex items-center justify-center gap-2 text-sm" onclick="openChat(${u.id}, '${u.username}', '${u.role}', true)">
                                 <i class="fa-solid fa-comment-dots"></i> Message
                             </button>
-                            <button class="btn btn-secondary btn-sm" onclick="deleteConnection(${conn.connection_id})" title="Remove from Circle">
+                            <button class="bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-400 border border-slate-200 hover:border-red-200 font-bold w-11 rounded-xl transition-all flex items-center justify-center" onclick="deleteConnection(${conn.connection_id})" title="Remove from Circle">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </div>
@@ -4176,17 +4221,24 @@ async function loadNetwork() {
                 incomingCard.style.display = 'block';
                 data.incoming_requests.forEach(req => {
                     const row = document.createElement('div');
-                    row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm);';
+                    row.className = 'flex justify-between items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow';
                     row.innerHTML = `
-                        <div>
-                            <strong style="font-size: 13px;">${req.sender_username}</strong>
-                            <span class="badge ${req.sender_role === 'FARMER' ? 'badge-green' : (req.sender_role === 'BUYER' ? 'badge-blue' : 'badge-orange')}" style="padding: 1px 4px; font-size: 8px; margin-left: 4px;">
-                                ${req.sender_role.charAt(0) + req.sender_role.slice(1).toLowerCase()}
-                            </span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-orange-400 to-amber-500 text-white flex items-center justify-center font-bold text-lg uppercase shadow-inner shrink-0">${req.sender_username.charAt(0)}</div>
+                            <div class="flex flex-col">
+                                <strong class="text-sm text-slate-800 leading-tight">${req.sender_username}</strong>
+                                <span class="badge ${req.sender_role === 'FARMER' ? 'bg-emerald-100 text-emerald-700' : (req.sender_role === 'BUYER' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700')} text-[9px] px-2 py-0.5 rounded-full border ${req.sender_role === 'FARMER' ? 'border-emerald-200' : (req.sender_role === 'BUYER' ? 'border-blue-200' : 'border-orange-200')} font-bold w-fit mt-0.5">
+                                    ${req.sender_role.charAt(0) + req.sender_role.slice(1).toLowerCase()}
+                                </span>
+                            </div>
                         </div>
-                        <div style="display: flex; gap: 6px;">
-                            <button class="btn btn-success btn-xs" onclick="respondToConnection(${req.id}, 'accept')" style="padding: 4px 8px; width: auto;">Accept</button>
-                            <button class="btn btn-secondary btn-xs" onclick="respondToConnection(${req.id}, 'reject')" style="padding: 4px 8px; width: auto;">Reject</button>
+                        <div class="flex gap-2">
+                            <button class="bg-emerald-500 hover:bg-emerald-600 text-white w-9 h-9 flex items-center justify-center rounded-lg transition-colors shadow-sm" onclick="respondToConnection(${req.id}, 'accept')" title="Accept">
+                                <i class="fa-solid fa-check"></i>
+                            </button>
+                            <button class="bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-500 w-9 h-9 flex items-center justify-center border border-slate-200 hover:border-red-200 rounded-lg transition-colors shadow-sm" onclick="respondToConnection(${req.id}, 'reject')" title="Reject">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
                         </div>
                     `;
                     incomingGrid.appendChild(row);
@@ -4203,15 +4255,18 @@ async function loadNetwork() {
                 outgoingCard.style.display = 'block';
                 data.outgoing_requests.forEach(req => {
                     const row = document.createElement('div');
-                    row.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(255,255,255,0.02); border: 1px solid var(--border-color); border-radius: var(--radius-sm);';
+                    row.className = 'flex justify-between items-center p-3 bg-white border border-slate-200 rounded-xl shadow-sm hover:shadow-md transition-shadow';
                     row.innerHTML = `
-                        <div>
-                            <strong style="font-size: 13px;">${req.receiver_username}</strong>
-                            <span class="badge ${req.receiver_role === 'FARMER' ? 'badge-green' : (req.receiver_role === 'BUYER' ? 'badge-blue' : 'badge-orange')}" style="padding: 1px 4px; font-size: 8px; margin-left: 4px;">
-                                ${req.receiver_role.charAt(0) + req.receiver_role.slice(1).toLowerCase()}
-                            </span>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 text-white flex items-center justify-center font-bold text-lg uppercase shadow-inner shrink-0">${req.receiver_username.charAt(0)}</div>
+                            <div class="flex flex-col">
+                                <strong class="text-sm text-slate-800 leading-tight">${req.receiver_username}</strong>
+                                <span class="badge ${req.receiver_role === 'FARMER' ? 'bg-emerald-100 text-emerald-700' : (req.receiver_role === 'BUYER' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700')} text-[9px] px-2 py-0.5 rounded-full border ${req.receiver_role === 'FARMER' ? 'border-emerald-200' : (req.receiver_role === 'BUYER' ? 'border-blue-200' : 'border-orange-200')} font-bold w-fit mt-0.5">
+                                    ${req.receiver_role.charAt(0) + req.receiver_role.slice(1).toLowerCase()}
+                                </span>
+                            </div>
                         </div>
-                        <span class="text-secondary font-xxs" style="font-style: italic;"><i class="fa-solid fa-clock"></i> Invited</span>
+                        <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider flex items-center gap-1 bg-slate-50 px-2 py-1.5 rounded-md border border-slate-100"><i class="fa-solid fa-clock text-slate-400"></i> Invited</span>
                     `;
                     outgoingGrid.appendChild(row);
                 });
@@ -4260,33 +4315,33 @@ function renderDiscoverUsers() {
 
     filtered.forEach(u => {
         const card = document.createElement('div');
-        card.className = 'connection-user-card';
+        card.className = 'bg-white rounded-2xl border border-slate-200 p-5 flex flex-col gap-4 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden';
 
         let actionHtml = '';
         if (u.status === 'NONE') {
             actionHtml = `
-                <button class="btn btn-primary btn-sm" onclick="sendConnectionRequest(${u.id})" style="padding: 8px;">
+                <button class="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-2.5 rounded-xl shadow-sm shadow-primary-500/20 transition-all flex items-center justify-center gap-2 text-sm" onclick="sendConnectionRequest(${u.id})">
                     <i class="fa-solid fa-user-plus"></i> Connect
                 </button>
             `;
         } else if (u.status === 'PENDING_SENT') {
             actionHtml = `
-                <button class="btn btn-secondary btn-sm" disabled style="opacity: 0.65; cursor: not-allowed; padding: 8px;">
+                <button class="w-full bg-slate-100 text-slate-400 font-bold py-2.5 rounded-xl cursor-not-allowed flex items-center justify-center gap-2 text-sm border border-slate-200" disabled>
                     <i class="fa-solid fa-clock"></i> Invited
                 </button>
             `;
         } else if (u.status === 'PENDING_RECEIVED') {
             actionHtml = `
-                <div style="display: flex; gap: 6px; width: 100%;">
-                    <button class="btn btn-success btn-sm flex-grow" onclick="respondToConnection(${u.connection_id}, 'accept')" style="padding: 8px;">Accept</button>
-                    <button class="btn btn-secondary btn-sm" onclick="respondToConnection(${u.connection_id}, 'reject')" style="padding: 8px; width: auto;"><i class="fa-solid fa-xmark"></i></button>
+                <div class="flex gap-2 w-full">
+                    <button class="flex-grow bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-2.5 rounded-xl shadow-sm shadow-emerald-500/20 transition-all text-sm" onclick="respondToConnection(${u.connection_id}, 'accept')">Accept</button>
+                    <button class="w-12 bg-slate-100 hover:bg-red-50 hover:text-red-600 text-slate-600 border border-slate-200 hover:border-red-200 font-bold rounded-xl transition-all flex items-center justify-center" onclick="respondToConnection(${u.connection_id}, 'reject')"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             `;
         } else if (u.status === 'ACCEPTED') {
             actionHtml = `
-                <div style="display: flex; gap: 6px; width: 100%; align-items: center;">
-                    <span class="badge badge-green text-center block" style="padding: 6px; width: auto; font-size: 10px;"><i class="fa-solid fa-circle-check"></i> Connected</span>
-                    <button class="btn btn-primary btn-sm flex-grow" onclick="openChat(${u.id}, '${u.username}', '${u.role}', true)" style="padding: 8px;">
+                <div class="flex gap-2 w-full items-center">
+                    <span class="flex-shrink-0 flex items-center gap-1 text-[10px] text-emerald-700 font-bold uppercase tracking-wider bg-emerald-100 px-2.5 py-2.5 rounded-xl border border-emerald-200 h-full"><i class="fa-solid fa-circle-check"></i> Connected</span>
+                    <button class="flex-grow bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 rounded-xl shadow-sm shadow-blue-500/20 transition-all flex items-center justify-center gap-2 text-sm" onclick="openChat(${u.id}, '${u.username}', '${u.role}', true)">
                         <i class="fa-solid fa-comment-dots"></i> Message
                     </button>
                 </div>
@@ -4294,18 +4349,21 @@ function renderDiscoverUsers() {
         }
 
         card.innerHTML = `
-            <div class="connection-user-header">
-                <div>
-                    <strong style="font-size: 15px; color: var(--text-primary);">${u.username}</strong>
-                    <span class="badge ${u.role === 'FARMER' ? 'badge-green' : (u.role === 'BUYER' ? 'badge-blue' : 'badge-orange')}" style="padding: 1px 6px; font-size: 9px; margin-left: 6px;">
+            <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-full bg-gradient-to-br ${u.role === 'FARMER' ? 'from-emerald-400 to-teal-500' : (u.role === 'BUYER' ? 'from-blue-400 to-indigo-500' : 'from-orange-400 to-amber-500')} text-white flex items-center justify-center font-bold text-2xl uppercase shadow-inner shrink-0">
+                    ${u.username.charAt(0)}
+                </div>
+                <div class="flex flex-col">
+                    <strong class="text-base text-slate-800 leading-tight">${u.username}</strong>
+                    <span class="badge ${u.role === 'FARMER' ? 'bg-emerald-100 text-emerald-700' : (u.role === 'BUYER' ? 'bg-blue-100 text-blue-700' : 'bg-orange-100 text-orange-700')} text-[10px] px-2 py-0.5 rounded-full border ${u.role === 'FARMER' ? 'border-emerald-200' : (u.role === 'BUYER' ? 'border-blue-200' : 'border-orange-200')} font-semibold w-fit mt-1">
                         ${u.role.charAt(0) + u.role.slice(1).toLowerCase()}
                     </span>
                 </div>
             </div>
-            <div class="connection-user-body">
-                <span class="text-secondary font-xs"><i class="fa-solid fa-location-dot"></i> ${u.district}, ${u.region}</span>
+            <div class="flex flex-col gap-1 mt-1 bg-slate-50 p-3 rounded-xl border border-slate-100">
+                <span class="text-xs text-slate-600 font-medium flex items-center gap-2"><i class="fa-solid fa-location-dot text-slate-400 w-4 text-center"></i> ${u.district}, ${u.region}</span>
             </div>
-            <div style="margin-top: auto; width: 100%;">
+            <div class="mt-auto pt-2 w-full">
                 ${actionHtml}
             </div>
         `;
@@ -4406,10 +4464,8 @@ async function loadChats() {
         chats.forEach(chat => {
             const p = chat.partner;
             const item = document.createElement('div');
-            item.className = 'chat-thread-item';
-            if (activeChatPartnerId && activeChatPartnerId === p.id) {
-                item.classList.add('active');
-            }
+            const isActive = activeChatPartnerId && activeChatPartnerId === p.id;
+            item.className = `chat-thread-item p-3 flex items-center gap-3 cursor-pointer transition-colors border-l-4 ${isActive ? 'bg-blue-50/80 border-blue-500' : 'hover:bg-slate-50 border-transparent'}`;
 
             // Initials avatar
             const initials = p.username.slice(0, 2).toUpperCase();
@@ -4425,19 +4481,19 @@ async function loadChats() {
 
             // Unread Badge
             const badgeHtml = chat.unread_count > 0 ? 
-                `<span class="badge badge-orange" style="border-radius: 50%; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-size: 9px; padding: 0;">${chat.unread_count}</span>` : '';
+                `<span class="bg-orange-500 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full shadow-sm">${chat.unread_count}</span>` : '';
 
             item.innerHTML = `
-                <div class="chat-avatar" style="width: 38px; height: 38px; border-radius: 50%; background-color: var(--border-color); display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight:700; color: var(--emerald-light); flex-shrink:0;">
+                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center font-bold text-sm text-slate-600 shadow-inner shrink-0">
                     ${initials}
                 </div>
-                <div class="chat-thread-info">
-                    <div class="chat-thread-name-row">
-                        <strong style="font-size: 13px;">${p.username}</strong>
-                        <span class="text-secondary" style="font-size: 9px;">${timeStr}</span>
+                <div class="flex-1 flex flex-col overflow-hidden">
+                    <div class="flex justify-between items-center mb-0.5">
+                        <strong class="text-sm text-slate-800 truncate">${p.username}</strong>
+                        <span class="text-[10px] text-slate-400 font-medium whitespace-nowrap ml-2">${timeStr}</span>
                     </div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
-                        <span class="chat-thread-msg-preview">${preview}</span>
+                    <div class="flex justify-between items-center gap-2">
+                        <span class="text-xs text-slate-500 truncate ${chat.unread_count > 0 ? 'font-bold text-slate-700' : ''}">${preview}</span>
                         ${badgeHtml}
                     </div>
                 </div>
@@ -4446,8 +4502,10 @@ async function loadChats() {
             item.addEventListener('click', () => {
                 // Set active and load history
                 activeChatPartnerId = p.id;
-                document.querySelectorAll('.chat-thread-item').forEach(el => el.classList.remove('active'));
-                item.classList.add('active');
+                document.querySelectorAll('.chat-thread-item').forEach(el => {
+                    el.className = 'chat-thread-item p-3 flex items-center gap-3 cursor-pointer transition-colors border-l-4 hover:bg-slate-50 border-transparent';
+                });
+                item.className = 'chat-thread-item p-3 flex items-center gap-3 cursor-pointer transition-colors border-l-4 bg-blue-50/80 border-blue-500';
                 loadChatHistory(p.id);
             });
 
@@ -4526,14 +4584,16 @@ async function loadChatHistory(partnerId, silent = false) {
             messages.forEach(msg => {
                 const bubbleRow = document.createElement('div');
                 const isSent = msg.sender === currentUser.id;
-                bubbleRow.className = `chat-message-row ${isSent ? 'sent' : 'received'}`;
+                bubbleRow.className = `flex w-full ${isSent ? 'justify-end' : 'justify-start'}`;
                 
                 const time = new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
 
                 bubbleRow.innerHTML = `
-                    <div class="chat-bubble ${isSent ? 'sent' : 'received'}">
-                        <span>${msg.content}</span>
-                        <span class="chat-bubble-time">${time}</span>
+                    <div class="max-w-[85%] md:max-w-[70%] flex flex-col ${isSent ? 'items-end' : 'items-start'} group">
+                        <div class="relative px-4 py-2.5 shadow-sm ${isSent ? 'bg-gradient-to-br from-blue-500 to-indigo-600 text-white rounded-2xl rounded-tr-sm' : 'bg-white border border-slate-200 shadow-sm text-slate-700 rounded-2xl rounded-tl-sm'}">
+                            <span class="text-sm font-medium leading-relaxed">${msg.content}</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 mt-1.5 font-medium px-1 opacity-0 group-hover:opacity-100 transition-opacity">${time}</span>
                     </div>
                 `;
                 chatBody.appendChild(bubbleRow);
