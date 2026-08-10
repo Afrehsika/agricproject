@@ -25,6 +25,23 @@ let ussdState = {
     tempData: {}
 };
 
+// Global Button Loading Helper
+function setBtnLoading(btn, isLoading) {
+    if (!btn) return;
+    if (isLoading) {
+        btn.disabled = true;
+        btn.dataset.originalHtml = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
+        btn.classList.add('opacity-75', 'cursor-not-allowed');
+    } else {
+        btn.disabled = false;
+        if (btn.dataset.originalHtml) {
+            btn.innerHTML = btn.dataset.originalHtml;
+        }
+        btn.classList.remove('opacity-75', 'cursor-not-allowed');
+    }
+}
+
 // Available Mock Users for Demo Role Switching
 const demoUsers = [
     { username: 'Kofi_Mensah', role: 'FARMER', phone: '0241112222' },
@@ -1992,7 +2009,68 @@ async function loadOrders() {
                             </button>
                         </div>
                     `;
+                } else if (order.transporter_details && order.transporter_details.negotiation_status === 'PENDING_BUYER_APPROVAL') {
+                    // Driver has arrived and proposed a new price — buyer must respond
+                    const jobId = order.transporter_details.job_id || order.transporter_details.id;
+                    const proposed = parseFloat(order.transporter_details.proposed_price);
+                    const estimated = parseFloat(order.transporter_details.estimated_cost);
+                    const diff = proposed - estimated;
+                    const diffColor = diff > 0 ? 'text-red-600' : diff < 0 ? 'text-emerald-600' : 'text-slate-500';
+                    const diffLabel = diff > 0
+                        ? `<span class="${diffColor} font-bold">+GHS ${diff.toFixed(2)} more than estimated</span>`
+                        : diff < 0
+                        ? `<span class="${diffColor} font-bold">GHS ${Math.abs(diff).toFixed(2)} less — you get a refund!</span>`
+                        : `<span class="text-slate-500">Same as estimated price.</span>`;
+                    actionButtonsHtml = `
+                        <div class="flex flex-col gap-3 w-full border border-amber-200 bg-amber-50/40 p-4 rounded-xl">
+                            <div class="flex flex-col gap-1">
+                                <div class="text-amber-800 text-sm font-bold flex items-center gap-2">
+                                    <i class="fa-solid fa-scale-balanced text-amber-500 text-base"></i>
+                                    Logistics Price Review Required
+                                </div>
+                                <div class="text-amber-700 text-xs leading-relaxed mt-1">
+                                    <strong>${order.transporter_details.username || 'The driver'}</strong> is at the pickup location and has proposed a final fee of
+                                    <strong class="text-slate-800 text-sm">GHS ${proposed.toFixed(2)}</strong>
+                                    (Estimated: GHS ${estimated.toFixed(2)}) — ${diffLabel}
+                                </div>
+                            </div>
+                            <div class="flex flex-col sm:flex-row gap-2 mt-1">
+                                <button class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold py-2.5 px-4 rounded-xl shadow-md shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 accept-nego-btn"
+                                    data-job-id="${jobId}" data-proposed="${proposed}" data-estimated="${estimated}">
+                                    <i class="fa-solid fa-check"></i> Accept GHS ${proposed.toFixed(2)}
+                                </button>
+                                <button class="flex-1 bg-white border border-blue-300 hover:bg-blue-50 text-blue-700 font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 counter-nego-btn"
+                                    data-job-id="${jobId}" data-proposed="${proposed}" data-estimated="${estimated}">
+                                    <i class="fa-solid fa-handshake"></i> Counter Offer
+                                </button>
+                                <button class="flex-1 bg-white border border-red-300 hover:bg-red-50 text-red-600 font-bold py-2.5 px-4 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 reject-nego-btn"
+                                    data-job-id="${jobId}" data-proposed="${proposed}" data-estimated="${estimated}">
+                                    <i class="fa-solid fa-xmark"></i> End Contract
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                } else if (order.transporter_details && order.transporter_details.negotiation_status === 'PENDING_DRIVER_APPROVAL') {
+                    // Buyer sent a counter — waiting for the driver to respond
+                    const proposed = parseFloat(order.transporter_details.proposed_price);
+                    const estimated = parseFloat(order.transporter_details.estimated_cost);
+                    actionButtonsHtml = `
+                        <div class="flex flex-col gap-2 w-full border border-blue-200 bg-blue-50/40 p-4 rounded-xl">
+                            <div class="text-blue-800 text-sm font-bold flex items-center gap-2">
+                                <i class="fa-solid fa-clock-rotate-left text-blue-500"></i>
+                                Counter-Offer Sent — Awaiting Driver Response
+                            </div>
+                            <div class="text-blue-700 text-xs mt-1">
+                                Your counter-offer of <strong>GHS ${proposed.toFixed(2)}</strong> (Estimated: GHS ${estimated.toFixed(2)}) has been sent to the driver. 
+                                The page will update automatically when they respond.
+                            </div>
+                            <div class="bg-blue-100 text-blue-700 font-bold text-center py-2 rounded-lg text-[11px] uppercase tracking-wider mt-1">
+                                <i class="fa-solid fa-spinner fa-spin mr-1"></i> Waiting for driver…
+                            </div>
+                        </div>
+                    `;
                 } else if (order.transporter_details && order.transporter_details.payment_status === 'REQUESTED') {
+
                     actionButtonsHtml = `
                         <button class="bg-gradient-to-r from-blue-600 to-cyan-500 hover:from-blue-500 hover:to-cyan-400 text-white font-bold py-2.5 px-6 rounded-xl shadow-lg shadow-blue-500/25 transition-all transform hover:-translate-y-0.5 flex items-center gap-2 w-full md:w-auto justify-center approve-logistics-payment-btn" data-job-id="${order.transporter_details.job_id || order.transporter_details.id}" data-id="${order.id}">
                             <i class="fa-solid fa-wallet"></i> Pay Logistics Fee (GHS ${parseFloat(order.transporter_details.estimated_cost).toFixed(2)})
@@ -2237,6 +2315,110 @@ async function loadOrders() {
                 });
             }
 
+            // --- NEGOTIATION HANDLERS (Buyer side) ---
+            if (card.querySelector('.accept-nego-btn')) {
+                card.querySelector('.accept-nego-btn').addEventListener('click', async (e) => {
+                    const btn = e.currentTarget;
+                    const jobId = btn.getAttribute('data-job-id');
+                    const proposedPrice = parseFloat(btn.getAttribute('data-proposed'));
+                    const estimatedCost = parseFloat(btn.getAttribute('data-estimated'));
+                    const diff = proposedPrice - estimatedCost;
+                    const diffMsg = diff > 0
+                        ? `GHS ${diff.toFixed(2)} will be deducted from your wallet.`
+                        : diff < 0
+                        ? `GHS ${Math.abs(diff).toFixed(2)} will be refunded to your wallet.`
+                        : `No wallet change needed.`;
+                    if (confirm(`Accept logistics fee of GHS ${proposedPrice.toFixed(2)}?\n${diffMsg}`)) {
+                        setBtnLoading(btn, true);
+                        try {
+                            const res = await fetch(`/api/logistics/jobs/${jobId}/negotiate/`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'accept' })
+                            });
+                            if (res.ok) {
+                                alert(`✅ Price accepted! Cargo is now officially in transit. ${diffMsg}`);
+                                loadOrders();
+                                loadUserProfile();
+                            } else {
+                                const err = await res.json();
+                                alert("Could not accept price: " + (err.detail || JSON.stringify(err)));
+                            }
+                        } catch (err) {
+                            console.error(err);
+                        } finally {
+                            setBtnLoading(btn, false);
+                        }
+                    }
+                });
+            }
+            if (card.querySelector('.counter-nego-btn')) {
+                card.querySelector('.counter-nego-btn').addEventListener('click', async (e) => {
+                    const btn = e.currentTarget;
+                    const jobId = btn.getAttribute('data-job-id');
+                    const estimatedCost = parseFloat(btn.getAttribute('data-estimated'));
+                    const currentProposed = parseFloat(btn.getAttribute('data-proposed'));
+                    const counterPriceStr = prompt(
+                        `Enter your counter-offer price (GHS):\n\nDriver proposed: GHS ${currentProposed.toFixed(2)}\nOriginal estimate: GHS ${estimatedCost.toFixed(2)}`,
+                        currentProposed.toFixed(2)
+                    );
+                    if (counterPriceStr === null) return;
+                    const counterPrice = parseFloat(counterPriceStr);
+                    if (isNaN(counterPrice) || counterPrice <= 0) {
+                        alert("Please enter a valid positive price.");
+                        return;
+                    }
+                    setBtnLoading(btn, true);
+                    try {
+                        const res = await fetch(`/api/logistics/jobs/${jobId}/negotiate/`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ action: 'counter', proposed_price: counterPrice })
+                        });
+                        if (res.ok) {
+                            alert(`↔️ Counter-offer of GHS ${counterPrice.toFixed(2)} sent to the driver. Awaiting their response.`);
+                            loadOrders();
+                        } else {
+                            const err = await res.json();
+                            alert("Counter failed: " + (err.detail || JSON.stringify(err)));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                    } finally {
+                        setBtnLoading(btn, false);
+                    }
+                });
+            }
+            if (card.querySelector('.reject-nego-btn')) {
+                card.querySelector('.reject-nego-btn').addEventListener('click', async (e) => {
+                    const btn = e.currentTarget;
+                    const jobId = btn.getAttribute('data-job-id');
+                    const estimatedCost = parseFloat(btn.getAttribute('data-estimated'));
+                    if (confirm(`End the logistics contract?\n\nGHS ${estimatedCost.toFixed(2)} (estimated logistics fee) will be refunded to your wallet, and the job will be reopened for other drivers.`)) {
+                        setBtnLoading(btn, true);
+                        try {
+                            const res = await fetch(`/api/logistics/jobs/${jobId}/negotiate/`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ action: 'reject' })
+                            });
+                            if (res.ok) {
+                                alert(`❌ Contract ended. GHS ${estimatedCost.toFixed(2)} refunded to your wallet. Job is now open for other drivers.`);
+                                loadOrders();
+                                loadUserProfile();
+                            } else {
+                                const err = await res.json();
+                                alert("Failed to end contract: " + (err.detail || JSON.stringify(err)));
+                            }
+                        } catch (err) {
+                            console.error(err);
+                        } finally {
+                            setBtnLoading(btn, false);
+                        }
+                    }
+                });
+            }
+
             container.appendChild(card);
 
             // Draw route on map for this order
@@ -2337,6 +2519,28 @@ async function loadLogisticsJobs() {
             const claimedRes = await fetch('/api/logistics/jobs/?claimed=true');
             const claimedJobs = claimedRes.ok ? await claimedRes.json() : [];
 
+            // Split claimed jobs: negotiations go to dedicated panel, rest stay in My Claimed
+            const negotiationJobs = claimedJobs.filter(j => j.negotiation_status === 'PENDING_DRIVER_APPROVAL');
+            const regularClaimedJobs = claimedJobs.filter(j => j.negotiation_status !== 'PENDING_DRIVER_APPROVAL');
+
+            // Render Negotiations Panel (show/hide based on count)
+            const negotiationsWrapper = document.getElementById('logistics-negotiations-wrapper');
+            const negotiationsContainer = document.getElementById('logistics-negotiations');
+            const negotiationsBadge = document.getElementById('negotiations-count-badge');
+            if (negotiationsWrapper && negotiationsContainer) {
+                if (negotiationJobs.length > 0) {
+                    negotiationsWrapper.classList.remove('hidden');
+                    if (negotiationsBadge) negotiationsBadge.textContent = `${negotiationJobs.length} Pending`;
+                    negotiationsContainer.innerHTML = '';
+                    negotiationJobs.forEach(job => {
+                        const card = createNegotiationCard(job);
+                        negotiationsContainer.appendChild(card);
+                    });
+                } else {
+                    negotiationsWrapper.classList.add('hidden');
+                }
+            }
+
             // Render Open Jobs
             const openContainer = document.getElementById('logistics-open-jobs');
             if (openContainer) {
@@ -2352,14 +2556,14 @@ async function loadLogisticsJobs() {
                 }
             }
 
-            // Render Claimed Jobs
+            // Render Regular Claimed Jobs (no pending negotiations)
             const myContainer = document.getElementById('logistics-my-jobs');
             if (myContainer) {
                 myContainer.innerHTML = '';
-                if (claimedJobs.length === 0) {
+                if (regularClaimedJobs.length === 0) {
                     myContainer.innerHTML = '<div class="text-secondary font-xs text-center p-3">You have no active claimed transport jobs. Claim a job on the left.</div>';
                 } else {
-                    claimedJobs.forEach(job => {
+                    regularClaimedJobs.forEach(job => {
                         const card = createJobCard(job, true);
                         myContainer.appendChild(card);
                         addLogisticsMarkers(job);
@@ -2396,8 +2600,8 @@ function createJobCard(job, isClaimed) {
     } else {
         if (job.status === 'MATCHED') {
             btnHtml = `
-                <button class="pick-job-btn w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold shadow-lg shadow-orange-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" data-id="${job.id}">
-                    <i class="fa-solid fa-truck-pickup"></i> Confirm Cargo Pickup
+                <button class="pick-job-btn w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-bold shadow-lg shadow-orange-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" data-id="${job.id}" data-estimated="${job.estimated_cost}">
+                    <i class="fa-solid fa-truck-pickup"></i> Confirm Cargo Pickup &amp; Set Price
                 </button>
             `;
             if (job.paid_by === 'BUYER' && job.payment_status === 'UNPAID') {
@@ -2411,6 +2615,16 @@ function createJobCard(job, isClaimed) {
                     <div class="mt-3 bg-amber-50 text-amber-600 font-bold text-center py-2.5 rounded-xl border border-amber-200 uppercase tracking-wider text-[11px]"><i class="fa-solid fa-clock mr-1"></i> Payment Requested</div>
                 `;
             }
+        } else if (job.status === 'MATCHED' && job.negotiation_status === 'PENDING_BUYER_APPROVAL') {
+
+            // Driver submitted price — waiting for buyer
+            const proposed = parseFloat(job.proposed_price);
+            btnHtml = `
+                <div class="mt-2 bg-amber-50 border border-amber-200 text-amber-700 font-bold text-center py-3 rounded-xl text-[12px]">
+                    <i class="fa-solid fa-hourglass-half fa-spin mr-1"></i>
+                    Price Proposed (GHS ${proposed.toFixed(2)}) — Awaiting Buyer Approval
+                </div>
+            `;
         } else if (job.status === 'PICKED_UP') {
             btnHtml = `
                 <button class="deliver-job-btn w-full py-3.5 mt-2 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-bold shadow-lg shadow-emerald-500/30 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2" data-id="${job.id}">
@@ -2475,22 +2689,43 @@ function createJobCard(job, isClaimed) {
     }
 
     if (card.querySelector('.pick-job-btn')) {
-        card.querySelector('.pick-job-btn').addEventListener('click', async () => {
+        card.querySelector('.pick-job-btn').addEventListener('click', async (e) => {
+            const btn = e.currentTarget;
+            const estimated = parseFloat(btn.getAttribute('data-estimated') || '0');
+            const proposedStr = prompt(
+                `Set your final logistics price (GHS):\n\nEstimated fee: GHS ${estimated.toFixed(2)}\n\nEnter the price you are charging for this delivery. The buyer must approve before cargo is picked up.`,
+                estimated.toFixed(2)
+            );
+            if (proposedStr === null) return;
+            const proposedPrice = parseFloat(proposedStr);
+            if (isNaN(proposedPrice) || proposedPrice <= 0) {
+                alert('Please enter a valid positive price.');
+                return;
+            }
+            setBtnLoading(btn, true);
             try {
                 const res = await fetch(`/api/logistics/jobs/${job.id}/update/`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ status: 'PICKED_UP' })
+                    body: JSON.stringify({ status: 'PICKED_UP', proposed_price: proposedPrice })
                 });
                 if (res.ok) {
-                    alert("Status Updated: Cargo Picked Up and In Transit.");
+                    alert(`✅ Price proposal of GHS ${proposedPrice.toFixed(2)} sent to buyer! Waiting for their approval before cargo moves.`);
                     loadLogisticsJobs();
+                } else {
+                    const err = await res.json();
+                    alert('Failed: ' + (err.detail || JSON.stringify(err)));
                 }
-            } catch (e) {
-                console.error(e);
+            } catch (err) {
+                console.error(err);
+            } finally {
+                setBtnLoading(btn, false);
             }
         });
     }
+
+    // Driver counter-offer handlers were moved to createNegotiationCard
+
 
     if (card.querySelector('.req-payment-btn')) {
         card.querySelector('.req-payment-btn').addEventListener('click', async () => {
@@ -2526,6 +2761,138 @@ function createJobCard(job, isClaimed) {
             }
         });
     }
+
+    return card;
+}
+
+
+// -------------------------------------------------------------
+// NEGOTIATION CARD — Driver responds to buyer counter-offer
+// Separate, standalone card shown in the "Active Negotiations" panel
+function createNegotiationCard(job) {
+    const card = document.createElement('div');
+    card.className = 'bg-white border-2 border-amber-200 rounded-2xl shadow-md overflow-hidden';
+
+    const proposed = parseFloat(job.proposed_price);
+    const estimated = parseFloat(job.estimated_cost);
+    const diff = proposed - estimated;
+    const produce = job.order_details.produce_details;
+    const orderDate = new Date(job.order_details.created_at).toLocaleDateString('en-GH', { day: 'numeric', month: 'short', year: 'numeric' });
+
+    const diffBadge = diff > 0
+        ? `<span class="text-red-600 bg-red-50 border border-red-100 font-bold text-xs px-2 py-0.5 rounded-full">+GHS ${diff.toFixed(2)} vs estimate</span>`
+        : diff < 0
+        ? `<span class="text-emerald-600 bg-emerald-50 border border-emerald-100 font-bold text-xs px-2 py-0.5 rounded-full">−GHS ${Math.abs(diff).toFixed(2)} vs estimate</span>`
+        : `<span class="text-slate-500 bg-slate-50 border border-slate-100 font-bold text-xs px-2 py-0.5 rounded-full">Same as estimate</span>`;
+
+    card.innerHTML = `
+        <div class="bg-gradient-to-r from-amber-50 to-orange-50 p-4 border-b border-amber-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 rounded-xl bg-amber-100 flex items-center justify-center text-amber-600 shrink-0">
+                    <i class="fa-solid fa-scale-balanced"></i>
+                </div>
+                <div>
+                    <div class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                        Order #${job.order} — Buyer Counter-Offer
+                    </div>
+                    <div class="text-slate-500 text-xs mt-0.5">
+                        <i class="fa-regular fa-calendar mr-1"></i>${orderDate} &nbsp;·&nbsp;
+                        <i class="fa-solid fa-leaf text-emerald-500 mr-1"></i>${job.order_details.quantity} ${produce.unit} of ${produce.variety || produce.name}
+                    </div>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 flex-wrap">
+                ${diffBadge}
+                <span class="bg-amber-100 text-amber-700 font-bold text-xs px-2 py-0.5 rounded-full uppercase tracking-wider">Negotiating</span>
+            </div>
+        </div>
+
+        <div class="p-4">
+            <div class="grid grid-cols-3 gap-4 bg-slate-50 border border-slate-100 p-4 rounded-xl mb-4">
+                <div class="flex flex-col gap-1">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Your Original Ask</span>
+                    <span class="text-slate-700 text-sm font-bold">GHS ${estimated.toFixed(2)}</span>
+                </div>
+                <div class="flex flex-col gap-1 text-center">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Buyer's Counter</span>
+                    <span class="text-blue-700 text-base font-black">GHS ${proposed.toFixed(2)}</span>
+                </div>
+                <div class="flex flex-col gap-1 text-right">
+                    <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Difference</span>
+                    <span class="text-sm font-bold ${diff >= 0 ? 'text-red-500' : 'text-emerald-500'}">${diff >= 0 ? '−' : '+'}GHS ${Math.abs(diff).toFixed(2)}</span>
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-white font-bold py-3 px-5 rounded-xl shadow-md shadow-emerald-500/20 transition-all transform hover:-translate-y-0.5 flex items-center justify-center gap-2 nego-card-accept-btn"
+                    data-job-id="${job.id}" data-proposed="${proposed}" data-estimated="${estimated}">
+                    <i class="fa-solid fa-check"></i> Accept GHS ${proposed.toFixed(2)}
+                </button>
+                <button class="flex-1 bg-white border border-blue-300 hover:bg-blue-50 text-blue-700 font-bold py-3 px-5 rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 nego-card-counter-btn"
+                    data-job-id="${job.id}" data-proposed="${proposed}" data-estimated="${estimated}">
+                    <i class="fa-solid fa-handshake"></i> Counter Back
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Accept handler — driver agrees to buyer's counter price
+    card.querySelector('.nego-card-accept-btn').addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        const jobId = btn.getAttribute('data-job-id');
+        const counterPrice = parseFloat(btn.getAttribute('data-proposed'));
+        if (!confirm(`Accept buyer's counter-offer of GHS ${counterPrice.toFixed(2)}?\n\nThis sends the price back to the buyer as a new proposal for their final acceptance.`)) return;
+        setBtnLoading(btn, true);
+        try {
+            // Driver "accepts" by countering with the same price — puts it back to PENDING_BUYER_APPROVAL
+            const res = await fetch(`/api/logistics/jobs/${jobId}/negotiate/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'counter', proposed_price: counterPrice })
+            });
+            if (res.ok) {
+                alert(`✅ Agreed to GHS ${counterPrice.toFixed(2)}. The buyer will now confirm final acceptance and pickup will proceed.`);
+                loadLogisticsJobs();
+            } else {
+                const err = await res.json();
+                alert('Error: ' + (err.detail || JSON.stringify(err)));
+            }
+        } catch (err) { console.error(err); } finally {
+            setBtnLoading(btn, false);
+        }
+    });
+
+    // Counter handler — driver sends a new price back to the buyer
+    card.querySelector('.nego-card-counter-btn').addEventListener('click', async (e) => {
+        const btn = e.currentTarget;
+        const jobId = btn.getAttribute('data-job-id');
+        const buyerOffer = parseFloat(btn.getAttribute('data-proposed'));
+        const original = parseFloat(btn.getAttribute('data-estimated'));
+        const newPriceStr = prompt(
+            `Send a counter-offer (GHS):\n\nBuyer offered: GHS ${buyerOffer.toFixed(2)}\nOriginal estimate: GHS ${original.toFixed(2)}`,
+            buyerOffer.toFixed(2)
+        );
+        if (newPriceStr === null) return;
+        const newPrice = parseFloat(newPriceStr);
+        if (isNaN(newPrice) || newPrice <= 0) { alert('Enter a valid price.'); return; }
+        setBtnLoading(btn, true);
+        try {
+            const res = await fetch(`/api/logistics/jobs/${jobId}/negotiate/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'counter', proposed_price: newPrice })
+            });
+            if (res.ok) {
+                alert(`↔️ Counter-offer of GHS ${newPrice.toFixed(2)} sent to buyer.`);
+                loadLogisticsJobs();
+            } else {
+                const err = await res.json();
+                alert('Error: ' + (err.detail || JSON.stringify(err)));
+            }
+        } catch (err) { console.error(err); } finally {
+            setBtnLoading(btn, false);
+        }
+    });
 
     return card;
 }

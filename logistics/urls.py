@@ -9,4 +9,5 @@ urlpatterns = [
     path('api/logistics/jobs/<int:pk>/approve/', views.TransportJobApproveView.as_view(), name='api-logistics-approve'),
     path('api/logistics/jobs/<int:pk>/request_payment/', views.TransportJobPaymentRequestView.as_view(), name='api-logistics-request-payment'),
     path('api/logistics/jobs/<int:pk>/approve_payment/', views.TransportJobClientApproveView.as_view(), name='api-logistics-approve-payment'),
+    path('api/logistics/jobs/<int:pk>/negotiate/', views.TransportJobNegotiationView.as_view(), name='api-logistics-negotiate'),
 ]

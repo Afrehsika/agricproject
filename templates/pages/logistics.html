@@ -121,6 +121,28 @@
 
     <!-- Transporter View (Hidden by default, shown via JS if role is TRANSPORTER) -->
     <div id="transporter-logistics-view" class="grid grid-cols-1 lg:grid-cols-2 gap-6" style="display: none;">
+        <!-- Active Price Negotiations (full-width, shown only when negotiations exist) -->
+        <div id="logistics-negotiations-wrapper" class="lg:col-span-2 hidden">
+            <div class="bg-white border-2 border-amber-300 rounded-2xl shadow-xl shadow-amber-500/10 flex flex-col overflow-hidden">
+                <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-5 flex items-center gap-3 text-white relative">
+                    <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10 mix-blend-overlay pointer-events-none"></div>
+                    <div class="w-10 h-10 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white shadow-inner shrink-0 relative z-10">
+                        <i class="fa-solid fa-scale-balanced text-lg"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <h3 class="font-outfit font-bold text-xl m-0 leading-tight">Active Price Negotiations</h3>
+                        <p class="text-amber-100 text-xs m-0 opacity-90">Buyer has responded — review and reply to continue the contract</p>
+                    </div>
+                    <span id="negotiations-count-badge" class="ml-auto relative z-10 bg-white/20 border border-white/30 text-white text-xs font-bold px-2.5 py-1 rounded-full backdrop-blur-sm"></span>
+                </div>
+                <div class="p-5 bg-amber-50/30">
+                    <div id="logistics-negotiations" class="flex flex-col gap-4">
+                        <!-- Filled dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Available Jobs -->
         <div class="bg-white border border-slate-200 rounded-2xl shadow-xl shadow-slate-200/50 flex flex-col h-full overflow-hidden">
             <div class="bg-gradient-to-r from-amber-500 to-orange-500 p-5 flex justify-between items-center text-white relative">
@@ -171,5 +193,6 @@
             </div>
         </div>
     </div>
+
 </div>
 {% endblock %}

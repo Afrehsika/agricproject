@@ -94,47 +94,68 @@ class TransportJobStatusUpdateView(APIView):
         new_status = request.data.get('status')
         if new_status not in ['PICKED_UP', 'DELIVERED']:
             return Response({'detail': 'Invalid status update'}, status=status.HTTP_400_BAD_REQUEST)
-            
+
         order = job.order
         farmer = order.produce.farmer
-        
+
         if new_status == 'PICKED_UP':
-            job.status = 'PICKED_UP'
-            job.pickup_time = timezone.now()
+            # Require the driver to propose a final price before pickup is confirmed.
+            # This starts the negotiation flow instead of immediately marking as picked up.
+            proposed_price = request.data.get('proposed_price')
+            if proposed_price is None:
+                return Response({'detail': 'A proposed_price is required to initiate cargo pickup.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            try:
+                proposed_price = float(proposed_price)
+                if proposed_price <= 0:
+                    raise ValueError
+            except (ValueError, TypeError):
+                return Response({'detail': 'proposed_price must be a positive number.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            job.proposed_price = proposed_price
+            job.negotiation_status = 'PENDING_BUYER_APPROVAL'
             job.save()
-            
-            order.status = 'SHIPPED'
-            order.save()
-            
-            # Send cargo picked up alerts
+
+            estimated = float(job.estimated_cost)
+            diff = proposed_price - estimated
+            diff_msg = (
+                f"GHS {abs(diff):.2f} MORE than the estimated GHS {estimated:.2f}." if diff > 0
+                else f"GHS {abs(diff):.2f} LESS than the estimated GHS {estimated:.2f} (you will be refunded the difference)."
+                if diff < 0 else f"the same as the estimated GHS {estimated:.2f}."
+            )
+
             create_alert(
                 user=order.buyer,
                 notification_type='SMS',
-                title='Cargo In Transit',
-                content=f"Your cargo for Order #{order.id} has been picked up by transporter {job.transporter.username} and is in transit."
+                title=f'Price Review Required — Order #{order.id}',
+                content=(
+                    f"Transporter {job.transporter.username} has proposed a final logistics fee of "
+                    f"GHS {proposed_price:.2f} for Order #{order.id}, which is {diff_msg} "
+                    f"Please review and accept, counter, or reject in your Orders dashboard."
+                )
             )
             create_alert(
                 user=order.buyer,
                 notification_type='EMAIL',
-                title=f"Order #{order.id} - Cargo In Transit",
-                content=f"Your cargo for Order #{order.id} has been picked up by {job.transporter.username} and is on its way."
+                title=f'Order #{order.id} — Logistics Price Review Required',
+                content=(
+                    f"Transporter {job.transporter.username} is at the pickup location and has proposed "
+                    f"a final fee of GHS {proposed_price:.2f} (Estimated: GHS {estimated:.2f}). "
+                    f"Please log in to accept, counter-offer, or reject."
+                )
             )
-            create_alert(
-                user=farmer,
-                notification_type='SMS',
-                title='Cargo Dispatched',
-                content=f"Transporter {job.transporter.username} has picked up the cargo for Order #{order.id}."
-            )
-            
+
         elif new_status == 'DELIVERED':
+            if job.negotiation_status not in ('NONE', 'ACCEPTED'):
+                return Response({'detail': 'Cannot mark as delivered while price negotiation is still open.'}, status=status.HTTP_400_BAD_REQUEST)
+
             job.status = 'DELIVERED'
             job.delivery_time = timezone.now()
             job.save()
-            
+
             order.status = 'DELIVERED'
             order.save()
-            
-            # Send cargo delivered alerts
+
             create_alert(
                 user=order.buyer,
                 notification_type='SMS',
@@ -153,11 +174,176 @@ class TransportJobStatusUpdateView(APIView):
                 title='Cargo Delivered',
                 content=f"Your produce for Order #{order.id} has been delivered. Once the buyer confirms, escrow payment will be released."
             )
-            
+
         return Response(TransportJobSerializer(job).data)
 
 
+class TransportJobNegotiationView(APIView):
+    """
+    POST /api/logistics/jobs/<pk>/negotiate/
+    Handles the price negotiation ping-pong between the buyer and the driver.
+
+    Actions (sent in request body as `action`):
+      - 'accept'  — Buyer accepts the proposed price. Wallet is adjusted, cargo is marked picked up.
+      - 'counter' — Either party counters with a new proposed_price. Flips negotiation_status.
+      - 'reject'  — Buyer rejects and ends the contract. Refunds estimated_cost, resets job.
+    """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def post(self, request, pk):
+        try:
+            job = TransportJob.objects.select_related('order', 'order__buyer', 'order__produce__farmer', 'transporter').get(id=pk)
+        except TransportJob.DoesNotExist:
+            return Response({'detail': 'Logistics job not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        order = job.order
+        buyer = order.buyer
+        transporter = job.transporter
+        farmer = order.produce.farmer
+        action = request.data.get('action')
+
+        if action not in ('accept', 'counter', 'reject'):
+            return Response({'detail': "action must be 'accept', 'counter', or 'reject'."}, status=status.HTTP_400_BAD_REQUEST)
+
+        # --- ACCEPT ---
+        if action == 'accept':
+            if request.user != buyer:
+                return Response({'detail': 'Only the buyer can accept a price proposal.'}, status=status.HTTP_403_FORBIDDEN)
+            if job.negotiation_status != 'PENDING_BUYER_APPROVAL':
+                return Response({'detail': 'No pending price proposal for you to accept.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            from decimal import Decimal
+            proposed = job.proposed_price if job.proposed_price is not None else Decimal('0.00')
+            estimated = job.estimated_cost if job.estimated_cost is not None else Decimal('0.00')
+            difference = proposed - estimated  # positive = buyer owes more, negative = refund
+
+            with transaction.atomic():
+                if difference > 0:
+                    # Driver wants more than estimated — deduct shortfall from buyer's wallet
+                    if buyer.wallet_balance < difference:
+                        return Response(
+                            {'detail': f'Insufficient wallet balance. You need GHS {difference:.2f} more to accept this price. Please top up your wallet.'},
+                            status=status.HTTP_400_BAD_REQUEST
+                        )
+                    buyer.wallet_balance -= difference
+                    buyer.save()
+                elif difference < 0:
+                    # Driver accepted less — refund the excess to the buyer's wallet
+                    buyer.wallet_balance += abs(difference)
+                    buyer.save()
+
+                job.final_price = proposed
+                job.negotiation_status = 'NONE'
+                job.status = 'PICKED_UP'
+                job.pickup_time = timezone.now()
+                job.save()
+
+                order.status = 'SHIPPED'
+                order.save()
+
+            # Alerts
+            create_alert(
+                user=transporter,
+                notification_type='SMS',
+                title=f'Price Accepted — Order #{order.id}',
+                content=f'The buyer has accepted your price of GHS {proposed:.2f} for Order #{order.id}. Cargo is now officially in transit.'
+            )
+            create_alert(
+                user=buyer,
+                notification_type='SMS',
+                title=f'Price Accepted — Cargo In Transit (Order #{order.id})',
+                content=(
+                    f'You accepted the logistics fee of GHS {proposed:.2f}. '
+                    + (f'GHS {difference:.2f} was deducted from your wallet.' if difference > 0
+                       else f'GHS {abs(difference):.2f} was refunded to your wallet.' if difference < 0
+                       else 'No wallet change was needed.')
+                    + f' Order #{order.id} is now in transit.'
+                )
+            )
+            create_alert(
+                user=farmer,
+                notification_type='SMS',
+                title='Cargo Dispatched',
+                content=f'Transporter {transporter.username} has picked up the cargo for Order #{order.id}.'
+            )
+            return Response(TransportJobSerializer(job).data)
+
+        # --- COUNTER ---
+        if action == 'counter':
+            # Determine whose turn it is
+            if job.negotiation_status == 'PENDING_BUYER_APPROVAL' and request.user != buyer:
+                return Response({'detail': 'It is the buyer\'s turn to respond.'}, status=status.HTTP_403_FORBIDDEN)
+            if job.negotiation_status == 'PENDING_DRIVER_APPROVAL' and request.user != transporter:
+                return Response({'detail': 'It is the driver\'s turn to respond.'}, status=status.HTTP_403_FORBIDDEN)
+            if job.negotiation_status not in ('PENDING_BUYER_APPROVAL', 'PENDING_DRIVER_APPROVAL'):
+                return Response({'detail': 'No active negotiation to counter.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            new_price = request.data.get('proposed_price')
+            try:
+                new_price = float(new_price)
+                if new_price <= 0:
+                    raise ValueError
+            except (ValueError, TypeError):
+                return Response({'detail': 'A valid positive proposed_price is required to counter.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            # Flip the ball to the other party
+            if request.user == buyer:
+                job.negotiation_status = 'PENDING_DRIVER_APPROVAL'
+                notify_user = transporter
+                notify_title = f'Counter-Offer Received — Order #{order.id}'
+                notify_content = f'Buyer {buyer.username} has countered with GHS {new_price:.2f} for Order #{order.id}. Please accept or counter back in your Logistics dashboard.'
+            else:
+                job.negotiation_status = 'PENDING_BUYER_APPROVAL'
+                notify_user = buyer
+                notify_title = f'Counter-Offer Received — Order #{order.id}'
+                notify_content = f'Driver {transporter.username} has countered with GHS {new_price:.2f} for Order #{order.id}. Please review in your Orders dashboard.'
+
+            job.proposed_price = new_price
+            job.save()
+
+            create_alert(user=notify_user, notification_type='SMS', title=notify_title, content=notify_content)
+            return Response(TransportJobSerializer(job).data)
+
+        # --- REJECT ---
+        if action == 'reject':
+            if request.user != buyer:
+                return Response({'detail': 'Only the buyer can reject and end the logistics contract.'}, status=status.HTTP_403_FORBIDDEN)
+            if job.negotiation_status not in ('PENDING_BUYER_APPROVAL', 'PENDING_DRIVER_APPROVAL'):
+                return Response({'detail': 'No active negotiation to reject.'}, status=status.HTTP_400_BAD_REQUEST)
+
+            estimated = float(job.estimated_cost)
+            rejected_transporter = transporter
+
+            with transaction.atomic():
+                # Refund the estimated_cost back to the buyer since they're ending the contract
+                buyer.wallet_balance += estimated
+                buyer.save()
+
+                # Unassign driver and reset job to open market
+                job.transporter = None
+                job.status = 'PENDING_MATCH'
+                job.negotiation_status = 'NONE'
+                job.proposed_price = None
+                job.final_price = None
+                job.save()
+
+            create_alert(
+                user=rejected_transporter,
+                notification_type='SMS',
+                title=f'Logistics Contract Ended — Order #{order.id}',
+                content=f'The buyer has rejected your final price for Order #{order.id} and ended the contract. The job is now available for other drivers.'
+            )
+            create_alert(
+                user=buyer,
+                notification_type='SMS',
+                title=f'Logistics Contract Cancelled — Order #{order.id}',
+                content=f'You have ended the logistics contract for Order #{order.id}. GHS {estimated:.2f} has been refunded to your wallet. The job is now open for new drivers.'
+            )
+            return Response(TransportJobSerializer(job).data)
+
+
 class TransportJobAssignView(APIView):
+
     """
     POST /api/logistics/<int:pk>/assign/
     Allows a farmer or buyer to directly assign/hire a driver for a transport job.

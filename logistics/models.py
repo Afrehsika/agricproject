@@ -11,6 +11,12 @@ class TransportJob(models.Model):
         ('PICKED_UP', 'Picked Up / In Transit'),
         ('DELIVERED', 'Delivered'),
     )
+
+    NEGOTIATION_STATUS_CHOICES = (
+        ('NONE', 'No Negotiation'),
+        ('PENDING_BUYER_APPROVAL', 'Pending Buyer Price Approval'),
+        ('PENDING_DRIVER_APPROVAL', 'Pending Driver Counter-Offer Approval'),
+    )
     
     VEHICLE_CHOICES = (
         ('Aboboyaa Tricycle', 'Aboboyaa Tricycle'),
@@ -35,6 +41,11 @@ class TransportJob(models.Model):
     vehicle_type = models.CharField(max_length=30, choices=VEHICLE_CHOICES, default='Aboboyaa Tricycle')
     estimated_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0.00)
     status = models.CharField(max_length=25, choices=STATUS_CHOICES, default='PENDING_MATCH')
+
+    # Price negotiation fields
+    negotiation_status = models.CharField(max_length=30, choices=NEGOTIATION_STATUS_CHOICES, default='NONE')
+    proposed_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    final_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     paid_by = models.CharField(max_length=10, choices=PAID_BY_CHOICES, default='UNSET')
     payment_status = models.CharField(max_length=15, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
@@ -44,3 +55,4 @@ class TransportJob(models.Model):
 
     def __str__(self):
         return f"Logistics #{self.id} for Order #{self.order.id} (Status: {self.status})"
+

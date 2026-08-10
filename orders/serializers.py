@@ -46,17 +46,24 @@ class OrderSerializer(serializers.ModelSerializer):
                     'status': job.status,
                     'vehicle_type': job.vehicle_type,
                     'estimated_cost': float(job.estimated_cost),
-                    'payment_status': job.payment_status
+                    'payment_status': job.payment_status,
+                    'negotiation_status': job.negotiation_status,
+                    'proposed_price': float(job.proposed_price) if job.proposed_price is not None else None,
+                    'final_price': float(job.final_price) if job.final_price is not None else None,
                 }
             return {
                 'job_id': job.id,
                 'status': job.status,
                 'vehicle_type': job.vehicle_type,
                 'estimated_cost': float(job.estimated_cost),
-                'payment_status': job.payment_status
+                'payment_status': job.payment_status,
+                'negotiation_status': job.negotiation_status,
+                'proposed_price': float(job.proposed_price) if job.proposed_price is not None else None,
+                'final_price': float(job.final_price) if job.final_price is not None else None,
             }
         except TransportJob.DoesNotExist:
             return None
+
 
     def get_latest_dispute(self, obj):
         try:
