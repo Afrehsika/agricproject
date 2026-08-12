@@ -37,6 +37,8 @@ class OrderCreateView(APIView):
             orders = Order.objects.filter(buyer=request.user).order_by('-id')
         elif request.user.role == 'FARMER':
             orders = Order.objects.filter(produce__farmer=request.user).order_by('-id')
+        elif request.user.role == 'TRANSPORTER':
+            orders = Order.objects.filter(transport_job__transporter=request.user).order_by('-id')
         else:
             orders = Order.objects.all().order_by('-id')
         serializer = OrderSerializer(orders, many=True)

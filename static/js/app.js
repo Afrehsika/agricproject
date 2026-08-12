@@ -5360,8 +5360,8 @@ async function renderAnalyticsChart() {
                 .filter(o => o.payment_status === 'HELD_IN_ESCROW')
                 .reduce((sum, o) => sum + parseFloat(o.total_price || 0), 0);
                 
-        } else {
-            // Buyer/Transporter data
+        } else if (myRole === 'BUYER') {
+            // Buyer data
             activeCount = orders.filter(o => o.status !== 'DELIVERED').length;
             totalRevenueOrSpent = orders.reduce((sum, o) => sum + parseFloat(o.total_price || 0), 0);
             completedCount = orders.filter(o => o.status === 'DELIVERED').length;
@@ -5380,6 +5380,30 @@ async function renderAnalyticsChart() {
             escrowBalance = orders
                 .filter(o => o.payment_status === 'HELD_IN_ESCROW')
                 .reduce((sum, o) => sum + parseFloat(o.total_price || 0), 0);
+        } else {
+            // Transporter data
+            activeCount = orders.filter(o => o.status !== 'DELIVERED').length;
+            totalRevenueOrSpent = orders.reduce((sum, o) => {
+                let fee = 0;
+                if (o.transporter_details) {
+                    fee = o.transporter_details.final_price || o.transporter_details.estimated_cost || 0;
+                }
+                return sum + parseFloat(fee);
+            }, 0);
+            completedCount = orders.filter(o => o.status === 'DELIVERED').length;
+            
+            // Fulfillment rate = total quantity transported
+            secondaryMetric = completedCount;
+            
+            // Insights
+            const cropCounts = {};
+            orders.forEach(o => {
+                const cropName = o.produce_details ? o.produce_details.name : "Cargo";
+                cropCounts[cropName] = (cropCounts[cropName] || 0) + 1;
+            });
+            primaryCrop = Object.keys(cropCounts).length > 0 ? Object.keys(cropCounts).reduce((a, b) => cropCounts[a] > cropCounts[b] ? a : b) : "Cargo";
+            
+            escrowBalance = 0;
         }
         
         // Update Card 1: Revenue or Spent
